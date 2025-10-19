@@ -124,19 +124,6 @@ const JeepersCampers = () => {
     return { width: 340, height: 160 };
   };
 
-  const getCurrentImage = () => {
-    // Base image selection logic based on configuration
-    if (config.rearKitchen && config.roofTent) {
-      return `${process.env.PUBLIC_URL}/images/camper_back_view_opened.jpeg`;
-    } else if (config.roofTent) {
-      return `${process.env.PUBLIC_URL}/images/camper_with_roam_tent.jpeg`;
-    } else if (config.frame === 'minimalist') {
-      return `${process.env.PUBLIC_URL}/images/camper_side_view.jpeg`;
-    } else {
-      return `${process.env.PUBLIC_URL}/images/camper_alternate_side_view.jpeg`;
-    }
-  };
-
   const dims = getFrameDimensions();
 
   // Enhanced gallery media data with intuitive labels based on filenames
