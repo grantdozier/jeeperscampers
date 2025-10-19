@@ -293,13 +293,13 @@ const JeepersCampers = () => {
       <main className="container mx-auto px-4 py-8">
         {/* BUILDER TAB */}
         {activeTab === 'builder' && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 lg:gap-8">
+          <div className="grid grid-cols-2 gap-2 sm:gap-4 md:gap-6 lg:gap-8">
             {/* CONFIGURATOR PANEL */}
-            <div className="bg-gray-800 rounded-lg p-6">
-              <h2 className="text-3xl font-bold mb-6 text-center">Build Your Camper</h2>
+            <div className="bg-gray-800 rounded-lg p-3 sm:p-4 lg:p-6">
+              <h2 className="text-lg sm:text-2xl lg:text-3xl font-bold mb-4 lg:mb-6 text-center">Build Your Camper</h2>
               
               {/* Frame Selection */}
-              <div className="mb-8">
+              <div className="mb-4 lg:mb-8">
                 <h3 className="text-xl font-bold mb-4 flex items-center">
                   <Truck className="mr-2 text-orange-500" size={20} />
                   Frame Type
@@ -309,15 +309,15 @@ const JeepersCampers = () => {
                     <button
                       key={frame}
                       onClick={() => setFrameType(frame)}
-                      className={`p-4 rounded-lg border-2 transition ${
+                      className={`p-2 sm:p-3 lg:p-4 rounded-lg border-2 transition ${
                         config.frame === frame
                           ? 'border-orange-500 bg-orange-500/20'
                           : 'border-gray-600 hover:border-orange-300'
                       }`}
                     >
                       <div className="text-center">
-                        <div className="font-bold capitalize">{frame}</div>
-                        <div className="text-sm text-gray-400">
+                        <div className="font-bold text-xs sm:text-sm lg:text-base capitalize">{frame}</div>
+                        <div className="text-orange-500 text-xs sm:text-sm lg:text-base">
                           ${prices[frame as keyof typeof prices].toLocaleString()}
                         </div>
                       </div>
@@ -327,22 +327,22 @@ const JeepersCampers = () => {
               </div>
 
               {/* Wheel Selection */}
-              <div className="mb-8">
+              <div className="mb-4 lg:mb-8">
                 <h3 className="text-xl font-bold mb-4">Wheel Package</h3>
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 lg:gap-4">
                   {['standard', 'offroad', 'extreme'].map((wheel) => (
                     <button
                       key={wheel}
                       onClick={() => setWheelType(wheel)}
-                      className={`p-4 rounded-lg border-2 transition ${
+                      className={`p-2 sm:p-3 lg:p-4 rounded-lg border-2 transition ${
                         config.wheels === wheel
                           ? 'border-orange-500 bg-orange-500/20'
                           : 'border-gray-600 hover:border-orange-300'
                       }`}
                     >
                       <div className="text-center">
-                        <div className="font-bold capitalize">{wheel}</div>
-                        <div className="text-sm text-gray-400">
+                        <div className="font-bold text-xs sm:text-sm lg:text-base capitalize">{wheel}</div>
+                        <div className="text-orange-500 text-xs sm:text-sm lg:text-base">
                           ${prices[('wheels_' + wheel) as keyof typeof prices].toLocaleString()}
                         </div>
                       </div>
@@ -396,18 +396,18 @@ const JeepersCampers = () => {
             </div>
 
             {/* VISUAL PREVIEW */}
-            <div className="bg-gray-800 rounded-lg p-6">
-              <h3 className="text-xl font-bold mb-4 text-center">Your Camper Preview</h3>
+            <div className="bg-gray-800 rounded-lg p-3 sm:p-4 lg:p-6">
+              <h3 className="text-lg lg:text-xl font-bold mb-4 text-center">Your Camper Preview</h3>
               
               {/* Interactive 3D Configurator */}
-              <div className="mb-6 bg-gray-700 rounded-lg p-4" style={{ minHeight: '400px' }}>
+              <div className="mb-3 lg:mb-6 bg-gray-700 rounded-lg p-1 sm:p-2 lg:p-4" style={{ minHeight: '200px' }}>
                 <CamperConfigurator config={config} />
               </div>
 
               {/* Configuration Summary */}
-              <div className="bg-gray-700 rounded-lg p-4">
+              <div className="bg-gray-700 rounded-lg p-2 sm:p-3 lg:p-4 mb-3 lg:mb-4">
                 <h4 className="font-bold mb-3">Current Configuration:</h4>
-                <div className="space-y-2 text-sm">
+                <div className="space-y-1 sm:space-y-2 text-xs sm:text-sm">
                   <div className="flex justify-between">
                     <span>Frame:</span>
                     <span className="text-orange-500 capitalize">{config.frame}</span>
@@ -430,7 +430,7 @@ const JeepersCampers = () => {
               </div>
 
               {/* Image Gallery */}
-              <div className="mt-6">
+              <div className="hidden lg:block">
                 <h4 className="font-bold mb-3">Gallery</h4>
                 <div className="grid grid-cols-2 gap-2">
                   {galleryMedia.map((media, idx) => (
