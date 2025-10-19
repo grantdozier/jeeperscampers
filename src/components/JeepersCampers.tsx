@@ -195,7 +195,7 @@ const JeepersCampers = () => {
             <div className="text-2xl font-light">CAMPERS</div>
           </div>
           <nav className="hidden md:flex space-x-6">
-            {['builder', 'reviews', 'about'].map((tab) => (
+            {['builder', 'reviews', 'gallery', 'about'].map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
@@ -223,7 +223,7 @@ const JeepersCampers = () => {
         </div>
         {mobileMenu && (
           <nav className="md:hidden mt-4 flex flex-col space-y-2 px-4 pb-4">
-            {['builder', 'reviews', 'about'].map((tab) => (
+            {['builder', 'reviews', 'gallery', 'about'].map((tab) => (
               <button
                 key={tab}
                 onClick={() => {
@@ -238,6 +238,25 @@ const JeepersCampers = () => {
           </nav>
         )}
       </header>
+
+      {/* Mobile Navigation - Always Visible */}
+      <nav className="md:hidden bg-gray-700 px-4 py-2">
+        <div className="flex space-x-1 overflow-x-auto">
+          {['builder', 'gallery', 'reviews', 'about'].map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`px-3 py-2 rounded text-sm whitespace-nowrap transition ${
+                activeTab === tab 
+                  ? 'bg-orange-500 text-white' 
+                  : 'text-gray-300 hover:text-orange-500 hover:bg-gray-600'
+              }`}
+            >
+              {tab.charAt(0).toUpperCase() + tab.slice(1)}
+            </button>
+          ))}
+        </div>
+      </nav>
 
       {/* CART DRAWER */}
       {showCart && (
@@ -294,31 +313,31 @@ const JeepersCampers = () => {
       <main className="container mx-auto px-4 py-8">
         {/* BUILDER TAB */}
         {activeTab === 'builder' && (
-          <div className="grid grid-cols-2 gap-2 sm:gap-4 md:gap-6 lg:gap-8">
+          <div className="grid grid-cols-2 gap-2 sm:gap-4 md:gap-6 lg:gap-8" style={{ gridTemplateColumns: '1fr 1.5fr' }}>
             {/* CONFIGURATOR PANEL */}
-            <div className="bg-gray-800 rounded-lg p-3 sm:p-4 lg:p-6">
-              <h2 className="text-lg sm:text-2xl lg:text-3xl font-bold mb-4 lg:mb-6 text-center">Build Your Camper</h2>
+            <div className="bg-gray-800 rounded-lg p-2 sm:p-3 lg:p-4">
+              <h2 className="text-base sm:text-xl lg:text-2xl font-bold mb-2 lg:mb-4 text-center">Build Your Camper</h2>
               
               {/* Frame Selection */}
-              <div className="mb-4 lg:mb-8">
-                <h3 className="text-xl font-bold mb-4 flex items-center">
-                  <Truck className="mr-2 text-orange-500" size={20} />
+              <div className="mb-3 lg:mb-6">
+                <h3 className="text-sm sm:text-base lg:text-lg font-bold mb-2 lg:mb-3 flex items-center">
+                  <Truck className="mr-1 sm:mr-2 text-orange-500" size={16} />
                   Frame Type
                 </h3>
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 lg:gap-4">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-1 sm:gap-2 lg:gap-3">
                   {['minimalist', 'standard', 'heavy'].map((frame) => (
                     <button
                       key={frame}
                       onClick={() => setFrameType(frame)}
-                      className={`p-2 sm:p-3 lg:p-4 rounded-lg border-2 transition ${
+                      className={`p-1 sm:p-2 lg:p-3 rounded border-2 transition ${
                         config.frame === frame
                           ? 'border-orange-500 bg-orange-500/20'
                           : 'border-gray-600 hover:border-orange-300'
                       }`}
                     >
                       <div className="text-center">
-                        <div className="font-bold text-xs sm:text-sm lg:text-base capitalize">{frame}</div>
-                        <div className="text-orange-500 text-xs sm:text-sm lg:text-base">
+                        <div className="font-bold text-xs lg:text-sm capitalize">{frame}</div>
+                        <div className="text-orange-500 text-xs lg:text-sm">
                           ${prices[frame as keyof typeof prices].toLocaleString()}
                         </div>
                       </div>
@@ -328,22 +347,22 @@ const JeepersCampers = () => {
               </div>
 
               {/* Wheel Selection */}
-              <div className="mb-4 lg:mb-8">
-                <h3 className="text-xl font-bold mb-4">Wheel Package</h3>
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 lg:gap-4">
+              <div className="mb-3 lg:mb-6">
+                <h3 className="text-sm sm:text-base lg:text-lg font-bold mb-2 lg:mb-3">Wheel Package</h3>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-1 sm:gap-2 lg:gap-3">
                   {['standard', 'offroad', 'extreme'].map((wheel) => (
                     <button
                       key={wheel}
                       onClick={() => setWheelType(wheel)}
-                      className={`p-2 sm:p-3 lg:p-4 rounded-lg border-2 transition ${
+                      className={`p-1 sm:p-2 lg:p-3 rounded border-2 transition ${
                         config.wheels === wheel
                           ? 'border-orange-500 bg-orange-500/20'
                           : 'border-gray-600 hover:border-orange-300'
                       }`}
                     >
                       <div className="text-center">
-                        <div className="font-bold text-xs sm:text-sm lg:text-base capitalize">{wheel}</div>
-                        <div className="text-orange-500 text-xs sm:text-sm lg:text-base">
+                        <div className="font-bold text-xs lg:text-sm capitalize">{wheel}</div>
+                        <div className="text-orange-500 text-xs lg:text-sm">
                           ${prices[('wheels_' + wheel) as keyof typeof prices].toLocaleString()}
                         </div>
                       </div>
@@ -353,62 +372,75 @@ const JeepersCampers = () => {
               </div>
 
               {/* Options Grid */}
-              <div className="mb-8">
-                <h3 className="text-xl font-bold mb-4 flex items-center">
-                  <Wrench className="mr-2 text-orange-500" size={20} />
+              <div className="mb-3 lg:mb-6">
+                <h3 className="text-sm sm:text-base lg:text-lg font-bold mb-2 lg:mb-3 flex items-center">
+                  <Wrench className="mr-1 sm:mr-2 text-orange-500" size={16} />
                   Options & Accessories
                 </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-1 sm:gap-2 lg:gap-3">
                   {Object.entries(prices).filter(([key]) => 
                     !key.startsWith('wheels_') && !['minimalist', 'standard', 'heavy'].includes(key)
                   ).map(([key, price]) => (
-                    <label key={key} className="flex items-center justify-between p-3 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition">
+                    <label key={key} className="flex items-center justify-between p-1 sm:p-2 lg:p-3 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition">
                       <div className="flex items-center">
                         <input
                           type="checkbox"
                           checked={config[key as keyof typeof config] as boolean}
                           onChange={() => toggleConfig(key)}
-                          className="mr-3 w-4 h-4 text-orange-500 bg-gray-600 border-gray-500 rounded focus:ring-orange-500"
+                          className="mr-2 w-3 h-3 sm:w-4 sm:h-4 text-orange-500 bg-gray-600 border-gray-500 rounded focus:ring-orange-500"
                         />
-                        <span className="capitalize">{key.replace(/([A-Z])/g, ' $1').trim()}</span>
+                        <span className="capitalize text-xs sm:text-sm lg:text-base">{key.replace(/([A-Z])/g, ' $1').trim()}</span>
                       </div>
-                      <span className="text-orange-500 font-bold">${price.toLocaleString()}</span>
+                      <span className="text-orange-500 font-bold text-xs sm:text-sm lg:text-base">${price.toLocaleString()}</span>
                     </label>
                   ))}
                 </div>
               </div>
 
-              {/* Price Summary */}
-              <div className="bg-gray-700 rounded-lg p-6 mb-6">
-                <div className="flex justify-between items-center text-2xl font-bold">
-                  <span>Total Price:</span>
-                  <span className="text-orange-500">${calculatePrice().toLocaleString()}</span>
+              {/* Pricing Summary */}
+              <div className="bg-gray-700 rounded-lg p-2 sm:p-3 lg:p-4 mb-3 lg:mb-6">
+                <h3 className="font-bold mb-2 text-sm lg:text-base">Configuration Summary</h3>
+                <div className="space-y-1 text-xs sm:text-sm">
+                  <div className="flex justify-between">
+                    <span>Frame:</span>
+                    <span className="text-orange-500 capitalize">{config.frame}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Wheels:</span>
+                    <span className="text-orange-500 capitalize">{config.wheels}</span>
+                  </div>
+                  <div className="border-t border-gray-600 pt-2 mt-2">
+                    <div className="flex justify-between font-bold text-sm lg:text-lg">
+                      <span>Total:</span>
+                      <span className="text-orange-500">${calculatePrice().toLocaleString()}</span>
+                    </div>
+                  </div>
                 </div>
               </div>
 
-              {/* Add to Cart Button */}
+              {/* Add to Cart */}
               <button
                 onClick={addToCart}
-                className="w-full bg-orange-500 hover:bg-orange-600 text-white py-4 rounded-lg font-bold text-xl transition flex items-center justify-center"
+                className="w-full bg-orange-500 hover:bg-orange-600 text-white py-2 sm:py-3 lg:py-4 rounded-lg font-bold text-sm sm:text-base lg:text-xl transition flex items-center justify-center"
               >
-                <ShoppingCart className="mr-2" size={24} />
+                <ShoppingCart className="mr-1 sm:mr-2" size={16} />
                 Add to Cart
               </button>
             </div>
 
             {/* VISUAL PREVIEW */}
-            <div className="bg-gray-800 rounded-lg p-3 sm:p-4 lg:p-6">
-              <h3 className="text-lg lg:text-xl font-bold mb-4 text-center">Your Camper Preview</h3>
+            <div className="bg-gray-800 rounded-lg p-2 sm:p-3 lg:p-4 sticky top-4">
+              <h3 className="text-base sm:text-lg lg:text-xl font-bold mb-2 lg:mb-4 text-center">Your Camper Preview</h3>
               
               {/* Interactive 3D Configurator */}
-              <div className="mb-3 lg:mb-6 bg-gray-700 rounded-lg p-1 sm:p-2 lg:p-4" style={{ minHeight: '200px' }}>
+              <div className="mb-2 lg:mb-4 bg-gray-700 rounded-lg p-1 sm:p-2 lg:p-3" style={{ minHeight: '300px' }}>
                 <CamperConfigurator config={config} />
               </div>
 
               {/* Configuration Summary */}
-              <div className="bg-gray-700 rounded-lg p-2 sm:p-3 lg:p-4 mb-3 lg:mb-4">
-                <h4 className="font-bold mb-3">Current Configuration:</h4>
-                <div className="space-y-1 sm:space-y-2 text-xs sm:text-sm">
+              <div className="bg-gray-700 rounded-lg p-2 lg:p-3 mb-2 lg:mb-3">
+                <h4 className="font-bold mb-2 text-sm lg:text-base">Current Configuration:</h4>
+                <div className="space-y-1 text-xs lg:text-sm">
                   <div className="flex justify-between">
                     <span>Frame:</span>
                     <span className="text-orange-500 capitalize">{config.frame}</span>
@@ -422,7 +454,7 @@ const JeepersCampers = () => {
                     <span className="text-orange-500">{dims.width}" × {dims.height}"</span>
                   </div>
                   <div className="border-t border-gray-600 pt-2 mt-2">
-                    <div className="flex justify-between font-bold">
+                    <div className="flex justify-between font-bold text-sm lg:text-lg">
                       <span>Total:</span>
                       <span className="text-orange-500">${calculatePrice().toLocaleString()}</span>
                     </div>
@@ -432,7 +464,7 @@ const JeepersCampers = () => {
 
               {/* Image Gallery */}
               <div className="hidden lg:block">
-                <h4 className="font-bold mb-3">Gallery</h4>
+                <h4 className="font-bold mb-2 text-sm">Gallery</h4>
                 <div className="grid grid-cols-2 gap-2">
                   {galleryMedia.map((media, idx) => (
                     <button
@@ -441,7 +473,7 @@ const JeepersCampers = () => {
                         setSelectedMedia(idx);
                         setShowLightbox(true);
                       }}
-                      className="w-full h-20 object-cover rounded cursor-pointer hover:opacity-80 transition"
+                      className="w-full h-16 object-cover rounded cursor-pointer hover:opacity-80 transition"
                     >
                       {media.type === 'image' ? (
                         <img
@@ -466,6 +498,60 @@ const JeepersCampers = () => {
                   ))}
                 </div>
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* GALLERY TAB */}
+        {activeTab === 'gallery' && (
+          <div className="max-w-6xl mx-auto">
+            <h2 className="text-3xl font-bold mb-8 text-center">Badland Campers Gallery</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {galleryMedia.map((media, idx) => (
+                <div
+                  key={idx}
+                  className="bg-gray-800 rounded-lg overflow-hidden hover:transform hover:scale-105 transition-transform duration-300 cursor-pointer"
+                  onClick={() => {
+                    setSelectedMedia(idx);
+                    setShowLightbox(true);
+                  }}
+                >
+                  <div className="relative h-48 overflow-hidden">
+                    {media.type === 'image' ? (
+                      <img
+                        src={media.src}
+                        alt={media.title}
+                        className="w-full h-full object-cover hover:scale-110 transition-transform duration-300"
+                        onError={(e) => {
+                          e.currentTarget.style.display = 'none';
+                        }}
+                      />
+                    ) : (
+                      <div className="relative">
+                        <video
+                          src={media.src}
+                          title={media.title}
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            e.currentTarget.style.display = 'none';
+                          }}
+                        />
+                        <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30">
+                          <div className="bg-orange-500 rounded-full p-3">
+                            <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
+                            </svg>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                  <div className="p-4">
+                    <h3 className="font-bold text-lg mb-2 text-orange-500">{media.title}</h3>
+                    <p className="text-gray-400 text-sm">{media.description}</p>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         )}
