@@ -190,7 +190,7 @@ const JeepersCampers = () => {
       <header className="bg-gray-800 border-b border-orange-500">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <div className="flex items-center space-x-2">
-            <div className="text-3xl font-bold text-orange-500">JEEPERS</div>
+            <div className="text-3xl font-bold text-orange-500">BADLAND</div>
             <div className="text-2xl font-light">CAMPERS</div>
           </div>
           <nav className="hidden md:flex space-x-6">
@@ -293,7 +293,7 @@ const JeepersCampers = () => {
       <main className="container mx-auto px-4 py-8">
         {/* BUILDER TAB */}
         {activeTab === 'builder' && (
-          <div className="grid lg:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 lg:gap-8">
             {/* CONFIGURATOR PANEL */}
             <div className="bg-gray-800 rounded-lg p-6">
               <h2 className="text-3xl font-bold mb-6 text-center">Build Your Camper</h2>
@@ -304,15 +304,15 @@ const JeepersCampers = () => {
                   <Truck className="mr-2 text-orange-500" size={20} />
                   Frame Type
                 </h3>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 lg:gap-4">
                   {['minimalist', 'standard', 'heavy'].map((frame) => (
                     <button
                       key={frame}
                       onClick={() => setFrameType(frame)}
-                      className={`p-4 rounded border-2 transition ${
+                      className={`p-4 rounded-lg border-2 transition ${
                         config.frame === frame
                           ? 'border-orange-500 bg-orange-500/20'
-                          : 'border-gray-600 hover:border-orange-400'
+                          : 'border-gray-600 hover:border-orange-300'
                       }`}
                     >
                       <div className="text-center">
@@ -329,15 +329,15 @@ const JeepersCampers = () => {
               {/* Wheel Selection */}
               <div className="mb-8">
                 <h3 className="text-xl font-bold mb-4">Wheel Package</h3>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 lg:gap-4">
                   {['standard', 'offroad', 'extreme'].map((wheel) => (
                     <button
                       key={wheel}
                       onClick={() => setWheelType(wheel)}
-                      className={`p-4 rounded border-2 transition ${
+                      className={`p-4 rounded-lg border-2 transition ${
                         config.wheels === wheel
                           ? 'border-orange-500 bg-orange-500/20'
-                          : 'border-gray-600 hover:border-orange-400'
+                          : 'border-gray-600 hover:border-orange-300'
                       }`}
                     >
                       <div className="text-center">
@@ -502,7 +502,7 @@ const JeepersCampers = () => {
         {activeTab === 'about' && (
           <div className="max-w-4xl mx-auto">
             <div className="bg-gray-800 rounded-lg p-8">
-              <h2 className="text-3xl font-bold mb-6 text-center">About Jeepers Campers</h2>
+              <h2 className="text-3xl font-bold mb-6 text-center">About Badland Campers</h2>
               
               <div className="grid md:grid-cols-2 gap-8 mb-8">
                 <div>
