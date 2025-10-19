@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ShoppingCart, Star, Menu, X, Wrench, Truck, Home } from 'lucide-react';
 import CamperConfigurator from './CamperConfigurator';
+import { OrderForm } from './OrderForm'; // Import the new OrderForm component
 
 const JeepersCampers = () => {
   const [activeTab, setActiveTab] = useState('builder');
@@ -557,88 +558,28 @@ const JeepersCampers = () => {
 
         {/* ORDER TAB */}
         {activeTab === 'order' && (
-          <div className="max-w-2xl mx-auto bg-gray-800 rounded-lg p-8">
-            <h2 className="text-3xl font-bold mb-6">Complete Your Order</h2>
+          <div className="max-w-4xl mx-auto">
             {cart.length === 0 ? (
-              <div className="text-center py-12">
-                <p className="text-gray-400 mb-4">Your cart is empty</p>
+              <div className="bg-gray-800 rounded-lg p-8 text-center">
+                <h2 className="text-2xl font-bold mb-4">Your cart is empty</h2>
+                <p className="text-gray-400 mb-6">Add some campers to your cart before placing an order.</p>
                 <button
                   onClick={() => setActiveTab('builder')}
-                  className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded font-bold transition"
+                  className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded font-bold"
                 >
-                  Go to Builder
+                  Start Building
                 </button>
               </div>
             ) : (
-              <>
-                <div className="bg-gray-700 rounded p-6 mb-6">
-                  <h3 className="font-bold mb-4">Order Summary</h3>
-                  {cart.map((item, idx) => (
-                    <div key={item.id} className="mb-2 border-b border-gray-600 pb-2">
-                      <p className="text-sm">
-                        Camper #{idx + 1}: {getConfigDisplay(item.config)}
-                      </p>
-                      <p className="text-orange-500 font-bold">${item.price.toLocaleString()}</p>
-                    </div>
-                  ))}
-                  <div className="flex justify-between text-xl font-bold mt-4">
-                    <span>Total:</span>
-                    <span className="text-orange-500">
-                      ${cart.reduce((s, i) => s + i.price, 0).toLocaleString()}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="space-y-4">
-                  <input
-                    type="text"
-                    placeholder="Full Name"
-                    value={orderForm.name}
-                    onChange={(e) => setOrderForm({ ...orderForm, name: e.target.value })}
-                    className="w-full bg-gray-700 border border-gray-600 rounded px-4 py-2 text-white"
-                  />
-                  <input
-                    type="email"
-                    placeholder="Email"
-                    value={orderForm.email}
-                    onChange={(e) => setOrderForm({ ...orderForm, email: e.target.value })}
-                    className="w-full bg-gray-700 border border-gray-600 rounded px-4 py-2 text-white"
-                  />
-                  <input
-                    type="tel"
-                    placeholder="Phone"
-                    value={orderForm.phone}
-                    onChange={(e) => setOrderForm({ ...orderForm, phone: e.target.value })}
-                    className="w-full bg-gray-700 border border-gray-600 rounded px-4 py-2 text-white"
-                  />
-                  <textarea
-                    placeholder="Delivery Address"
-                    value={orderForm.address}
-                    onChange={(e) => setOrderForm({ ...orderForm, address: e.target.value })}
-                    className="w-full bg-gray-700 border border-gray-600 rounded px-4 py-2 text-white h-24"
-                  />
-
-                  <button
-                    onClick={() => {
-                      if (orderForm.name && orderForm.email) {
-                        alert(
-                          `Order submitted successfully!\n\nName: ${orderForm.name}\nEmail: ${orderForm.email}\n\nTotal: $${cart
-                            .reduce((s, i) => s + i.price, 0)
-                            .toLocaleString()}\n\nWe'll contact you within 24 hours to confirm your order details.`
-                        );
-                        setCart([]);
-                        setOrderForm({ name: '', email: '', phone: '', address: '' });
-                        setActiveTab('builder');
-                      } else {
-                        alert('Please fill in name and email');
-                      }
-                    }}
-                    className="w-full bg-orange-500 hover:bg-orange-600 text-white py-4 rounded font-bold text-xl transition"
-                  >
-                    Submit Order
-                  </button>
-                </div>
-              </>
+              <OrderForm
+                cart={cart}
+                onOrderComplete={() => {
+                  setCart([]);
+                  setOrderForm({ name: '', email: '', phone: '', address: '' });
+                }}
+                onBackToBuilder={() => setActiveTab('builder')}
+                getConfigDisplay={getConfigDisplay}
+              />
             )}
           </div>
         )}
