@@ -568,12 +568,12 @@ const CamperConfigurator: React.FC<CamperConfiguratorProps> = ({ config }) => {
               <g>
                 <path
                   d={`
-                    M ${iso(axleX - 35, -wheelY - 18, 5).x} ${iso(axleX - 35, -wheelY - 18, 5).y}
-                    Q ${iso(axleX, -wheelY - 22, 10).x} ${iso(axleX, -wheelY - 22, 10).y}
-                      ${iso(axleX + 40, -wheelY - 18, 5).x} ${iso(axleX + 40, -wheelY - 18, 5).y}
-                    L ${iso(axleX + 40, -wheelY, 5).x} ${iso(axleX + 40, -wheelY, 5).y}
+                    M ${iso(axleX - 28, -wheelY - 14, 5).x} ${iso(axleX - 28, -wheelY - 14, 5).y}
+                    Q ${iso(axleX, -wheelY - 18, 10).x} ${iso(axleX, -wheelY - 18, 10).y}
+                      ${iso(axleX + 32, -wheelY - 14, 5).x} ${iso(axleX + 32, -wheelY - 14, 5).y}
+                    L ${iso(axleX + 32, -wheelY, 5).x} ${iso(axleX + 32, -wheelY, 5).y}
                     Q ${iso(axleX, -wheelY + 2, wheelSpecs.radius + 8).x} ${iso(axleX, -wheelY + 2, wheelSpecs.radius + 8).y}
-                      ${iso(axleX - 35, -wheelY, 5).x} ${iso(axleX - 35, -wheelY, 5).y}
+                      ${iso(axleX - 28, -wheelY, 5).x} ${iso(axleX - 28, -wheelY, 5).y}
                     Z
                   `}
                   fill="url(#panelGradient)"
@@ -584,9 +584,9 @@ const CamperConfigurator: React.FC<CamperConfiguratorProps> = ({ config }) => {
                 {/* Fender detail arc */}
                 <path
                   d={`
-                    M ${iso(axleX - 30, -wheelY - 13, 6).x} ${iso(axleX - 30, -wheelY - 13, 6).y}
-                    Q ${iso(axleX, -wheelY - 17, 8).x} ${iso(axleX, -wheelY - 17, 8).y}
-                      ${iso(axleX + 35, -wheelY - 13, 6).x} ${iso(axleX + 35, -wheelY - 13, 6).y}
+                    M ${iso(axleX - 24, -wheelY - 10, 6).x} ${iso(axleX - 24, -wheelY - 10, 6).y}
+                    Q ${iso(axleX, -wheelY - 14, 8).x} ${iso(axleX, -wheelY - 14, 8).y}
+                      ${iso(axleX + 28, -wheelY - 10, 6).x} ${iso(axleX + 28, -wheelY - 10, 6).y}
                   `}
                   stroke="#555"
                   strokeWidth="1.5"
@@ -610,16 +610,16 @@ const CamperConfigurator: React.FC<CamperConfiguratorProps> = ({ config }) => {
               <line
                 x1={iso(axleX, -wheelY + 8, axleHeight).x}
                 y1={iso(axleX, -wheelY + 8, axleHeight).y}
-                x2={iso(axleX, wheelY - 8, axleHeight).x}
-                y2={iso(axleX, wheelY - 8, axleHeight).y}
+                x2={iso(axleX, wheelY - 25, axleHeight).x}
+                y2={iso(axleX, wheelY - 25, axleHeight).y}
                 stroke="rgba(0,0,0,0.3)"
                 strokeWidth="10"
               />
               <line
                 x1={iso(axleX, -wheelY + 8, axleHeight).x}
                 y1={iso(axleX, -wheelY + 8, axleHeight).y}
-                x2={iso(axleX, wheelY - 8, axleHeight).x}
-                y2={iso(axleX, wheelY - 8, axleHeight).y}
+                x2={iso(axleX, wheelY - 25, axleHeight).x}
+                y2={iso(axleX, wheelY - 25, axleHeight).y}
                 stroke="url(#metalGradient)"
                 strokeWidth="9"
               />
@@ -678,12 +678,12 @@ const CamperConfigurator: React.FC<CamperConfiguratorProps> = ({ config }) => {
               <g>
                 <path
                   d={`
-                    M ${iso(axleX - 35, wheelY, 5).x} ${iso(axleX - 35, wheelY, 5).y}
+                    M ${iso(axleX - 28, wheelY, 5).x} ${iso(axleX - 28, wheelY, 5).y}
                     Q ${iso(axleX, wheelY - 2, wheelSpecs.radius + 8).x} ${iso(axleX, wheelY - 2, wheelSpecs.radius + 8).y}
-                      ${iso(axleX + 40, wheelY, 5).x} ${iso(axleX + 40, wheelY, 5).y}
-                    L ${iso(axleX + 40, wheelY + 18, 5).x} ${iso(axleX + 40, wheelY + 18, 5).y}
-                    Q ${iso(axleX, wheelY + 22, 10).x} ${iso(axleX, wheelY + 22, 10).y}
-                      ${iso(axleX - 35, wheelY + 18, 5).x} ${iso(axleX - 35, wheelY + 18, 5).y}
+                      ${iso(axleX + 32, wheelY, 5).x} ${iso(axleX + 32, wheelY, 5).y}
+                    L ${iso(axleX + 32, wheelY + 14, 5).x} ${iso(axleX + 32, wheelY + 14, 5).y}
+                    Q ${iso(axleX, wheelY + 18, 10).x} ${iso(axleX, wheelY + 18, 10).y}
+                      ${iso(axleX - 28, wheelY + 14, 5).x} ${iso(axleX - 28, wheelY + 14, 5).y}
                     Z
                   `}
                   fill="url(#panelGradient)"
@@ -694,9 +694,9 @@ const CamperConfigurator: React.FC<CamperConfiguratorProps> = ({ config }) => {
                 {/* Fender detail arc */}
                 <path
                   d={`
-                    M ${iso(axleX - 30, wheelY + 13, 6).x} ${iso(axleX - 30, wheelY + 13, 6).y}
-                    Q ${iso(axleX, wheelY + 17, 8).x} ${iso(axleX, wheelY + 17, 8).y}
-                      ${iso(axleX + 35, wheelY + 13, 6).x} ${iso(axleX + 35, wheelY + 13, 6).y}
+                    M ${iso(axleX - 24, wheelY + 10, 6).x} ${iso(axleX - 24, wheelY + 10, 6).y}
+                    Q ${iso(axleX, wheelY + 14, 8).x} ${iso(axleX, wheelY + 14, 8).y}
+                      ${iso(axleX + 28, wheelY + 10, 6).x} ${iso(axleX + 28, wheelY + 10, 6).y}
                   `}
                   stroke="#555"
                   strokeWidth="1.5"
