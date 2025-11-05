@@ -12,47 +12,47 @@ const JeepersCampers = () => {
 
   const [config, setConfig] = useState({
     frame: 'standard',
-    wheels: 'standard',
-    breakingHubs: false,
+    wheels: 'offroad',
+    breakingHubs: true,
     // Enclosure options
-    enclosureType: '', // 'single-door' or 'dual-door'
-    rearHatch: false,
+    enclosureType: 'dual-door', // 'single-door' or 'dual-door'
+    rearHatch: true,
     // Kitchen options
-    partitionKitchenCounter: false,
-    kitchenStoveTop: false,
-    kitchenFridge: false,
-    kitchenCabinet: false,
-    kitchenFaucet: false,
-    kitchenDrawers: false,
-    refrigerator: false,
+    partitionKitchenCounter: true,
+    kitchenStoveTop: true,
+    kitchenFridge: true,
+    kitchenCabinet: true,
+    kitchenFaucet: true,
+    kitchenDrawers: true,
+    refrigerator: true,
     // Roof options
-    roofTent: '',
+    roofTent: 'premium',
     // Exterior options
-    diamondPlateFrontExterior: false,
-    diamondPlatePowderCoat: false,
-    vNoseFrontStorage: false,
-    vNosePowderCoat: false,
-    fullyArticulatedHitch: false,
-    frontStorageBoxes: false,
-    toolBoxDPlated: false,
-    toolBoxPowderCoat: false,
-    rearReceiverHitch: false,
-    trailerWiringLights: false,
-    roofTopAccessSteps: false,
+    diamondPlateFrontExterior: true,
+    diamondPlatePowderCoat: false, // Powder coat options off by default
+    vNoseFrontStorage: true,
+    vNosePowderCoat: false, // Powder coat options off by default
+    fullyArticulatedHitch: true,
+    frontStorageBoxes: true,
+    toolBoxDPlated: true,
+    toolBoxPowderCoat: false, // Powder coat options off by default
+    rearReceiverHitch: true,
+    trailerWiringLights: true,
+    roofTopAccessSteps: true,
     // Interior options
-    interiorWiringPackage: false,
-    lithiumBattery: false,
-    onboardBatteryCharger: false,
-    redarcCharger: false,
-    interiorLightingPackage: false,
-    tenSpeedFan: false,
-    onboardWaterTank: false,
-    onboardPropaneTank: false,
-    campluxOutdoorShower: false,
-    roamShowerRoom: false,
+    interiorWiringPackage: true,
+    lithiumBattery: true,
+    onboardBatteryCharger: true,
+    redarcCharger: true,
+    interiorLightingPackage: true,
+    tenSpeedFan: true,
+    onboardWaterTank: true,
+    onboardPropaneTank: true,
+    campluxOutdoorShower: true,
+    roamShowerRoom: true,
     // Interior packages
     basicInteriorPackage: false,
-    premiumInteriorPackage: false,
+    premiumInteriorPackage: true,
   });
 
   const [cart, setCart] = useState<any[]>([]);
@@ -374,9 +374,79 @@ const JeepersCampers = () => {
       <main className="container mx-auto px-4 py-8">
         {/* BUILDER TAB */}
         {activeTab === 'builder' && (
-          <div className="grid grid-cols-2 gap-2 sm:gap-4 md:gap-6 lg:gap-8" style={{ gridTemplateColumns: '1fr 1.5fr' }}>
-            {/* CONFIGURATOR PANEL */}
-            <div className="bg-gray-800 rounded-lg p-2 sm:p-3 lg:p-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 lg:gap-8">
+            {/* VISUAL PREVIEW - Mobile Top, Desktop Right (Sticky) */}
+            <div className="order-1 lg:order-2">
+              <div className="lg:sticky lg:top-4 bg-gray-800 rounded-lg p-3 sm:p-4 lg:p-6 shadow-2xl">
+                <h3 className="text-lg sm:text-xl lg:text-2xl font-bold mb-3 lg:mb-4 text-center text-orange-500">Your Premium Build</h3>
+
+                {/* Interactive 3D Configurator */}
+                <div className="mb-3 lg:mb-4 bg-gray-900 rounded-lg p-2 sm:p-3 lg:p-4 shadow-inner" style={{ minHeight: '400px' }}>
+                  <CamperConfigurator config={config} />
+                </div>
+
+                {/* Configuration Summary */}
+                <div className="bg-gray-700 rounded-lg p-3 lg:p-4 mb-3 lg:mb-4">
+                  <h4 className="font-bold mb-3 text-base lg:text-lg border-b border-gray-600 pb-2">Current Configuration</h4>
+                  <div className="space-y-2 text-xs lg:text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-gray-300">Frame:</span>
+                      <span className="text-orange-500 font-semibold">Standard</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-300">Wheels:</span>
+                      <span className="text-orange-500 font-semibold capitalize">{config.wheels}</span>
+                    </div>
+                    {config.enclosureType && (
+                      <div className="flex justify-between">
+                        <span className="text-gray-300">Enclosure:</span>
+                        <span className="text-orange-500 font-semibold">{config.enclosureType === 'single-door' ? 'Single Door' : 'Dual Doors'}</span>
+                      </div>
+                    )}
+                    {config.roofTent && (
+                      <div className="flex justify-between">
+                        <span className="text-gray-300">Roof Tent:</span>
+                        <span className="text-orange-500 font-semibold capitalize">{config.roofTent}</span>
+                      </div>
+                    )}
+                    {config.premiumInteriorPackage && (
+                      <div className="flex justify-between">
+                        <span className="text-gray-300">Interior:</span>
+                        <span className="text-orange-500 font-semibold">Premium</span>
+                      </div>
+                    )}
+                    {config.basicInteriorPackage && (
+                      <div className="flex justify-between">
+                        <span className="text-gray-300">Interior:</span>
+                        <span className="text-orange-500 font-semibold">Basic</span>
+                      </div>
+                    )}
+                    <div className="flex justify-between">
+                      <span className="text-gray-300">Dimensions:</span>
+                      <span className="text-orange-500 font-semibold">{dims.width}" × {dims.height}"</span>
+                    </div>
+                    <div className="border-t border-gray-600 pt-3 mt-3">
+                      <div className="flex justify-between font-bold text-base lg:text-xl">
+                        <span className="text-white">Total Price:</span>
+                        <span className="text-orange-500">${calculatePrice().toLocaleString()}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Add to Cart */}
+                <button
+                  onClick={addToCart}
+                  className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white py-3 lg:py-4 rounded-lg font-bold text-base sm:text-lg lg:text-xl transition-all duration-200 flex items-center justify-center shadow-lg hover:shadow-xl transform hover:scale-105"
+                >
+                  <ShoppingCart className="mr-2" size={20} />
+                  Add to Cart
+                </button>
+              </div>
+            </div>
+
+            {/* OPTIONS PANEL - Mobile Bottom, Desktop Left (Scrollable) */}
+            <div className="order-2 lg:order-1 bg-gray-800 rounded-lg p-3 sm:p-4 lg:p-5 shadow-xl">
               <h2 className="text-base sm:text-xl lg:text-2xl font-bold mb-2 lg:mb-4 text-center">Build Your Camper</h2>
               
               {/* Frame Type - Standard Only */}
@@ -500,7 +570,6 @@ const JeepersCampers = () => {
                         type="checkbox"
                         checked={config.partitionKitchenCounter}
                         onChange={() => {
-                          toggleConfig('partitionKitchenCounter');
                           // Auto-enable sub-options when partition is selected
                           if (!config.partitionKitchenCounter) {
                             setConfig((prev) => ({
@@ -529,21 +598,45 @@ const JeepersCampers = () => {
                     <span className="text-orange-500 font-bold text-xs sm:text-sm lg:text-base">${prices.partitionKitchenCounter.toLocaleString()}</span>
                   </label>
 
-                  {/* Sub-options (auto-filled when partition is selected) */}
+                  {/* Sub-options (toggleable individually) */}
                   {config.partitionKitchenCounter && (
-                    <div className="ml-6 space-y-1 text-xs sm:text-sm text-gray-400">
-                      <div className="flex items-center">
-                        <span className="mr-2">✓</span> Stove Top (included)
-                      </div>
-                      <div className="flex items-center">
-                        <span className="mr-2">✓</span> Fridge (included)
-                      </div>
-                      <div className="flex items-center">
-                        <span className="mr-2">✓</span> Kitchen Cabinet (included)
-                      </div>
-                      <div className="flex items-center">
-                        <span className="mr-2">✓</span> Faucet (included)
-                      </div>
+                    <div className="ml-6 space-y-2">
+                      <label className="flex items-center p-1 sm:p-2 bg-gray-600 rounded cursor-pointer hover:bg-gray-500 transition">
+                        <input
+                          type="checkbox"
+                          checked={config.kitchenStoveTop}
+                          onChange={() => toggleConfig('kitchenStoveTop')}
+                          className="mr-2 w-3 h-3 text-orange-500 bg-gray-700 border-gray-600 rounded focus:ring-orange-500"
+                        />
+                        <span className="text-xs sm:text-sm text-gray-300">Stove Top (included)</span>
+                      </label>
+                      <label className="flex items-center p-1 sm:p-2 bg-gray-600 rounded cursor-pointer hover:bg-gray-500 transition">
+                        <input
+                          type="checkbox"
+                          checked={config.kitchenFridge}
+                          onChange={() => toggleConfig('kitchenFridge')}
+                          className="mr-2 w-3 h-3 text-orange-500 bg-gray-700 border-gray-600 rounded focus:ring-orange-500"
+                        />
+                        <span className="text-xs sm:text-sm text-gray-300">Fridge (included)</span>
+                      </label>
+                      <label className="flex items-center p-1 sm:p-2 bg-gray-600 rounded cursor-pointer hover:bg-gray-500 transition">
+                        <input
+                          type="checkbox"
+                          checked={config.kitchenCabinet}
+                          onChange={() => toggleConfig('kitchenCabinet')}
+                          className="mr-2 w-3 h-3 text-orange-500 bg-gray-700 border-gray-600 rounded focus:ring-orange-500"
+                        />
+                        <span className="text-xs sm:text-sm text-gray-300">Kitchen Cabinet (included)</span>
+                      </label>
+                      <label className="flex items-center p-1 sm:p-2 bg-gray-600 rounded cursor-pointer hover:bg-gray-500 transition">
+                        <input
+                          type="checkbox"
+                          checked={config.kitchenFaucet}
+                          onChange={() => toggleConfig('kitchenFaucet')}
+                          className="mr-2 w-3 h-3 text-orange-500 bg-gray-700 border-gray-600 rounded focus:ring-orange-500"
+                        />
+                        <span className="text-xs sm:text-sm text-gray-300">Faucet (included)</span>
+                      </label>
                     </div>
                   )}
 
@@ -958,132 +1051,6 @@ const JeepersCampers = () => {
                     </div>
                     <span className="text-orange-500 font-bold text-xs sm:text-sm lg:text-base">${prices.premiumInteriorPackage.toLocaleString()}</span>
                   </label>
-                </div>
-              </div>
-
-              {/* Pricing Summary */}
-              <div className="bg-gray-700 rounded-lg p-2 sm:p-3 lg:p-4 mb-3 lg:mb-6">
-                <h3 className="font-bold mb-2 text-sm lg:text-base">Configuration Summary</h3>
-                <div className="space-y-1 text-xs sm:text-sm">
-                  <div className="flex justify-between">
-                    <span>Frame:</span>
-                    <span className="text-orange-500">Standard</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Wheels:</span>
-                    <span className="text-orange-500 capitalize">{config.wheels}</span>
-                  </div>
-                  {config.enclosureType && (
-                    <div className="flex justify-between">
-                      <span>Enclosure:</span>
-                      <span className="text-orange-500">{config.enclosureType === 'single-door' ? 'Single Door' : 'Dual Doors'}</span>
-                    </div>
-                  )}
-                  {config.roofTent && (
-                    <div className="flex justify-between">
-                      <span>Roof Tent:</span>
-                      <span className="text-orange-500 capitalize">{config.roofTent}</span>
-                    </div>
-                  )}
-                  <div className="border-t border-gray-600 pt-2 mt-2">
-                    <div className="flex justify-between font-bold text-sm lg:text-lg">
-                      <span>Total:</span>
-                      <span className="text-orange-500">${calculatePrice().toLocaleString()}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Add to Cart */}
-              <button
-                onClick={addToCart}
-                className="w-full bg-orange-500 hover:bg-orange-600 text-white py-2 sm:py-3 lg:py-4 rounded-lg font-bold text-sm sm:text-base lg:text-xl transition flex items-center justify-center"
-              >
-                <ShoppingCart className="mr-1 sm:mr-2" size={16} />
-                Add to Cart
-              </button>
-            </div>
-
-            {/* VISUAL PREVIEW */}
-            <div className="bg-gray-800 rounded-lg p-2 sm:p-3 lg:p-4 sticky top-4">
-              <h3 className="text-base sm:text-lg lg:text-xl font-bold mb-2 lg:mb-4 text-center">Your Camper Preview</h3>
-              
-              {/* Interactive 3D Configurator */}
-              <div className="mb-2 lg:mb-4 bg-gray-700 rounded-lg p-1 sm:p-2 lg:p-3" style={{ minHeight: '300px' }}>
-                <CamperConfigurator config={config} />
-              </div>
-
-              {/* Configuration Summary */}
-              <div className="bg-gray-700 rounded-lg p-2 lg:p-3 mb-2 lg:mb-3">
-                <h4 className="font-bold mb-2 text-sm lg:text-base">Current Configuration:</h4>
-                <div className="space-y-1 text-xs lg:text-sm">
-                  <div className="flex justify-between">
-                    <span>Frame:</span>
-                    <span className="text-orange-500">Standard</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Wheels:</span>
-                    <span className="text-orange-500 capitalize">{config.wheels}</span>
-                  </div>
-                  {config.enclosureType && (
-                    <div className="flex justify-between">
-                      <span>Enclosure:</span>
-                      <span className="text-orange-500">{config.enclosureType === 'single-door' ? 'Single Door' : 'Dual Doors'}</span>
-                    </div>
-                  )}
-                  {config.roofTent && (
-                    <div className="flex justify-between">
-                      <span>Roof Tent:</span>
-                      <span className="text-orange-500 capitalize">{config.roofTent}</span>
-                    </div>
-                  )}
-                  <div className="flex justify-between">
-                    <span>Dimensions:</span>
-                    <span className="text-orange-500">{dims.width}" × {dims.height}"</span>
-                  </div>
-                  <div className="border-t border-gray-600 pt-2 mt-2">
-                    <div className="flex justify-between font-bold text-sm lg:text-lg">
-                      <span>Total:</span>
-                      <span className="text-orange-500">${calculatePrice().toLocaleString()}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Image Gallery */}
-              <div className="hidden lg:block">
-                <h4 className="font-bold mb-2 text-sm">Gallery</h4>
-                <div className="grid grid-cols-2 gap-2">
-                  {galleryMedia.map((media, idx) => (
-                    <button
-                      key={idx}
-                      onClick={() => {
-                        setSelectedMedia(idx);
-                        setShowLightbox(true);
-                      }}
-                      className="w-full h-16 object-cover rounded cursor-pointer hover:opacity-80 transition"
-                    >
-                      {media.type === 'image' ? (
-                        <img
-                          src={media.src}
-                          alt={media.title}
-                          className="w-full h-full object-cover"
-                          onError={(e) => {
-                            e.currentTarget.style.display = 'none';
-                          }}
-                        />
-                      ) : (
-                        <video
-                          src={media.src}
-                          title={media.title}
-                          className="w-full h-full object-cover"
-                          onError={(e) => {
-                            e.currentTarget.style.display = 'none';
-                          }}
-                        />
-                      )}
-                    </button>
-                  ))}
                 </div>
               </div>
             </div>
