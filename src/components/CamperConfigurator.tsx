@@ -59,17 +59,17 @@ const CamperConfigurator: React.FC<CamperConfiguratorProps> = ({ config }) => {
     return { x: isoX, y: isoY };
   };
 
-  // Enhanced wheel specifications - BIGGER
+  // Enhanced wheel specifications - MUCH BIGGER
   const getWheelSpecs = () => {
     switch (config.wheels) {
       case 'standard':
-        return { radius: 45, treadDepth: 6, rimSize: 30, spokeCount: 6, color: '#2a2a2a' };
+        return { radius: 55, treadDepth: 7, rimSize: 36, spokeCount: 6, color: '#2a2a2a' };
       case 'offroad':
-        return { radius: 50, treadDepth: 9, rimSize: 34, spokeCount: 8, color: '#1a1a1a' };
+        return { radius: 62, treadDepth: 10, rimSize: 42, spokeCount: 8, color: '#1a1a1a' };
       case 'extreme':
-        return { radius: 55, treadDepth: 12, rimSize: 38, spokeCount: 10, color: '#0a0a0a' };
+        return { radius: 68, treadDepth: 14, rimSize: 46, spokeCount: 10, color: '#0a0a0a' };
       default:
-        return { radius: 45, treadDepth: 6, rimSize: 30, spokeCount: 6, color: '#2a2a2a' };
+        return { radius: 55, treadDepth: 7, rimSize: 36, spokeCount: 6, color: '#2a2a2a' };
     }
   };
 
@@ -553,42 +553,27 @@ const CamperConfigurator: React.FC<CamperConfiguratorProps> = ({ config }) => {
         </g>
       )}
 
-      {/* Premium wheels and axle - MOVED FORWARD */}
+      {/* Premium wheels, axle, fenders, and running boards */}
       <g>
         {(() => {
-          const axleX = frameSize.length / 4; // MOVED FORWARD from 2.3 to 4
-          const wheelY = frameSize.width / 2 + 10;
-          const nearWheel = iso(axleX, wheelY, 0); // Near wheel (visible)
-          const farWheel = iso(axleX, -wheelY, 0); // Far wheel (partially hidden)
-          const axleNear = iso(axleX, wheelY, 12);
-          const axleFar = iso(axleX, -wheelY, 12);
+          const axleX = frameSize.length / 4; // Forward position
+          const wheelY = frameSize.width / 2 + 12;
+          const nearWheel = iso(axleX, wheelY, 0); // Near wheel (right/front - fully visible)
+          // Far wheel is NOT rendered at all - completely hidden
+          const axleHeight = 14;
 
           return (
             <>
-              {/* Axle tube with shadow */}
-              <line x1={axleFar.x} y1={axleFar.y + 2} x2={axleNear.x} y2={axleNear.y + 2} stroke="rgba(0,0,0,0.3)" strokeWidth="10" />
-              <line x1={axleFar.x} y1={axleFar.y} x2={axleNear.x} y2={axleNear.y} stroke="url(#metalGradient)" strokeWidth="10" />
-
-              {/* Far wheel (left/back) - PARTIALLY HIDDEN, RENDER FIRST */}
-              <g opacity="0.6">
-                {/* Tire shadow */}
-                <ellipse cx={farWheel.x + 2} cy={farWheel.y + 3} rx={wheelSpecs.radius * 0.4} ry={wheelSpecs.radius * 0.4} fill="rgba(0,0,0,0.2)" />
-                {/* Tire - only show partial */}
-                <ellipse cx={farWheel.x} cy={farWheel.y} rx={wheelSpecs.radius * 0.35} ry={wheelSpecs.radius} fill={wheelSpecs.color} stroke="#000" strokeWidth="2" />
-                {/* Rim - only show partial */}
-                <ellipse cx={farWheel.x} cy={farWheel.y} rx={wheelSpecs.rimSize * 0.35} ry={wheelSpecs.rimSize} fill={COLORS.rim} stroke="#000" strokeWidth="2" />
-              </g>
-
-              {/* LEFT/FAR FENDER - covers far wheel */}
+              {/* LEFT/FAR FENDER - positioned at ground level covering far side */}
               <g>
                 <path
                   d={`
-                    M ${iso(axleX - 25, -wheelY - 15, wheelSpecs.radius + 15).x} ${iso(axleX - 25, -wheelY - 15, wheelSpecs.radius + 15).y}
-                    Q ${iso(axleX, -wheelY - 18, wheelSpecs.radius + 20).x} ${iso(axleX, -wheelY - 18, wheelSpecs.radius + 20).y}
-                      ${iso(axleX + 35, -wheelY - 15, wheelSpecs.radius + 15).x} ${iso(axleX + 35, -wheelY - 15, wheelSpecs.radius + 15).y}
-                    L ${iso(axleX + 35, -wheelY + 15, wheelSpecs.radius + 15).x} ${iso(axleX + 35, -wheelY + 15, wheelSpecs.radius + 15).y}
-                    Q ${iso(axleX, -wheelY + 18, wheelSpecs.radius + 20).x} ${iso(axleX, -wheelY + 18, wheelSpecs.radius + 20).y}
-                      ${iso(axleX - 25, -wheelY + 15, wheelSpecs.radius + 15).x} ${iso(axleX - 25, -wheelY + 15, wheelSpecs.radius + 15).y}
+                    M ${iso(axleX - 35, -wheelY - 18, 5).x} ${iso(axleX - 35, -wheelY - 18, 5).y}
+                    Q ${iso(axleX, -wheelY - 22, 10).x} ${iso(axleX, -wheelY - 22, 10).y}
+                      ${iso(axleX + 40, -wheelY - 18, 5).x} ${iso(axleX + 40, -wheelY - 18, 5).y}
+                    L ${iso(axleX + 40, -wheelY, 5).x} ${iso(axleX + 40, -wheelY, 5).y}
+                    Q ${iso(axleX, -wheelY + 2, wheelSpecs.radius + 8).x} ${iso(axleX, -wheelY + 2, wheelSpecs.radius + 8).y}
+                      ${iso(axleX - 35, -wheelY, 5).x} ${iso(axleX - 35, -wheelY, 5).y}
                     Z
                   `}
                   fill="url(#panelGradient)"
@@ -596,14 +581,14 @@ const CamperConfigurator: React.FC<CamperConfiguratorProps> = ({ config }) => {
                   strokeWidth="2.5"
                   opacity="0.95"
                 />
-                {/* Fender detail lines */}
+                {/* Fender detail arc */}
                 <path
                   d={`
-                    M ${iso(axleX - 20, -wheelY - 10, wheelSpecs.radius + 16).x} ${iso(axleX - 20, -wheelY - 10, wheelSpecs.radius + 16).y}
-                    Q ${iso(axleX, -wheelY - 13, wheelSpecs.radius + 18).x} ${iso(axleX, -wheelY - 13, wheelSpecs.radius + 18).y}
-                      ${iso(axleX + 30, -wheelY - 10, wheelSpecs.radius + 16).x} ${iso(axleX + 30, -wheelY - 10, wheelSpecs.radius + 16).y}
+                    M ${iso(axleX - 30, -wheelY - 13, 6).x} ${iso(axleX - 30, -wheelY - 13, 6).y}
+                    Q ${iso(axleX, -wheelY - 17, 8).x} ${iso(axleX, -wheelY - 17, 8).y}
+                      ${iso(axleX + 35, -wheelY - 13, 6).x} ${iso(axleX + 35, -wheelY - 13, 6).y}
                   `}
-                  stroke="#666"
+                  stroke="#555"
                   strokeWidth="1.5"
                   fill="none"
                 />
@@ -611,49 +596,70 @@ const CamperConfigurator: React.FC<CamperConfiguratorProps> = ({ config }) => {
 
               {/* LEFT/FAR RUNNING BOARD */}
               <rect
-                x={iso(axleX - 35, -wheelY - 12, 5).x - 40}
-                y={iso(axleX - 35, -wheelY - 12, 5).y - 6}
-                width="150"
-                height="12"
+                x={iso(axleX - 45, -wheelY - 15, 3).x - 35}
+                y={iso(axleX - 45, -wheelY - 15, 3).y - 5}
+                width="160"
+                height="10"
                 rx="2"
                 fill={COLORS.steelLight}
                 stroke="#000"
                 strokeWidth="2"
               />
 
-              {/* Near wheel (right/front) - FULLY VISIBLE, RENDER ON TOP */}
+              {/* Axle tube - shortened so it doesn't stick out */}
+              <line
+                x1={iso(axleX, -wheelY + 8, axleHeight).x}
+                y1={iso(axleX, -wheelY + 8, axleHeight).y}
+                x2={iso(axleX, wheelY - 8, axleHeight).x}
+                y2={iso(axleX, wheelY - 8, axleHeight).y}
+                stroke="rgba(0,0,0,0.3)"
+                strokeWidth="10"
+              />
+              <line
+                x1={iso(axleX, -wheelY + 8, axleHeight).x}
+                y1={iso(axleX, -wheelY + 8, axleHeight).y}
+                x2={iso(axleX, wheelY - 8, axleHeight).x}
+                y2={iso(axleX, wheelY - 8, axleHeight).y}
+                stroke="url(#metalGradient)"
+                strokeWidth="9"
+              />
+
+              {/* Near wheel (right/front) - FULLY VISIBLE */}
               <g>
                 {/* Tire shadow */}
-                <ellipse cx={nearWheel.x + 3} cy={nearWheel.y + 4} rx={wheelSpecs.radius + 3} ry={wheelSpecs.radius + 3} fill="rgba(0,0,0,0.3)" />
-                {/* Tire */}
-                <circle cx={nearWheel.x} cy={nearWheel.y} r={wheelSpecs.radius} fill={wheelSpecs.color} stroke="#000" strokeWidth="3" />
+                <ellipse cx={nearWheel.x + 4} cy={nearWheel.y + 5} rx={wheelSpecs.radius + 4} ry={wheelSpecs.radius + 4} fill="rgba(0,0,0,0.35)" />
+                {/* Tire outer */}
+                <circle cx={nearWheel.x} cy={nearWheel.y} r={wheelSpecs.radius} fill={wheelSpecs.color} stroke="#000" strokeWidth="3.5" />
                 {/* Tire sidewall detail */}
-                <circle cx={nearWheel.x} cy={nearWheel.y} r={wheelSpecs.radius - 5} fill={COLORS.tireDetail} opacity="0.8" />
+                <circle cx={nearWheel.x} cy={nearWheel.y} r={wheelSpecs.radius - 6} fill={COLORS.tireDetail} opacity="0.75" />
+                <circle cx={nearWheel.x} cy={nearWheel.y} r={wheelSpecs.radius - 8} fill={wheelSpecs.color} opacity="0.4" />
 
                 {/* Aggressive tread pattern */}
-                {Array.from({ length: 28 }).map((_, i) => {
-                  const angle = (i / 28) * Math.PI * 2;
+                {Array.from({ length: 32 }).map((_, i) => {
+                  const angle = (i / 32) * Math.PI * 2;
                   const x1 = nearWheel.x + Math.cos(angle) * (wheelSpecs.radius - 2);
                   const y1 = nearWheel.y + Math.sin(angle) * (wheelSpecs.radius - 2);
                   const x2 = nearWheel.x + Math.cos(angle) * (wheelSpecs.radius - wheelSpecs.treadDepth);
                   const y2 = nearWheel.y + Math.sin(angle) * (wheelSpecs.radius - wheelSpecs.treadDepth);
-                  return <line key={`tread-n-${i}`} x1={x1} y1={y1} x2={x2} y2={y2} stroke="#444" strokeWidth="3" />;
+                  return <line key={`tread-n-${i}`} x1={x1} y1={y1} x2={x2} y2={y2} stroke="#555" strokeWidth="3.5" />;
                 })}
 
-                {/* Rim with gradient */}
-                <circle cx={nearWheel.x} cy={nearWheel.y} r={wheelSpecs.rimSize} fill={COLORS.rim} stroke="#000" strokeWidth="3" />
-                <circle cx={nearWheel.x} cy={nearWheel.y} r={wheelSpecs.rimSize - 4} fill={COLORS.rimShine} opacity="0.6" />
+                {/* Rim with gradient and shine */}
+                <circle cx={nearWheel.x} cy={nearWheel.y} r={wheelSpecs.rimSize} fill={COLORS.rim} stroke="#000" strokeWidth="3.5" />
+                <circle cx={nearWheel.x} cy={nearWheel.y} r={wheelSpecs.rimSize - 5} fill={COLORS.rimShine} opacity="0.7" />
+                <circle cx={nearWheel.x - 4} cy={nearWheel.y - 4} r={wheelSpecs.rimSize - 8} fill="rgba(255,255,255,0.2)" />
 
-                {/* Center cap */}
-                <circle cx={nearWheel.x} cy={nearWheel.y} r="10" fill={COLORS.steel} stroke="#000" strokeWidth="2.5" />
+                {/* Center cap with detail */}
+                <circle cx={nearWheel.x} cy={nearWheel.y} r="12" fill={COLORS.steel} stroke="#000" strokeWidth="2.5" />
+                <circle cx={nearWheel.x} cy={nearWheel.y} r="8" fill={COLORS.steelLight} opacity="0.8" />
 
                 {/* Spokes */}
                 {Array.from({ length: wheelSpecs.spokeCount }).map((_, i) => {
                   const angle = (i / wheelSpecs.spokeCount) * Math.PI * 2;
-                  const x1 = nearWheel.x + Math.cos(angle) * 10;
-                  const y1 = nearWheel.y + Math.sin(angle) * 10;
-                  const x2 = nearWheel.x + Math.cos(angle) * (wheelSpecs.rimSize - 4);
-                  const y2 = nearWheel.y + Math.sin(angle) * (wheelSpecs.rimSize - 4);
+                  const x1 = nearWheel.x + Math.cos(angle) * 12;
+                  const y1 = nearWheel.y + Math.sin(angle) * 12;
+                  const x2 = nearWheel.x + Math.cos(angle) * (wheelSpecs.rimSize - 5);
+                  const y2 = nearWheel.y + Math.sin(angle) * (wheelSpecs.rimSize - 5);
                   return (
                     <line
                       key={`spoke-n-${i}`}
@@ -662,22 +668,22 @@ const CamperConfigurator: React.FC<CamperConfiguratorProps> = ({ config }) => {
                       x2={x2}
                       y2={y2}
                       stroke={COLORS.steel}
-                      strokeWidth="4"
+                      strokeWidth="5"
                     />
                   );
                 })}
               </g>
 
-              {/* RIGHT/NEAR FENDER - around near wheel */}
+              {/* RIGHT/NEAR FENDER - positioned at ground level around visible wheel */}
               <g>
                 <path
                   d={`
-                    M ${iso(axleX - 25, wheelY - 15, wheelSpecs.radius + 15).x} ${iso(axleX - 25, wheelY - 15, wheelSpecs.radius + 15).y}
-                    Q ${iso(axleX, wheelY - 18, wheelSpecs.radius + 20).x} ${iso(axleX, wheelY - 18, wheelSpecs.radius + 20).y}
-                      ${iso(axleX + 35, wheelY - 15, wheelSpecs.radius + 15).x} ${iso(axleX + 35, wheelY - 15, wheelSpecs.radius + 15).y}
-                    L ${iso(axleX + 35, wheelY + 15, wheelSpecs.radius + 15).x} ${iso(axleX + 35, wheelY + 15, wheelSpecs.radius + 15).y}
-                    Q ${iso(axleX, wheelY + 18, wheelSpecs.radius + 20).x} ${iso(axleX, wheelY + 18, wheelSpecs.radius + 20).y}
-                      ${iso(axleX - 25, wheelY + 15, wheelSpecs.radius + 15).x} ${iso(axleX - 25, wheelY + 15, wheelSpecs.radius + 15).y}
+                    M ${iso(axleX - 35, wheelY, 5).x} ${iso(axleX - 35, wheelY, 5).y}
+                    Q ${iso(axleX, wheelY - 2, wheelSpecs.radius + 8).x} ${iso(axleX, wheelY - 2, wheelSpecs.radius + 8).y}
+                      ${iso(axleX + 40, wheelY, 5).x} ${iso(axleX + 40, wheelY, 5).y}
+                    L ${iso(axleX + 40, wheelY + 18, 5).x} ${iso(axleX + 40, wheelY + 18, 5).y}
+                    Q ${iso(axleX, wheelY + 22, 10).x} ${iso(axleX, wheelY + 22, 10).y}
+                      ${iso(axleX - 35, wheelY + 18, 5).x} ${iso(axleX - 35, wheelY + 18, 5).y}
                     Z
                   `}
                   fill="url(#panelGradient)"
@@ -685,14 +691,14 @@ const CamperConfigurator: React.FC<CamperConfiguratorProps> = ({ config }) => {
                   strokeWidth="2.5"
                   opacity="0.95"
                 />
-                {/* Fender detail lines */}
+                {/* Fender detail arc */}
                 <path
                   d={`
-                    M ${iso(axleX - 20, wheelY - 10, wheelSpecs.radius + 16).x} ${iso(axleX - 20, wheelY - 10, wheelSpecs.radius + 16).y}
-                    Q ${iso(axleX, wheelY - 13, wheelSpecs.radius + 18).x} ${iso(axleX, wheelY - 13, wheelSpecs.radius + 18).y}
-                      ${iso(axleX + 30, wheelY - 10, wheelSpecs.radius + 16).x} ${iso(axleX + 30, wheelY - 10, wheelSpecs.radius + 16).y}
+                    M ${iso(axleX - 30, wheelY + 13, 6).x} ${iso(axleX - 30, wheelY + 13, 6).y}
+                    Q ${iso(axleX, wheelY + 17, 8).x} ${iso(axleX, wheelY + 17, 8).y}
+                      ${iso(axleX + 35, wheelY + 13, 6).x} ${iso(axleX + 35, wheelY + 13, 6).y}
                   `}
-                  stroke="#666"
+                  stroke="#555"
                   strokeWidth="1.5"
                   fill="none"
                 />
@@ -700,10 +706,10 @@ const CamperConfigurator: React.FC<CamperConfiguratorProps> = ({ config }) => {
 
               {/* RIGHT/NEAR RUNNING BOARD */}
               <rect
-                x={iso(axleX - 35, wheelY + 12, 5).x - 40}
-                y={iso(axleX - 35, wheelY + 12, 5).y - 6}
-                width="150"
-                height="12"
+                x={iso(axleX - 45, wheelY + 15, 3).x - 35}
+                y={iso(axleX - 45, wheelY + 15, 3).y - 5}
+                width="160"
+                height="10"
                 rx="2"
                 fill={COLORS.steelLight}
                 stroke="#000"
