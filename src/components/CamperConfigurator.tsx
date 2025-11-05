@@ -594,17 +594,6 @@ const CamperConfigurator: React.FC<CamperConfiguratorProps> = ({ config }) => {
                 />
               </g>
 
-              {/* LEFT/FAR RUNNING BOARD */}
-              <rect
-                x={iso(axleX - 45, -wheelY - 15, 3).x - 35}
-                y={iso(axleX - 45, -wheelY - 15, 3).y - 5}
-                width="160"
-                height="10"
-                rx="2"
-                fill={COLORS.steelLight}
-                stroke="#000"
-                strokeWidth="2"
-              />
 
               {/* Axle tube - shortened so it doesn't stick out */}
               <line
@@ -704,17 +693,6 @@ const CamperConfigurator: React.FC<CamperConfiguratorProps> = ({ config }) => {
                 />
               </g>
 
-              {/* RIGHT/NEAR RUNNING BOARD */}
-              <rect
-                x={iso(axleX - 45, wheelY + 15, 3).x - 35}
-                y={iso(axleX - 45, wheelY + 15, 3).y - 5}
-                width="160"
-                height="10"
-                rx="2"
-                fill={COLORS.steelLight}
-                stroke="#000"
-                strokeWidth="2"
-              />
             </>
           );
         })()}

@@ -180,13 +180,15 @@ const JeepersCampers = () => {
     return parts.join(', ');
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const getFrameDimensions = () => {
     if (config.frame === 'minimalist') return { width: 240, height: 120 };
     if (config.frame === 'standard') return { width: 300, height: 140 };
     return { width: 340, height: 160 };
   };
 
-  const dims = getFrameDimensions();
+  // Dimensions available for future use
+  // const dims = getFrameDimensions();
 
   // Enhanced gallery media data with intuitive labels based on filenames
   const galleryMedia = [
@@ -371,94 +373,24 @@ const JeepersCampers = () => {
       )}
 
       {/* MAIN CONTENT */}
-      <main className="container mx-auto px-4 py-8">
+      <main className="container mx-auto px-2 sm:px-4 py-2 sm:py-4 lg:py-8">
         {/* BUILDER TAB */}
         {activeTab === 'builder' && (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 lg:gap-8">
-            {/* VISUAL PREVIEW - Mobile Top, Desktop Right (Sticky) */}
-            <div className="order-1 lg:order-2">
-              <div className="lg:sticky lg:top-4 bg-gray-800 rounded-lg p-3 sm:p-4 lg:p-6 shadow-2xl">
-                <h3 className="text-lg sm:text-xl lg:text-2xl font-bold mb-3 lg:mb-4 text-center text-orange-500">Your Premium Build</h3>
+          <div className="grid grid-cols-2 gap-2 sm:gap-4 lg:gap-8">
+            {/* OPTIONS PANEL - Left Side (Scrollable) */}
+            <div className="bg-gray-800 rounded-lg p-1 sm:p-2 lg:p-3 shadow-xl overflow-y-auto" style={{ maxHeight: 'calc(100vh - 120px)' }}>
+              <h2 className="text-xs sm:text-sm lg:text-base font-bold mb-1 sm:mb-2 lg:mb-4 text-center">Build Your Camper</h2>
 
-                {/* Interactive 3D Configurator */}
-                <div className="mb-3 lg:mb-4 bg-gray-900 rounded-lg p-2 sm:p-3 lg:p-4 shadow-inner" style={{ minHeight: '400px' }}>
-                  <CamperConfigurator config={config} />
-                </div>
-
-                {/* Configuration Summary */}
-                <div className="bg-gray-700 rounded-lg p-3 lg:p-4 mb-3 lg:mb-4">
-                  <h4 className="font-bold mb-3 text-base lg:text-lg border-b border-gray-600 pb-2">Current Configuration</h4>
-                  <div className="space-y-2 text-xs lg:text-sm">
-                    <div className="flex justify-between">
-                      <span className="text-gray-300">Frame:</span>
-                      <span className="text-orange-500 font-semibold">Standard</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-300">Wheels:</span>
-                      <span className="text-orange-500 font-semibold capitalize">{config.wheels}</span>
-                    </div>
-                    {config.enclosureType && (
-                      <div className="flex justify-between">
-                        <span className="text-gray-300">Enclosure:</span>
-                        <span className="text-orange-500 font-semibold">{config.enclosureType === 'single-door' ? 'Single Door' : 'Dual Doors'}</span>
-                      </div>
-                    )}
-                    {config.roofTent && (
-                      <div className="flex justify-between">
-                        <span className="text-gray-300">Roof Tent:</span>
-                        <span className="text-orange-500 font-semibold capitalize">{config.roofTent}</span>
-                      </div>
-                    )}
-                    {config.premiumInteriorPackage && (
-                      <div className="flex justify-between">
-                        <span className="text-gray-300">Interior:</span>
-                        <span className="text-orange-500 font-semibold">Premium</span>
-                      </div>
-                    )}
-                    {config.basicInteriorPackage && (
-                      <div className="flex justify-between">
-                        <span className="text-gray-300">Interior:</span>
-                        <span className="text-orange-500 font-semibold">Basic</span>
-                      </div>
-                    )}
-                    <div className="flex justify-between">
-                      <span className="text-gray-300">Dimensions:</span>
-                      <span className="text-orange-500 font-semibold">{dims.width}" × {dims.height}"</span>
-                    </div>
-                    <div className="border-t border-gray-600 pt-3 mt-3">
-                      <div className="flex justify-between font-bold text-base lg:text-xl">
-                        <span className="text-white">Total Price:</span>
-                        <span className="text-orange-500">${calculatePrice().toLocaleString()}</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Add to Cart */}
-                <button
-                  onClick={addToCart}
-                  className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white py-3 lg:py-4 rounded-lg font-bold text-base sm:text-lg lg:text-xl transition-all duration-200 flex items-center justify-center shadow-lg hover:shadow-xl transform hover:scale-105"
-                >
-                  <ShoppingCart className="mr-2" size={20} />
-                  Add to Cart
-                </button>
-              </div>
-            </div>
-
-            {/* OPTIONS PANEL - Mobile Bottom, Desktop Left (Scrollable) */}
-            <div className="order-2 lg:order-1 bg-gray-800 rounded-lg p-3 sm:p-4 lg:p-5 shadow-xl">
-              <h2 className="text-base sm:text-xl lg:text-2xl font-bold mb-2 lg:mb-4 text-center">Build Your Camper</h2>
-              
               {/* Frame Type - Standard Only */}
-              <div className="mb-3 lg:mb-6">
-                <h3 className="text-sm sm:text-base lg:text-lg font-bold mb-2 lg:mb-3 flex items-center">
-                  <Truck className="mr-1 sm:mr-2 text-orange-500" size={16} />
+              <div className="mb-1 sm:mb-2 lg:mb-3">
+                <h3 className="text-xs sm:text-sm lg:text-base font-bold mb-1 sm:mb-2 flex items-center">
+                  <Truck className="mr-1 text-orange-500" size={12} />
                   Frame Type
                 </h3>
-                <div className="bg-gray-700 p-2 sm:p-3 rounded border-2 border-orange-500">
+                <div className="bg-gray-700 p-1 sm:p-2 rounded border-2 border-orange-500">
                   <div className="text-center">
-                    <div className="font-bold text-sm lg:text-base">Standard Frame</div>
-                    <div className="text-orange-500 text-sm lg:text-base">
+                    <div className="font-bold text-xs sm:text-sm lg:text-base">Standard Frame</div>
+                    <div className="text-orange-500 text-xs sm:text-sm lg:text-base">
                       ${prices.standard.toLocaleString()}
                     </div>
                   </div>
@@ -466,9 +398,9 @@ const JeepersCampers = () => {
               </div>
 
               {/* Wheel Selection */}
-              <div className="mb-3 lg:mb-6">
-                <h3 className="text-sm sm:text-base lg:text-lg font-bold mb-2 lg:mb-3">Wheel Package</h3>
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-1 sm:gap-2 lg:gap-3">
+              <div className="mb-1 sm:mb-2 lg:mb-3">
+                <h3 className="text-xs sm:text-sm lg:text-base font-bold mb-1 sm:mb-2">Wheel Package</h3>
+                <div className="grid grid-cols-1 gap-1 sm:gap-2">
                   {['standard', 'offroad', 'extreme'].map((wheel) => (
                     <button
                       key={wheel}
@@ -480,8 +412,8 @@ const JeepersCampers = () => {
                       }`}
                     >
                       <div className="text-center">
-                        <div className="font-bold text-xs lg:text-sm capitalize">{wheel}</div>
-                        <div className="text-orange-500 text-xs lg:text-sm">
+                        <div className="font-bold text-xs sm:text-sm lg:text-base capitalize">{wheel}</div>
+                        <div className="text-orange-500 text-xs sm:text-sm lg:text-base">
                           ${prices[('wheels_' + wheel) as keyof typeof prices].toLocaleString()}
                         </div>
                       </div>
@@ -491,15 +423,15 @@ const JeepersCampers = () => {
               </div>
 
               {/* Breaking Hubs */}
-              <div className="mb-3 lg:mb-6">
-                <h3 className="text-sm sm:text-base lg:text-lg font-bold mb-2 lg:mb-3">Breaking Hubs</h3>
-                <label className="flex items-center justify-between p-2 sm:p-3 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition">
+              <div className="mb-1 sm:mb-2 lg:mb-3">
+                <h3 className="text-xs sm:text-sm lg:text-base font-bold mb-1 sm:mb-2">Breaking Hubs</h3>
+                <label className="flex items-center justify-between p-1 sm:p-2 lg:p-3 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition">
                   <div className="flex items-center">
                     <input
                       type="checkbox"
                       checked={config.breakingHubs}
                       onChange={() => toggleConfig('breakingHubs')}
-                      className="mr-2 w-4 h-4 text-orange-500 bg-gray-600 border-gray-500 rounded focus:ring-orange-500"
+                      className="mr-1 sm:mr-2 w-3 h-3 sm:w-4 sm:h-4 text-orange-500 bg-gray-600 border-gray-500 rounded focus:ring-orange-500"
                     />
                     <span className="text-xs sm:text-sm lg:text-base">Breaking Hubs (Trailer Brakes)</span>
                   </div>
@@ -507,35 +439,35 @@ const JeepersCampers = () => {
               </div>
 
               {/* Enclosure Options */}
-              <div className="mb-3 lg:mb-6">
-                <h3 className="text-sm sm:text-base lg:text-lg font-bold mb-2 lg:mb-3 flex items-center">
-                  <Wrench className="mr-1 sm:mr-2 text-orange-500" size={16} />
+              <div className="mb-1 sm:mb-2 lg:mb-3">
+                <h3 className="text-xs sm:text-sm lg:text-base font-bold mb-1 sm:mb-2 flex items-center">
+                  <Wrench className="mr-1 text-orange-500" size={12} />
                   Enclosure Options
                 </h3>
-                <div className="grid grid-cols-1 gap-2 sm:gap-3">
+                <div className="grid grid-cols-1 gap-1 sm:gap-2">
                   <button
                     onClick={() => setEnclosureType('single-door')}
-                    className={`p-2 sm:p-3 rounded border-2 transition ${
+                    className={`p-1 sm:p-2 lg:p-3 rounded border-2 transition ${
                       config.enclosureType === 'single-door'
                         ? 'border-orange-500 bg-orange-500/20'
                         : 'border-gray-600 hover:border-orange-300'
                     }`}
                   >
                     <div className="flex justify-between items-center">
-                      <span className="font-bold text-xs sm:text-sm lg:text-base">Enclosed - Single Side Door</span>
+                      <span className="font-bold text-xs sm:text-sm lg:text-base">Single Door</span>
                       <span className="text-orange-500 text-xs sm:text-sm lg:text-base">${prices.enclosureType_singleDoor.toLocaleString()}</span>
                     </div>
                   </button>
                   <button
                     onClick={() => setEnclosureType('dual-door')}
-                    className={`p-2 sm:p-3 rounded border-2 transition ${
+                    className={`p-1 sm:p-2 lg:p-3 rounded border-2 transition ${
                       config.enclosureType === 'dual-door'
                         ? 'border-orange-500 bg-orange-500/20'
                         : 'border-gray-600 hover:border-orange-300'
                     }`}
                   >
                     <div className="flex justify-between items-center">
-                      <span className="font-bold text-xs sm:text-sm lg:text-base">Enclosed - Dual Side Doors</span>
+                      <span className="font-bold text-xs sm:text-sm lg:text-base">Dual Doors</span>
                       <span className="text-orange-500 text-xs sm:text-sm lg:text-base">${prices.enclosureType_dualDoor.toLocaleString()}</span>
                     </div>
                   </button>
@@ -543,15 +475,15 @@ const JeepersCampers = () => {
               </div>
 
               {/* Rear Hatch */}
-              <div className="mb-3 lg:mb-6">
-                <h3 className="text-sm sm:text-base lg:text-lg font-bold mb-2 lg:mb-3">Rear Hatch</h3>
-                <label className="flex items-center justify-between p-2 sm:p-3 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition">
+              <div className="mb-1 sm:mb-2 lg:mb-3">
+                <h3 className="text-xs sm:text-sm lg:text-base font-bold mb-1 sm:mb-2">Rear Hatch</h3>
+                <label className="flex items-center justify-between p-1 sm:p-2 lg:p-3 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition">
                   <div className="flex items-center">
                     <input
                       type="checkbox"
                       checked={config.rearHatch}
                       onChange={() => toggleConfig('rearHatch')}
-                      className="mr-2 w-4 h-4 text-orange-500 bg-gray-600 border-gray-500 rounded focus:ring-orange-500"
+                      className="mr-1 sm:mr-2 w-3 h-3 sm:w-4 sm:h-4 text-orange-500 bg-gray-600 border-gray-500 rounded focus:ring-orange-500"
                     />
                     <span className="text-xs sm:text-sm lg:text-base">Rear Hatch</span>
                   </div>
@@ -560,11 +492,11 @@ const JeepersCampers = () => {
               </div>
 
               {/* Kitchen Options */}
-              <div className="mb-3 lg:mb-6">
-                <h3 className="text-sm sm:text-base lg:text-lg font-bold mb-2 lg:mb-3">Kitchen Options</h3>
-                <div className="space-y-2">
+              <div className="mb-1 sm:mb-2 lg:mb-3">
+                <h3 className="text-xs sm:text-sm lg:text-base font-bold mb-1 sm:mb-2">Kitchen Options</h3>
+                <div className="space-y-1">
                   {/* Partition - Kitchen Counter */}
-                  <label className="flex items-center justify-between p-2 sm:p-3 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition">
+                  <label className="flex items-center justify-between p-1 sm:p-2 lg:p-3 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition">
                     <div className="flex items-center">
                       <input
                         type="checkbox"
@@ -591,76 +523,76 @@ const JeepersCampers = () => {
                             }));
                           }
                         }}
-                        className="mr-2 w-4 h-4 text-orange-500 bg-gray-600 border-gray-500 rounded focus:ring-orange-500"
+                        className="mr-1 sm:mr-2 w-3 h-3 sm:w-4 sm:h-4 text-orange-500 bg-gray-600 border-gray-500 rounded focus:ring-orange-500"
                       />
-                      <span className="text-xs sm:text-sm lg:text-base">Partition - Kitchen Counter</span>
+                      <span className="text-xs sm:text-sm lg:text-base">Kitchen Counter</span>
                     </div>
                     <span className="text-orange-500 font-bold text-xs sm:text-sm lg:text-base">${prices.partitionKitchenCounter.toLocaleString()}</span>
                   </label>
 
                   {/* Sub-options (toggleable individually) */}
                   {config.partitionKitchenCounter && (
-                    <div className="ml-6 space-y-2">
-                      <label className="flex items-center p-1 sm:p-2 bg-gray-600 rounded cursor-pointer hover:bg-gray-500 transition">
+                    <div className="ml-2 sm:ml-4 space-y-1">
+                      <label className="flex items-center p-1 bg-gray-600 rounded cursor-pointer hover:bg-gray-500 transition">
                         <input
                           type="checkbox"
                           checked={config.kitchenStoveTop}
                           onChange={() => toggleConfig('kitchenStoveTop')}
-                          className="mr-2 w-3 h-3 text-orange-500 bg-gray-700 border-gray-600 rounded focus:ring-orange-500"
+                          className="mr-1 w-2 h-2 sm:w-3 sm:h-3 text-orange-500 bg-gray-700 border-gray-600 rounded focus:ring-orange-500"
                         />
-                        <span className="text-xs sm:text-sm text-gray-300">Stove Top (included)</span>
+                        <span className="text-xs text-gray-300">Stove Top</span>
                       </label>
-                      <label className="flex items-center p-1 sm:p-2 bg-gray-600 rounded cursor-pointer hover:bg-gray-500 transition">
+                      <label className="flex items-center p-1 bg-gray-600 rounded cursor-pointer hover:bg-gray-500 transition">
                         <input
                           type="checkbox"
                           checked={config.kitchenFridge}
                           onChange={() => toggleConfig('kitchenFridge')}
-                          className="mr-2 w-3 h-3 text-orange-500 bg-gray-700 border-gray-600 rounded focus:ring-orange-500"
+                          className="mr-1 w-2 h-2 sm:w-3 sm:h-3 text-orange-500 bg-gray-700 border-gray-600 rounded focus:ring-orange-500"
                         />
-                        <span className="text-xs sm:text-sm text-gray-300">Fridge (included)</span>
+                        <span className="text-xs text-gray-300">Fridge</span>
                       </label>
-                      <label className="flex items-center p-1 sm:p-2 bg-gray-600 rounded cursor-pointer hover:bg-gray-500 transition">
+                      <label className="flex items-center p-1 bg-gray-600 rounded cursor-pointer hover:bg-gray-500 transition">
                         <input
                           type="checkbox"
                           checked={config.kitchenCabinet}
                           onChange={() => toggleConfig('kitchenCabinet')}
-                          className="mr-2 w-3 h-3 text-orange-500 bg-gray-700 border-gray-600 rounded focus:ring-orange-500"
+                          className="mr-1 w-2 h-2 sm:w-3 sm:h-3 text-orange-500 bg-gray-700 border-gray-600 rounded focus:ring-orange-500"
                         />
-                        <span className="text-xs sm:text-sm text-gray-300">Kitchen Cabinet (included)</span>
+                        <span className="text-xs text-gray-300">Cabinet</span>
                       </label>
-                      <label className="flex items-center p-1 sm:p-2 bg-gray-600 rounded cursor-pointer hover:bg-gray-500 transition">
+                      <label className="flex items-center p-1 bg-gray-600 rounded cursor-pointer hover:bg-gray-500 transition">
                         <input
                           type="checkbox"
                           checked={config.kitchenFaucet}
                           onChange={() => toggleConfig('kitchenFaucet')}
-                          className="mr-2 w-3 h-3 text-orange-500 bg-gray-700 border-gray-600 rounded focus:ring-orange-500"
+                          className="mr-1 w-2 h-2 sm:w-3 sm:h-3 text-orange-500 bg-gray-700 border-gray-600 rounded focus:ring-orange-500"
                         />
-                        <span className="text-xs sm:text-sm text-gray-300">Faucet (included)</span>
+                        <span className="text-xs text-gray-300">Faucet</span>
                       </label>
                     </div>
                   )}
 
                   {/* Additional Back Hatch Options */}
-                  <label className="flex items-center justify-between p-2 sm:p-3 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition">
+                  <label className="flex items-center justify-between p-1 sm:p-2 lg:p-3 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition">
                     <div className="flex items-center">
                       <input
                         type="checkbox"
                         checked={config.kitchenDrawers}
                         onChange={() => toggleConfig('kitchenDrawers')}
-                        className="mr-2 w-4 h-4 text-orange-500 bg-gray-600 border-gray-500 rounded focus:ring-orange-500"
+                        className="mr-1 sm:mr-2 w-3 h-3 sm:w-4 sm:h-4 text-orange-500 bg-gray-600 border-gray-500 rounded focus:ring-orange-500"
                       />
                       <span className="text-xs sm:text-sm lg:text-base">Kitchen Drawers</span>
                     </div>
                     <span className="text-orange-500 font-bold text-xs sm:text-sm lg:text-base">${prices.kitchenDrawers.toLocaleString()}</span>
                   </label>
 
-                  <label className="flex items-center justify-between p-2 sm:p-3 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition">
+                  <label className="flex items-center justify-between p-1 sm:p-2 lg:p-3 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition">
                     <div className="flex items-center">
                       <input
                         type="checkbox"
                         checked={config.refrigerator}
                         onChange={() => toggleConfig('refrigerator')}
-                        className="mr-2 w-4 h-4 text-orange-500 bg-gray-600 border-gray-500 rounded focus:ring-orange-500"
+                        className="mr-1 sm:mr-2 w-3 h-3 sm:w-4 sm:h-4 text-orange-500 bg-gray-600 border-gray-500 rounded focus:ring-orange-500"
                       />
                       <span className="text-xs sm:text-sm lg:text-base">Refrigerator</span>
                     </div>
@@ -670,45 +602,45 @@ const JeepersCampers = () => {
               </div>
 
               {/* Roof Tent Options */}
-              <div className="mb-3 lg:mb-6">
-                <h3 className="text-sm sm:text-base lg:text-lg font-bold mb-2 lg:mb-3">Roof Tent Options</h3>
-                <div className="grid grid-cols-1 gap-2">
+              <div className="mb-1 sm:mb-2 lg:mb-3">
+                <h3 className="text-xs sm:text-sm lg:text-base font-bold mb-1 sm:mb-2">Roof Tent Options</h3>
+                <div className="grid grid-cols-1 gap-1 sm:gap-2">
                   <button
                     onClick={() => setRoofTent(config.roofTent === 'basic' ? '' : 'basic')}
-                    className={`p-2 sm:p-3 rounded border-2 transition ${
+                    className={`p-1 sm:p-2 lg:p-3 rounded border-2 transition ${
                       config.roofTent === 'basic'
                         ? 'border-orange-500 bg-orange-500/20'
                         : 'border-gray-600 hover:border-orange-300'
                     }`}
                   >
                     <div className="flex justify-between items-center">
-                      <span className="font-bold text-xs sm:text-sm lg:text-base">Basic Roof Tent</span>
+                      <span className="font-bold text-xs sm:text-sm lg:text-base">Basic</span>
                       <span className="text-orange-500 text-xs sm:text-sm lg:text-base">${prices.roofTent_basic.toLocaleString()}</span>
                     </div>
                   </button>
                   <button
                     onClick={() => setRoofTent(config.roofTent === 'premium' ? '' : 'premium')}
-                    className={`p-2 sm:p-3 rounded border-2 transition ${
+                    className={`p-1 sm:p-2 lg:p-3 rounded border-2 transition ${
                       config.roofTent === 'premium'
                         ? 'border-orange-500 bg-orange-500/20'
                         : 'border-gray-600 hover:border-orange-300'
                     }`}
                   >
                     <div className="flex justify-between items-center">
-                      <span className="font-bold text-xs sm:text-sm lg:text-base">Premium Roof Tent</span>
+                      <span className="font-bold text-xs sm:text-sm lg:text-base">Premium</span>
                       <span className="text-orange-500 text-xs sm:text-sm lg:text-base">${prices.roofTent_premium.toLocaleString()}</span>
                     </div>
                   </button>
                   <button
                     onClick={() => setRoofTent(config.roofTent === 'luxury' ? '' : 'luxury')}
-                    className={`p-2 sm:p-3 rounded border-2 transition ${
+                    className={`p-1 sm:p-2 lg:p-3 rounded border-2 transition ${
                       config.roofTent === 'luxury'
                         ? 'border-orange-500 bg-orange-500/20'
                         : 'border-gray-600 hover:border-orange-300'
                     }`}
                   >
                     <div className="flex justify-between items-center">
-                      <span className="font-bold text-xs sm:text-sm lg:text-base">Luxury Roof Tent</span>
+                      <span className="font-bold text-xs sm:text-sm lg:text-base">Luxury</span>
                       <span className="text-orange-500 text-xs sm:text-sm lg:text-base">${prices.roofTent_luxury.toLocaleString()}</span>
                     </div>
                   </button>
@@ -716,154 +648,154 @@ const JeepersCampers = () => {
               </div>
 
               {/* Exterior Options */}
-              <div className="mb-3 lg:mb-6">
-                <h3 className="text-sm sm:text-base lg:text-lg font-bold mb-2 lg:mb-3">Exterior Options</h3>
-                <div className="space-y-2">
-                  <label className="flex items-center justify-between p-2 sm:p-3 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition">
+              <div className="mb-1 sm:mb-2 lg:mb-3">
+                <h3 className="text-xs sm:text-sm lg:text-base font-bold mb-1 sm:mb-2">Exterior Options</h3>
+                <div className="space-y-1">
+                  <label className="flex items-center justify-between p-1 sm:p-2 lg:p-3 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition">
                     <div className="flex items-center">
                       <input
                         type="checkbox"
                         checked={config.diamondPlateFrontExterior}
                         onChange={() => toggleConfig('diamondPlateFrontExterior')}
-                        className="mr-2 w-4 h-4 text-orange-500 bg-gray-600 border-gray-500 rounded focus:ring-orange-500"
+                        className="mr-1 sm:mr-2 w-3 h-3 sm:w-4 sm:h-4 text-orange-500 bg-gray-600 border-gray-500 rounded focus:ring-orange-500"
                       />
-                      <span className="text-xs sm:text-sm lg:text-base">Diamond Plated Front Exterior</span>
+                      <span className="text-xs sm:text-sm lg:text-base">Diamond Plate</span>
                     </div>
                     <span className="text-orange-500 font-bold text-xs sm:text-sm lg:text-base">${prices.diamondPlateFrontExterior.toLocaleString()}</span>
                   </label>
 
                   {config.diamondPlateFrontExterior && (
-                    <label className="ml-6 flex items-center justify-between p-2 sm:p-3 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition">
+                    <label className="ml-2 sm:ml-4 flex items-center justify-between p-1 sm:p-2 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition">
                       <div className="flex items-center">
                         <input
                           type="checkbox"
                           checked={config.diamondPlatePowderCoat}
                           onChange={() => toggleConfig('diamondPlatePowderCoat')}
-                          className="mr-2 w-4 h-4 text-orange-500 bg-gray-600 border-gray-500 rounded focus:ring-orange-500"
+                          className="mr-1 w-2 h-2 sm:w-3 sm:h-3 text-orange-500 bg-gray-600 border-gray-500 rounded focus:ring-orange-500"
                         />
-                        <span className="text-xs sm:text-sm lg:text-base">Powder Coat</span>
+                        <span className="text-xs">Powder Coat</span>
                       </div>
-                      <span className="text-orange-500 font-bold text-xs sm:text-sm lg:text-base">${prices.diamondPlatePowderCoat.toLocaleString()}</span>
+                      <span className="text-orange-500 font-bold text-xs sm:text-sm">${prices.diamondPlatePowderCoat.toLocaleString()}</span>
                     </label>
                   )}
 
-                  <label className="flex items-center justify-between p-2 sm:p-3 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition">
+                  <label className="flex items-center justify-between p-1 sm:p-2 lg:p-3 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition">
                     <div className="flex items-center">
                       <input
                         type="checkbox"
                         checked={config.vNoseFrontStorage}
                         onChange={() => toggleConfig('vNoseFrontStorage')}
-                        className="mr-2 w-4 h-4 text-orange-500 bg-gray-600 border-gray-500 rounded focus:ring-orange-500"
+                        className="mr-1 sm:mr-2 w-3 h-3 sm:w-4 sm:h-4 text-orange-500 bg-gray-600 border-gray-500 rounded focus:ring-orange-500"
                       />
-                      <span className="text-xs sm:text-sm lg:text-base">V-Nose Front Storage (D-Plated)</span>
+                      <span className="text-xs sm:text-sm lg:text-base">V-Nose Storage</span>
                     </div>
                     <span className="text-orange-500 font-bold text-xs sm:text-sm lg:text-base">${prices.vNoseFrontStorage.toLocaleString()}</span>
                   </label>
 
                   {config.vNoseFrontStorage && (
-                    <label className="ml-6 flex items-center justify-between p-2 sm:p-3 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition">
+                    <label className="ml-2 sm:ml-4 flex items-center justify-between p-1 sm:p-2 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition">
                       <div className="flex items-center">
                         <input
                           type="checkbox"
                           checked={config.vNosePowderCoat}
                           onChange={() => toggleConfig('vNosePowderCoat')}
-                          className="mr-2 w-4 h-4 text-orange-500 bg-gray-600 border-gray-500 rounded focus:ring-orange-500"
+                          className="mr-1 w-2 h-2 sm:w-3 sm:h-3 text-orange-500 bg-gray-600 border-gray-500 rounded focus:ring-orange-500"
                         />
-                        <span className="text-xs sm:text-sm lg:text-base">Powder Coat</span>
+                        <span className="text-xs">Powder Coat</span>
                       </div>
-                      <span className="text-orange-500 font-bold text-xs sm:text-sm lg:text-base">${prices.vNosePowderCoat.toLocaleString()}</span>
+                      <span className="text-orange-500 font-bold text-xs sm:text-sm">${prices.vNosePowderCoat.toLocaleString()}</span>
                     </label>
                   )}
 
-                  <label className="flex items-center justify-between p-2 sm:p-3 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition">
+                  <label className="flex items-center justify-between p-1 sm:p-2 lg:p-3 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition">
                     <div className="flex items-center">
                       <input
                         type="checkbox"
                         checked={config.fullyArticulatedHitch}
                         onChange={() => toggleConfig('fullyArticulatedHitch')}
-                        className="mr-2 w-4 h-4 text-orange-500 bg-gray-600 border-gray-500 rounded focus:ring-orange-500"
+                        className="mr-1 sm:mr-2 w-3 h-3 sm:w-4 sm:h-4 text-orange-500 bg-gray-600 border-gray-500 rounded focus:ring-orange-500"
                       />
-                      <span className="text-xs sm:text-sm lg:text-base">Fully Articulated Hitch Assembly</span>
+                      <span className="text-xs sm:text-sm lg:text-base">Articulated Hitch</span>
                     </div>
                     <span className="text-orange-500 font-bold text-xs sm:text-sm lg:text-base">${prices.fullyArticulatedHitch.toLocaleString()}</span>
                   </label>
 
-                  <label className="flex items-center justify-between p-2 sm:p-3 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition">
+                  <label className="flex items-center justify-between p-1 sm:p-2 lg:p-3 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition">
                     <div className="flex items-center">
                       <input
                         type="checkbox"
                         checked={config.frontStorageBoxes}
                         onChange={() => toggleConfig('frontStorageBoxes')}
-                        className="mr-2 w-4 h-4 text-orange-500 bg-gray-600 border-gray-500 rounded focus:ring-orange-500"
+                        className="mr-1 sm:mr-2 w-3 h-3 sm:w-4 sm:h-4 text-orange-500 bg-gray-600 border-gray-500 rounded focus:ring-orange-500"
                       />
-                      <span className="text-xs sm:text-sm lg:text-base">Front Storage Boxes</span>
+                      <span className="text-xs sm:text-sm lg:text-base">Storage Boxes</span>
                     </div>
                     <span className="text-orange-500 font-bold text-xs sm:text-sm lg:text-base">${prices.frontStorageBoxes.toLocaleString()}</span>
                   </label>
 
-                  <label className="flex items-center justify-between p-2 sm:p-3 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition">
+                  <label className="flex items-center justify-between p-1 sm:p-2 lg:p-3 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition">
                     <div className="flex items-center">
                       <input
                         type="checkbox"
                         checked={config.toolBoxDPlated}
                         onChange={() => toggleConfig('toolBoxDPlated')}
-                        className="mr-2 w-4 h-4 text-orange-500 bg-gray-600 border-gray-500 rounded focus:ring-orange-500"
+                        className="mr-1 sm:mr-2 w-3 h-3 sm:w-4 sm:h-4 text-orange-500 bg-gray-600 border-gray-500 rounded focus:ring-orange-500"
                       />
-                      <span className="text-xs sm:text-sm lg:text-base">Tool Box D-Plated</span>
+                      <span className="text-xs sm:text-sm lg:text-base">Tool Box</span>
                     </div>
                     <span className="text-orange-500 font-bold text-xs sm:text-sm lg:text-base">${prices.toolBoxDPlated.toLocaleString()}</span>
                   </label>
 
                   {config.toolBoxDPlated && (
-                    <label className="ml-6 flex items-center justify-between p-2 sm:p-3 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition">
+                    <label className="ml-2 sm:ml-4 flex items-center justify-between p-1 sm:p-2 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition">
                       <div className="flex items-center">
                         <input
                           type="checkbox"
                           checked={config.toolBoxPowderCoat}
                           onChange={() => toggleConfig('toolBoxPowderCoat')}
-                          className="mr-2 w-4 h-4 text-orange-500 bg-gray-600 border-gray-500 rounded focus:ring-orange-500"
+                          className="mr-1 w-2 h-2 sm:w-3 sm:h-3 text-orange-500 bg-gray-600 border-gray-500 rounded focus:ring-orange-500"
                         />
-                        <span className="text-xs sm:text-sm lg:text-base">Powder Coat</span>
+                        <span className="text-xs">Powder Coat</span>
                       </div>
-                      <span className="text-orange-500 font-bold text-xs sm:text-sm lg:text-base">${prices.toolBoxPowderCoat.toLocaleString()}</span>
+                      <span className="text-orange-500 font-bold text-xs sm:text-sm">${prices.toolBoxPowderCoat.toLocaleString()}</span>
                     </label>
                   )}
 
-                  <label className="flex items-center justify-between p-2 sm:p-3 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition">
+                  <label className="flex items-center justify-between p-1 sm:p-2 lg:p-3 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition">
                     <div className="flex items-center">
                       <input
                         type="checkbox"
                         checked={config.rearReceiverHitch}
                         onChange={() => toggleConfig('rearReceiverHitch')}
-                        className="mr-2 w-4 h-4 text-orange-500 bg-gray-600 border-gray-500 rounded focus:ring-orange-500"
+                        className="mr-1 sm:mr-2 w-3 h-3 sm:w-4 sm:h-4 text-orange-500 bg-gray-600 border-gray-500 rounded focus:ring-orange-500"
                       />
-                      <span className="text-xs sm:text-sm lg:text-base">Rear Receiver Hitch</span>
+                      <span className="text-xs sm:text-sm lg:text-base">Rear Hitch</span>
                     </div>
                     <span className="text-orange-500 font-bold text-xs sm:text-sm lg:text-base">${prices.rearReceiverHitch.toLocaleString()}</span>
                   </label>
 
-                  <label className="flex items-center justify-between p-2 sm:p-3 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition">
+                  <label className="flex items-center justify-between p-1 sm:p-2 lg:p-3 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition">
                     <div className="flex items-center">
                       <input
                         type="checkbox"
                         checked={config.trailerWiringLights}
                         onChange={() => toggleConfig('trailerWiringLights')}
-                        className="mr-2 w-4 h-4 text-orange-500 bg-gray-600 border-gray-500 rounded focus:ring-orange-500"
+                        className="mr-1 sm:mr-2 w-3 h-3 sm:w-4 sm:h-4 text-orange-500 bg-gray-600 border-gray-500 rounded focus:ring-orange-500"
                       />
-                      <span className="text-xs sm:text-sm lg:text-base">Trailer Wiring + Lights</span>
+                      <span className="text-xs sm:text-sm lg:text-base">Wiring + Lights</span>
                     </div>
                     <span className="text-orange-500 font-bold text-xs sm:text-sm lg:text-base">${prices.trailerWiringLights.toLocaleString()}</span>
                   </label>
 
-                  <label className="flex items-center justify-between p-2 sm:p-3 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition">
+                  <label className="flex items-center justify-between p-1 sm:p-2 lg:p-3 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition">
                     <div className="flex items-center">
                       <input
                         type="checkbox"
                         checked={config.roofTopAccessSteps}
                         onChange={() => toggleConfig('roofTopAccessSteps')}
-                        className="mr-2 w-4 h-4 text-orange-500 bg-gray-600 border-gray-500 rounded focus:ring-orange-500"
+                        className="mr-1 sm:mr-2 w-3 h-3 sm:w-4 sm:h-4 text-orange-500 bg-gray-600 border-gray-500 rounded focus:ring-orange-500"
                       />
-                      <span className="text-xs sm:text-sm lg:text-base">Roof Top Access Steps (both sides)</span>
+                      <span className="text-xs sm:text-sm lg:text-base">Roof Steps</span>
                     </div>
                     <span className="text-orange-500 font-bold text-xs sm:text-sm lg:text-base">${prices.roofTopAccessSteps.toLocaleString()}</span>
                   </label>
@@ -871,135 +803,135 @@ const JeepersCampers = () => {
               </div>
 
               {/* Interior Options */}
-              <div className="mb-3 lg:mb-6">
-                <h3 className="text-sm sm:text-base lg:text-lg font-bold mb-2 lg:mb-3">Interior Options</h3>
-                <div className="space-y-2">
-                  <label className="flex items-center justify-between p-2 sm:p-3 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition">
+              <div className="mb-1 sm:mb-2 lg:mb-3">
+                <h3 className="text-xs sm:text-sm lg:text-base font-bold mb-1 sm:mb-2">Interior Options</h3>
+                <div className="space-y-1">
+                  <label className="flex items-center justify-between p-1 sm:p-2 lg:p-3 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition">
                     <div className="flex items-center">
                       <input
                         type="checkbox"
                         checked={config.interiorWiringPackage}
                         onChange={() => toggleConfig('interiorWiringPackage')}
-                        className="mr-2 w-4 h-4 text-orange-500 bg-gray-600 border-gray-500 rounded focus:ring-orange-500"
+                        className="mr-1 sm:mr-2 w-3 h-3 sm:w-4 sm:h-4 text-orange-500 bg-gray-600 border-gray-500 rounded focus:ring-orange-500"
                       />
-                      <span className="text-xs sm:text-sm lg:text-base">Interior Wiring Package</span>
+                      <span className="text-xs sm:text-sm lg:text-base">Wiring Package</span>
                     </div>
                     <span className="text-orange-500 font-bold text-xs sm:text-sm lg:text-base">${prices.interiorWiringPackage.toLocaleString()}</span>
                   </label>
 
-                  <label className="flex items-center justify-between p-2 sm:p-3 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition">
+                  <label className="flex items-center justify-between p-1 sm:p-2 lg:p-3 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition">
                     <div className="flex items-center">
                       <input
                         type="checkbox"
                         checked={config.lithiumBattery}
                         onChange={() => toggleConfig('lithiumBattery')}
-                        className="mr-2 w-4 h-4 text-orange-500 bg-gray-600 border-gray-500 rounded focus:ring-orange-500"
+                        className="mr-1 sm:mr-2 w-3 h-3 sm:w-4 sm:h-4 text-orange-500 bg-gray-600 border-gray-500 rounded focus:ring-orange-500"
                       />
                       <span className="text-xs sm:text-sm lg:text-base">Lithium Battery</span>
                     </div>
                     <span className="text-orange-500 font-bold text-xs sm:text-sm lg:text-base">${prices.lithiumBattery.toLocaleString()}</span>
                   </label>
 
-                  <label className="flex items-center justify-between p-2 sm:p-3 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition">
+                  <label className="flex items-center justify-between p-1 sm:p-2 lg:p-3 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition">
                     <div className="flex items-center">
                       <input
                         type="checkbox"
                         checked={config.onboardBatteryCharger}
                         onChange={() => toggleConfig('onboardBatteryCharger')}
-                        className="mr-2 w-4 h-4 text-orange-500 bg-gray-600 border-gray-500 rounded focus:ring-orange-500"
+                        className="mr-1 sm:mr-2 w-3 h-3 sm:w-4 sm:h-4 text-orange-500 bg-gray-600 border-gray-500 rounded focus:ring-orange-500"
                       />
-                      <span className="text-xs sm:text-sm lg:text-base">Onboard Battery Charger (120V AC)</span>
+                      <span className="text-xs sm:text-sm lg:text-base">Battery Charger</span>
                     </div>
                     <span className="text-orange-500 font-bold text-xs sm:text-sm lg:text-base">${prices.onboardBatteryCharger.toLocaleString()}</span>
                   </label>
 
-                  <label className="flex items-center justify-between p-2 sm:p-3 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition">
+                  <label className="flex items-center justify-between p-1 sm:p-2 lg:p-3 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition">
                     <div className="flex items-center">
                       <input
                         type="checkbox"
                         checked={config.redarcCharger}
                         onChange={() => toggleConfig('redarcCharger')}
-                        className="mr-2 w-4 h-4 text-orange-500 bg-gray-600 border-gray-500 rounded focus:ring-orange-500"
+                        className="mr-1 sm:mr-2 w-3 h-3 sm:w-4 sm:h-4 text-orange-500 bg-gray-600 border-gray-500 rounded focus:ring-orange-500"
                       />
-                      <span className="text-xs sm:text-sm lg:text-base">REDARC In-Vehicle DC Battery Charger</span>
+                      <span className="text-xs sm:text-sm lg:text-base">REDARC Charger</span>
                     </div>
                     <span className="text-orange-500 font-bold text-xs sm:text-sm lg:text-base">${prices.redarcCharger.toLocaleString()}</span>
                   </label>
 
-                  <label className="flex items-center justify-between p-2 sm:p-3 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition">
+                  <label className="flex items-center justify-between p-1 sm:p-2 lg:p-3 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition">
                     <div className="flex items-center">
                       <input
                         type="checkbox"
                         checked={config.interiorLightingPackage}
                         onChange={() => toggleConfig('interiorLightingPackage')}
-                        className="mr-2 w-4 h-4 text-orange-500 bg-gray-600 border-gray-500 rounded focus:ring-orange-500"
+                        className="mr-1 sm:mr-2 w-3 h-3 sm:w-4 sm:h-4 text-orange-500 bg-gray-600 border-gray-500 rounded focus:ring-orange-500"
                       />
-                      <span className="text-xs sm:text-sm lg:text-base">Interior Lighting Package</span>
+                      <span className="text-xs sm:text-sm lg:text-base">Lighting Package</span>
                     </div>
                     <span className="text-orange-500 font-bold text-xs sm:text-sm lg:text-base">${prices.interiorLightingPackage.toLocaleString()}</span>
                   </label>
 
-                  <label className="flex items-center justify-between p-2 sm:p-3 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition">
+                  <label className="flex items-center justify-between p-1 sm:p-2 lg:p-3 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition">
                     <div className="flex items-center">
                       <input
                         type="checkbox"
                         checked={config.tenSpeedFan}
                         onChange={() => toggleConfig('tenSpeedFan')}
-                        className="mr-2 w-4 h-4 text-orange-500 bg-gray-600 border-gray-500 rounded focus:ring-orange-500"
+                        className="mr-1 sm:mr-2 w-3 h-3 sm:w-4 sm:h-4 text-orange-500 bg-gray-600 border-gray-500 rounded focus:ring-orange-500"
                       />
                       <span className="text-xs sm:text-sm lg:text-base">10 Speed Fan</span>
                     </div>
                     <span className="text-orange-500 font-bold text-xs sm:text-sm lg:text-base">${prices.tenSpeedFan.toLocaleString()}</span>
                   </label>
 
-                  <label className="flex items-center justify-between p-2 sm:p-3 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition">
+                  <label className="flex items-center justify-between p-1 sm:p-2 lg:p-3 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition">
                     <div className="flex items-center">
                       <input
                         type="checkbox"
                         checked={config.onboardWaterTank}
                         onChange={() => toggleConfig('onboardWaterTank')}
-                        className="mr-2 w-4 h-4 text-orange-500 bg-gray-600 border-gray-500 rounded focus:ring-orange-500"
+                        className="mr-1 sm:mr-2 w-3 h-3 sm:w-4 sm:h-4 text-orange-500 bg-gray-600 border-gray-500 rounded focus:ring-orange-500"
                       />
-                      <span className="text-xs sm:text-sm lg:text-base">Onboard Water Tank w/ Water Pump</span>
+                      <span className="text-xs sm:text-sm lg:text-base">Water Tank + Pump</span>
                     </div>
                     <span className="text-orange-500 font-bold text-xs sm:text-sm lg:text-base">${prices.onboardWaterTank.toLocaleString()}</span>
                   </label>
 
-                  <label className="flex items-center justify-between p-2 sm:p-3 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition">
+                  <label className="flex items-center justify-between p-1 sm:p-2 lg:p-3 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition">
                     <div className="flex items-center">
                       <input
                         type="checkbox"
                         checked={config.onboardPropaneTank}
                         onChange={() => toggleConfig('onboardPropaneTank')}
-                        className="mr-2 w-4 h-4 text-orange-500 bg-gray-600 border-gray-500 rounded focus:ring-orange-500"
+                        className="mr-1 sm:mr-2 w-3 h-3 sm:w-4 sm:h-4 text-orange-500 bg-gray-600 border-gray-500 rounded focus:ring-orange-500"
                       />
-                      <span className="text-xs sm:text-sm lg:text-base">Onboard Propane Tank w/ Plumbing</span>
+                      <span className="text-xs sm:text-sm lg:text-base">Propane Tank</span>
                     </div>
                     <span className="text-orange-500 font-bold text-xs sm:text-sm lg:text-base">${prices.onboardPropaneTank.toLocaleString()}</span>
                   </label>
 
-                  <label className="flex items-center justify-between p-2 sm:p-3 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition">
+                  <label className="flex items-center justify-between p-1 sm:p-2 lg:p-3 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition">
                     <div className="flex items-center">
                       <input
                         type="checkbox"
                         checked={config.campluxOutdoorShower}
                         onChange={() => toggleConfig('campluxOutdoorShower')}
-                        className="mr-2 w-4 h-4 text-orange-500 bg-gray-600 border-gray-500 rounded focus:ring-orange-500"
+                        className="mr-1 sm:mr-2 w-3 h-3 sm:w-4 sm:h-4 text-orange-500 bg-gray-600 border-gray-500 rounded focus:ring-orange-500"
                       />
-                      <span className="text-xs sm:text-sm lg:text-base">Camplux Outdoor Shower - Tankless (no refunds on public nudity tickets)</span>
+                      <span className="text-xs sm:text-sm lg:text-base">Outdoor Shower</span>
                     </div>
                     <span className="text-orange-500 font-bold text-xs sm:text-sm lg:text-base">${prices.campluxOutdoorShower.toLocaleString()}</span>
                   </label>
 
-                  <label className="flex items-center justify-between p-2 sm:p-3 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition">
+                  <label className="flex items-center justify-between p-1 sm:p-2 lg:p-3 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition">
                     <div className="flex items-center">
                       <input
                         type="checkbox"
                         checked={config.roamShowerRoom}
                         onChange={() => toggleConfig('roamShowerRoom')}
-                        className="mr-2 w-4 h-4 text-orange-500 bg-gray-600 border-gray-500 rounded focus:ring-orange-500"
+                        className="mr-1 sm:mr-2 w-3 h-3 sm:w-4 sm:h-4 text-orange-500 bg-gray-600 border-gray-500 rounded focus:ring-orange-500"
                       />
-                      <span className="text-xs sm:text-sm lg:text-base">ROAM Shower Room - Shower Screen</span>
+                      <span className="text-xs sm:text-sm lg:text-base">Shower Room</span>
                     </div>
                     <span className="text-orange-500 font-bold text-xs sm:text-sm lg:text-base">${prices.roamShowerRoom.toLocaleString()}</span>
                   </label>
@@ -1007,10 +939,10 @@ const JeepersCampers = () => {
               </div>
 
               {/* Interior Packages */}
-              <div className="mb-3 lg:mb-6">
-                <h3 className="text-sm sm:text-base lg:text-lg font-bold mb-2 lg:mb-3">Interior Packages</h3>
-                <div className="space-y-2">
-                  <label className="flex items-start justify-between p-2 sm:p-3 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition">
+              <div className="mb-1 sm:mb-2 lg:mb-3">
+                <h3 className="text-xs sm:text-sm lg:text-base font-bold mb-1 sm:mb-2">Interior Packages</h3>
+                <div className="space-y-1">
+                  <label className="flex items-start justify-between p-1 sm:p-2 lg:p-3 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition">
                     <div className="flex items-start">
                       <input
                         type="checkbox"
@@ -1021,17 +953,17 @@ const JeepersCampers = () => {
                             toggleConfig('premiumInteriorPackage');
                           }
                         }}
-                        className="mr-2 w-4 h-4 mt-1 text-orange-500 bg-gray-600 border-gray-500 rounded focus:ring-orange-500"
+                        className="mr-1 sm:mr-2 w-3 h-3 sm:w-4 sm:h-4 mt-0.5 text-orange-500 bg-gray-600 border-gray-500 rounded focus:ring-orange-500"
                       />
                       <div>
-                        <span className="text-xs sm:text-sm lg:text-base font-bold">Basic Interior Package</span>
-                        <div className="text-xs text-gray-400 mt-1">Sheeted particle board walls and ceiling</div>
+                        <span className="text-xs sm:text-sm lg:text-base font-bold">Basic</span>
+                        <div className="text-xs text-gray-400">Particle board</div>
                       </div>
                     </div>
                     <span className="text-orange-500 font-bold text-xs sm:text-sm lg:text-base">${prices.basicInteriorPackage.toLocaleString()}</span>
                   </label>
 
-                  <label className="flex items-start justify-between p-2 sm:p-3 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition">
+                  <label className="flex items-start justify-between p-1 sm:p-2 lg:p-3 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition">
                     <div className="flex items-start">
                       <input
                         type="checkbox"
@@ -1042,17 +974,69 @@ const JeepersCampers = () => {
                             toggleConfig('basicInteriorPackage');
                           }
                         }}
-                        className="mr-2 w-4 h-4 mt-1 text-orange-500 bg-gray-600 border-gray-500 rounded focus:ring-orange-500"
+                        className="mr-1 sm:mr-2 w-3 h-3 sm:w-4 sm:h-4 mt-0.5 text-orange-500 bg-gray-600 border-gray-500 rounded focus:ring-orange-500"
                       />
                       <div>
-                        <span className="text-xs sm:text-sm lg:text-base font-bold">Premium Interior Package</span>
-                        <div className="text-xs text-gray-400 mt-1">Solid wood (cedar, teakwood)</div>
+                        <span className="text-xs sm:text-sm lg:text-base font-bold">Premium</span>
+                        <div className="text-xs text-gray-400">Cedar/Teak</div>
                       </div>
                     </div>
                     <span className="text-orange-500 font-bold text-xs sm:text-sm lg:text-base">${prices.premiumInteriorPackage.toLocaleString()}</span>
                   </label>
                 </div>
               </div>
+            </div>
+
+            {/* VISUAL PREVIEW - Right Side (Sticky) */}
+            <div className="sticky top-2 bg-gray-800 rounded-lg p-1 sm:p-2 lg:p-3 shadow-2xl" style={{ maxHeight: 'calc(100vh - 120px)' }}>
+              <h3 className="text-xs sm:text-sm lg:text-base font-bold mb-1 sm:mb-2 lg:mb-3 text-center text-orange-500">Your Build</h3>
+
+              {/* Interactive 3D Configurator */}
+              <div className="mb-1 sm:mb-2 lg:mb-3 bg-gray-900 rounded-lg p-1 sm:p-2 lg:p-3 shadow-inner" style={{ minHeight: '200px' }}>
+                <CamperConfigurator config={config} />
+              </div>
+
+              {/* Configuration Summary */}
+              <div className="bg-gray-700 rounded-lg p-1 sm:p-2 lg:p-3 mb-1 sm:mb-2 lg:mb-3">
+                <h4 className="font-bold mb-1 sm:mb-2 text-xs sm:text-sm lg:text-base border-b border-gray-600 pb-1">Config</h4>
+                <div className="space-y-1 text-xs sm:text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-gray-300">Frame:</span>
+                    <span className="text-orange-500 font-semibold">Standard</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-300">Wheels:</span>
+                    <span className="text-orange-500 font-semibold capitalize">{config.wheels}</span>
+                  </div>
+                  {config.enclosureType && (
+                    <div className="flex justify-between">
+                      <span className="text-gray-300">Enclosure:</span>
+                      <span className="text-orange-500 font-semibold">{config.enclosureType === 'single-door' ? 'Single' : 'Dual'}</span>
+                    </div>
+                  )}
+                  {config.roofTent && (
+                    <div className="flex justify-between">
+                      <span className="text-gray-300">Tent:</span>
+                      <span className="text-orange-500 font-semibold capitalize">{config.roofTent}</span>
+                    </div>
+                  )}
+                  <div className="border-t border-gray-600 pt-1 mt-1">
+                    <div className="flex justify-between font-bold text-xs sm:text-sm lg:text-base">
+                      <span className="text-white">Total:</span>
+                      <span className="text-orange-500">${calculatePrice().toLocaleString()}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Add to Cart */}
+              <button
+                onClick={addToCart}
+                className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white py-2 sm:py-3 lg:py-4 rounded-lg font-bold text-xs sm:text-sm lg:text-base transition-all duration-200 flex items-center justify-center shadow-lg hover:shadow-xl"
+              >
+                <ShoppingCart className="mr-1 sm:mr-2" size={14} />
+                Add to Cart
+              </button>
             </div>
           </div>
         )}
