@@ -3,27 +3,16 @@ import React from 'react';
 interface CamperConfig {
   frame: string;
   wheels: string;
-  sidePanels: boolean;
-  frontPanel: boolean;
-  rearPanel: boolean;
-  diamondPlate: boolean;
-  roofPlatform: boolean;
-  roofRack: boolean;
-  roofTent: boolean;
-  roofLadder: boolean;
-  rearKitchen: boolean;
-  propaneTank: boolean;
-  kitchenCounter: boolean;
-  sideAccessDoors: boolean;
-  storageBoxes: boolean;
-  jerryCanMounts: boolean;
-  toolBox: boolean;
-  fenders: boolean;
-  runningBoards: boolean;
-  lightingKit: boolean;
-  solarPanel: boolean;
-  batterySystem: boolean;
-  waterTank: boolean;
+  enclosureType: string;
+  rearHatch: boolean;
+  partitionKitchenCounter: boolean;
+  roofTent: string;
+  diamondPlateFrontExterior: boolean;
+  vNoseFrontStorage: boolean;
+  frontStorageBoxes: boolean;
+  toolBoxDPlated: boolean;
+  onboardPropaneTank: boolean;
+  [key: string]: any;
 }
 
 interface CamperConfiguratorProps {
@@ -136,7 +125,7 @@ const CamperConfigurator: React.FC<CamperConfiguratorProps> = ({ config }) => {
         />
 
         {/* Diamond plate pattern */}
-        {config.diamondPlate && (
+        {config.diamondPlateFrontExterior && (
           <g opacity="0.4">
             {Array.from({ length: 15 }).map((_, i) => (
               <line
@@ -154,7 +143,7 @@ const CamperConfigurator: React.FC<CamperConfiguratorProps> = ({ config }) => {
       </g>
 
       {/* Side panels */}
-      {config.sidePanels && (
+      {config.enclosureType && (
         <>
           {/* Left long side panel */}
           <path
@@ -187,7 +176,7 @@ const CamperConfigurator: React.FC<CamperConfiguratorProps> = ({ config }) => {
           />
 
           {/* Side door on RIGHT long side */}
-          {config.sideAccessDoors && (
+          {config.enclosureType === 'single-door' && (
             <g>
               {(() => {
                 // Door positioned on right side panel, scaled up larger
@@ -242,7 +231,7 @@ const CamperConfigurator: React.FC<CamperConfiguratorProps> = ({ config }) => {
       )}
 
       {/* Front panel (LEFT end) */}
-      {config.frontPanel && (
+      {config.enclosureType && (
         <path
           d={`
             M ${iso(-frameSize.length / 2, -frameSize.width / 2, 0).x} ${iso(-frameSize.length / 2, -frameSize.width / 2, 0).y}
@@ -259,7 +248,7 @@ const CamperConfigurator: React.FC<CamperConfiguratorProps> = ({ config }) => {
       )}
 
       {/* Rear panel (RIGHT end) */}
-      {config.rearPanel && (
+      {config.rearHatch && (
         <path
           d={`
             M ${iso(frameSize.length / 2, -frameSize.width / 2, 0).x} ${iso(frameSize.length / 2, -frameSize.width / 2, 0).y}
@@ -276,7 +265,7 @@ const CamperConfigurator: React.FC<CamperConfiguratorProps> = ({ config }) => {
       )}
 
       {/* Propane tank on FRONT side near right */}
-      {config.propaneTank && (
+      {config.onboardPropaneTank && (
         <g>
           {(() => {
             const tankPos = iso(frameSize.length / 4, frameSize.width / 2 - 12, frameSize.height / 2);
@@ -352,42 +341,13 @@ const CamperConfigurator: React.FC<CamperConfiguratorProps> = ({ config }) => {
                 })}
               </g>
 
-              {/* Fenders */}
-              {config.fenders && (
-                <>
-                  <path
-                    d={`
-                      M ${iso(axleX - 8, -wheelY - 8, wheelSpecs.radius + 8).x} ${iso(axleX - 8, -wheelY - 8, wheelSpecs.radius + 8).y}
-                      L ${iso(axleX + wheelSpecs.radius + 12, -wheelY - 8, wheelSpecs.radius + 10).x} ${iso(axleX + wheelSpecs.radius + 12, -wheelY - 8, wheelSpecs.radius + 10).y}
-                      L ${iso(axleX + wheelSpecs.radius + 12, -wheelY + 8, wheelSpecs.radius + 10).x} ${iso(axleX + wheelSpecs.radius + 12, -wheelY + 8, wheelSpecs.radius + 10).y}
-                      L ${iso(axleX - 8, -wheelY + 8, wheelSpecs.radius + 8).x} ${iso(axleX - 8, -wheelY + 8, wheelSpecs.radius + 8).y}
-                      Z
-                    `}
-                    fill={COLORS.panel}
-                    stroke={COLORS.accent}
-                    strokeWidth="2"
-                  />
-                  <path
-                    d={`
-                      M ${iso(axleX - 8, wheelY - 8, wheelSpecs.radius + 8).x} ${iso(axleX - 8, wheelY - 8, wheelSpecs.radius + 8).y}
-                      L ${iso(axleX + wheelSpecs.radius + 12, wheelY - 8, wheelSpecs.radius + 10).x} ${iso(axleX + wheelSpecs.radius + 12, wheelY - 8, wheelSpecs.radius + 10).y}
-                      L ${iso(axleX + wheelSpecs.radius + 12, wheelY + 8, wheelSpecs.radius + 10).x} ${iso(axleX + wheelSpecs.radius + 12, wheelY + 8, wheelSpecs.radius + 10).y}
-                      L ${iso(axleX - 8, wheelY + 8, wheelSpecs.radius + 8).x} ${iso(axleX - 8, wheelY + 8, wheelSpecs.radius + 8).y}
-                      Z
-                    `}
-                    fill={COLORS.panel}
-                    stroke={COLORS.accent}
-                    strokeWidth="2"
-                  />
-                </>
-              )}
             </>
           );
         })()}
       </g>
 
       {/* Roof platform */}
-      {config.roofPlatform && (
+      {config.roofTent && (
         <path
           d={`
             M ${iso(-frameSize.length / 2 + 8, -frameSize.width / 2 + 8, frameSize.height).x} ${iso(-frameSize.length / 2 + 8, -frameSize.width / 2 + 8, frameSize.height).y}
@@ -403,7 +363,7 @@ const CamperConfigurator: React.FC<CamperConfiguratorProps> = ({ config }) => {
       )}
 
       {/* Roof rack */}
-      {config.roofRack && (
+      {config.roofTent && (
         <g stroke={COLORS.steel} strokeWidth="4">
           {/* Rails */}
           <line
@@ -481,7 +441,7 @@ const CamperConfigurator: React.FC<CamperConfiguratorProps> = ({ config }) => {
       )}
       
       {/* Side door on RIGHT long side - RENDERED LAST FOR TOP LAYER */}
-      {config.sideAccessDoors && (
+      {config.enclosureType === 'dual-door' && (
         <g>
           {(() => {
             // Door positioned on right side panel, scaled up much larger
