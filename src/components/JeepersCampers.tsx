@@ -4,7 +4,8 @@ import CamperConfigurator from './CamperConfigurator';
 import { OrderForm } from './OrderForm'; // Import the new OrderForm component
 
 const JeepersCampers = () => {
-  const [activeTab, setActiveTab] = useState('builder');
+  const [activeTab, setActiveTab] = useState('home');
+  const [camperModel, setCamperModel] = useState<'jeepers' | 'badlands'>('badlands');
   const [mobileMenu, setMobileMenu] = useState(false);
   const [showCart, setShowCart] = useState(false);
   const [selectedMedia, setSelectedMedia] = useState<number>(0);
@@ -258,7 +259,7 @@ const JeepersCampers = () => {
             <div className="text-2xl font-light">CAMPERS</div>
           </div>
           <nav className="hidden md:flex space-x-6">
-            {['builder', 'reviews', 'gallery', 'about'].map((tab) => (
+            {['home', 'builder', 'reviews', 'gallery', 'about'].map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
@@ -286,7 +287,7 @@ const JeepersCampers = () => {
         </div>
         {mobileMenu && (
           <nav className="md:hidden mt-4 flex flex-col space-y-2 px-4 pb-4">
-            {['builder', 'reviews', 'gallery', 'about'].map((tab) => (
+            {['home', 'builder', 'reviews', 'gallery', 'about'].map((tab) => (
               <button
                 key={tab}
                 onClick={() => {
@@ -305,7 +306,7 @@ const JeepersCampers = () => {
       {/* Mobile Navigation - Always Visible */}
       <nav className="md:hidden bg-gray-700 px-4 py-2">
         <div className="flex space-x-1 overflow-x-auto">
-          {['builder', 'gallery', 'reviews', 'about'].map((tab) => (
+          {['home', 'builder', 'gallery', 'reviews', 'about'].map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
