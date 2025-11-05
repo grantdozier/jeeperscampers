@@ -253,10 +253,17 @@ const JeepersCampers = () => {
     <div className="min-h-screen bg-gray-900 text-white">
       {/* HEADER */}
       <header className="bg-gray-800 border-b border-orange-500">
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <div className="flex items-center space-x-2">
-            <div className="text-3xl font-bold text-orange-500">BADLAND</div>
-            <div className="text-2xl font-light">CAMPERS</div>
+        <div className="container mx-auto px-4 py-3 flex justify-between items-center">
+          <div className="flex items-center">
+            <img
+              src={`${process.env.PUBLIC_URL}/images/badland_campers_OFFICAL_LOGO.png`}
+              alt="Badland Campers"
+              className="h-12 sm:h-16 md:h-20 w-auto object-contain cursor-pointer"
+              onClick={() => setActiveTab('home')}
+              onError={(e) => {
+                e.currentTarget.style.display = 'none';
+              }}
+            />
           </div>
           <nav className="hidden md:flex space-x-6">
             {['home', 'builder', 'reviews', 'gallery', 'about'].map((tab) => (
@@ -382,17 +389,14 @@ const JeepersCampers = () => {
             <div className="text-center mb-8 lg:mb-12">
               <div className="flex justify-center mb-6">
                 <img
-                  src={`${process.env.PUBLIC_URL}/images/badland_campers_logo.png`}
+                  src={`${process.env.PUBLIC_URL}/images/badland_campers_OFFICAL_LOGO.png`}
                   alt="Badland Campers Logo"
-                  className="h-32 sm:h-40 lg:h-48 w-auto object-contain"
+                  className="h-48 sm:h-56 lg:h-64 xl:h-72 w-auto object-contain"
                   onError={(e) => {
                     e.currentTarget.style.display = 'none';
                   }}
                 />
               </div>
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-4 text-orange-500">
-                BADLAND CAMPERS
-              </h1>
               <p className="text-xl sm:text-2xl text-gray-300 mb-2">
                 Premium Off-Road Trailer Configurator
               </p>
