@@ -4,7 +4,8 @@ import CamperConfigurator from './CamperConfigurator';
 import { OrderForm } from './OrderForm'; // Import the new OrderForm component
 
 const JeepersCampers = () => {
-  const [activeTab, setActiveTab] = useState('builder');
+  const [activeTab, setActiveTab] = useState('home');
+  const [camperModel, setCamperModel] = useState<'jeepers' | 'badlands'>('badlands');
   const [mobileMenu, setMobileMenu] = useState(false);
   const [showCart, setShowCart] = useState(false);
   const [selectedMedia, setSelectedMedia] = useState<number>(0);
@@ -195,7 +196,7 @@ const JeepersCampers = () => {
             <div className="text-2xl font-light">CAMPERS</div>
           </div>
           <nav className="hidden md:flex space-x-6">
-            {['builder', 'reviews', 'gallery', 'about'].map((tab) => (
+            {['home', 'builder', 'reviews', 'gallery', 'about'].map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
@@ -223,7 +224,7 @@ const JeepersCampers = () => {
         </div>
         {mobileMenu && (
           <nav className="md:hidden mt-4 flex flex-col space-y-2 px-4 pb-4">
-            {['builder', 'reviews', 'gallery', 'about'].map((tab) => (
+            {['home', 'builder', 'reviews', 'gallery', 'about'].map((tab) => (
               <button
                 key={tab}
                 onClick={() => {
@@ -242,7 +243,7 @@ const JeepersCampers = () => {
       {/* Mobile Navigation - Always Visible */}
       <nav className="md:hidden bg-gray-700 px-4 py-2">
         <div className="flex space-x-1 overflow-x-auto">
-          {['builder', 'gallery', 'reviews', 'about'].map((tab) => (
+          {['home', 'builder', 'gallery', 'reviews', 'about'].map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
@@ -311,12 +312,155 @@ const JeepersCampers = () => {
 
       {/* MAIN CONTENT */}
       <main className="container mx-auto px-4 py-8">
+        {/* HOME TAB */}
+        {activeTab === 'home' && (
+          <div className="max-w-7xl mx-auto">
+            <div className="text-center mb-12">
+              <h1 className="text-4xl md:text-5xl font-bold mb-4">
+                <span className="text-orange-500">BADLAND</span> CAMPERS
+              </h1>
+              <p className="text-xl text-gray-300 mb-2">Choose Your Adventure</p>
+              <p className="text-gray-400">Two legendary models, endless possibilities</p>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
+              {/* JEEPERS MODEL */}
+              <div className="bg-gray-800 rounded-lg overflow-hidden shadow-2xl hover:shadow-orange-500/20 transition-shadow duration-300">
+                <div className="relative">
+                  <img
+                    src={`${process.env.PUBLIC_URL}/images/jeepers_campers_greg_v2.png`}
+                    alt="Jeepers Camper Model"
+                    className="w-full h-64 md:h-80 object-cover"
+                    onError={(e) => {
+                      e.currentTarget.style.display = 'none';
+                    }}
+                  />
+                  <div className="absolute top-4 left-4 bg-orange-500 text-white px-4 py-2 rounded-full font-bold">
+                    JEEPERS
+                  </div>
+                </div>
+                <div className="p-6">
+                  <h2 className="text-2xl font-bold mb-3 text-orange-500">Jeepers Model</h2>
+                  <p className="text-gray-300 mb-4">
+                    The original adventure companion. Compact, rugged, and ready for any trail. 
+                    Perfect for weekend warriors and off-road enthusiasts who demand reliability.
+                  </p>
+                  <ul className="text-gray-400 mb-6 space-y-2">
+                    <li className="flex items-center">
+                      <span className="text-orange-500 mr-2">✓</span>
+                      Lightweight & Maneuverable
+                    </li>
+                    <li className="flex items-center">
+                      <span className="text-orange-500 mr-2">✓</span>
+                      Trail-Ready Design
+                    </li>
+                    <li className="flex items-center">
+                      <span className="text-orange-500 mr-2">✓</span>
+                      Essential Features
+                    </li>
+                  </ul>
+                  <button
+                    onClick={() => {
+                      setCamperModel('jeepers');
+                      setActiveTab('builder');
+                    }}
+                    className="w-full bg-orange-500 hover:bg-orange-600 text-white py-3 px-6 rounded-lg font-bold text-lg transition-colors duration-200 flex items-center justify-center space-x-2"
+                  >
+                    <Wrench size={20} />
+                    <span>Build Jeepers</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* BADLANDS MODEL */}
+              <div className="bg-gray-800 rounded-lg overflow-hidden shadow-2xl hover:shadow-orange-500/20 transition-shadow duration-300">
+                <div className="relative">
+                  <img
+                    src={`${process.env.PUBLIC_URL}/images/camper_alternate_side_view.jpeg`}
+                    alt="Badlands Camper Model"
+                    className="w-full h-64 md:h-80 object-cover"
+                    onError={(e) => {
+                      e.currentTarget.style.display = 'none';
+                    }}
+                  />
+                  <div className="absolute top-4 left-4 bg-orange-500 text-white px-4 py-2 rounded-full font-bold">
+                    BADLANDS
+                  </div>
+                </div>
+                <div className="p-6">
+                  <h2 className="text-2xl font-bold mb-3 text-orange-500">Badlands Model</h2>
+                  <p className="text-gray-300 mb-4">
+                    The ultimate overland machine. Built for extended expeditions with premium features 
+                    and maximum comfort. Your basecamp anywhere adventure takes you.
+                  </p>
+                  <ul className="text-gray-400 mb-6 space-y-2">
+                    <li className="flex items-center">
+                      <span className="text-orange-500 mr-2">✓</span>
+                      Premium Construction
+                    </li>
+                    <li className="flex items-center">
+                      <span className="text-orange-500 mr-2">✓</span>
+                      Extended Living Space
+                    </li>
+                    <li className="flex items-center">
+                      <span className="text-orange-500 mr-2">✓</span>
+                      Full Feature Set
+                    </li>
+                  </ul>
+                  <button
+                    onClick={() => {
+                      setCamperModel('badlands');
+                      setActiveTab('builder');
+                    }}
+                    className="w-full bg-orange-500 hover:bg-orange-600 text-white py-3 px-6 rounded-lg font-bold text-lg transition-colors duration-200 flex items-center justify-center space-x-2"
+                  >
+                    <Wrench size={20} />
+                    <span>Build Badlands</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* COMPARISON SECTION */}
+            <div className="mt-12 bg-gray-800 rounded-lg p-8">
+              <h3 className="text-2xl font-bold text-center mb-8">Model Comparison</h3>
+              <div className="grid md:grid-cols-2 gap-8">
+                <div>
+                  <h4 className="text-xl font-bold text-orange-500 mb-4">Jeepers</h4>
+                  <ul className="space-y-2 text-gray-300">
+                    <li>• Starting at $3,999</li>
+                    <li>• Compact 5' x 8' footprint</li>
+                    <li>• Perfect for tight trails</li>
+                    <li>• Lightweight towing</li>
+                    <li>• Essential camping features</li>
+                  </ul>
+                </div>
+                <div>
+                  <h4 className="text-xl font-bold text-orange-500 mb-4">Badlands</h4>
+                  <ul className="space-y-2 text-gray-300">
+                    <li>• Starting at $5,999</li>
+                    <li>• Spacious 6' x 10' design</li>
+                    <li>• Extended off-grid capability</li>
+                    <li>• Premium materials & finish</li>
+                    <li>• Full kitchen & living setup</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* BUILDER TAB */}
         {activeTab === 'builder' && (
           <div className="grid grid-cols-2 gap-2 sm:gap-4 md:gap-6 lg:gap-8" style={{ gridTemplateColumns: '1fr 1.5fr' }}>
             {/* CONFIGURATOR PANEL */}
             <div className="bg-gray-800 rounded-lg p-2 sm:p-3 lg:p-4">
-              <h2 className="text-base sm:text-xl lg:text-2xl font-bold mb-2 lg:mb-4 text-center">Build Your Camper</h2>
+              <div className="text-center mb-2 lg:mb-4">
+                <h2 className="text-base sm:text-xl lg:text-2xl font-bold">Build Your Camper</h2>
+                <p className="text-xs sm:text-sm text-orange-500 font-semibold mt-1">
+                  {camperModel === 'jeepers' ? 'JEEPERS MODEL' : 'BADLANDS MODEL'}
+                </p>
+              </div>
               
               {/* Frame Selection */}
               <div className="mb-3 lg:mb-6">
