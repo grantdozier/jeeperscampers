@@ -378,8 +378,18 @@ const JeepersCampers = () => {
         {/* HOME TAB */}
         {activeTab === 'home' && (
           <div className="max-w-6xl mx-auto">
-            {/* Hero Section */}
+            {/* Hero Section with Logo */}
             <div className="text-center mb-8 lg:mb-12">
+              <div className="flex justify-center mb-6">
+                <img
+                  src={`${process.env.PUBLIC_URL}/images/badland_campers_logo.png`}
+                  alt="Badland Campers Logo"
+                  className="h-32 sm:h-40 lg:h-48 w-auto object-contain"
+                  onError={(e) => {
+                    e.currentTarget.style.display = 'none';
+                  }}
+                />
+              </div>
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-4 text-orange-500">
                 BADLAND CAMPERS
               </h1>
@@ -497,26 +507,65 @@ const JeepersCampers = () => {
               </div>
             </div>
 
+            {/* Adventure Showcase Section */}
+            <div className="grid md:grid-cols-2 gap-6 mb-12">
+              <div className="relative rounded-lg overflow-hidden shadow-2xl group">
+                <img
+                  src={`${process.env.PUBLIC_URL}/images/camper_at_park_with_car.jpeg`}
+                  alt="Camping at the park"
+                  className="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-110"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent flex items-end p-6">
+                  <div>
+                    <h3 className="text-white text-2xl font-bold mb-2">Weekend Getaways</h3>
+                    <p className="text-gray-300">Perfect for family adventures and camping trips</p>
+                  </div>
+                </div>
+              </div>
+              <div className="relative rounded-lg overflow-hidden shadow-2xl group">
+                <img
+                  src={`${process.env.PUBLIC_URL}/images/camper_back_view.jpeg`}
+                  alt="Camper rear view"
+                  className="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-110"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent flex items-end p-6">
+                  <div>
+                    <h3 className="text-white text-2xl font-bold mb-2">Off-Road Ready</h3>
+                    <p className="text-gray-300">Built tough for any terrain you encounter</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             {/* Call to Action Section */}
-            <div className="bg-gray-800 rounded-lg p-8 text-center">
-              <h3 className="text-2xl font-bold mb-4">Ready to Start Your Adventure?</h3>
-              <p className="text-gray-300 mb-6 max-w-2xl mx-auto">
-                Choose your model above and start customizing your perfect off-road camper.
-                Our interactive 3D builder lets you see every option in real-time.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <button
-                  onClick={() => setActiveTab('gallery')}
-                  className="bg-gray-700 hover:bg-gray-600 text-white px-6 py-3 rounded-lg font-bold transition-all duration-200"
-                >
-                  View Gallery
-                </button>
-                <button
-                  onClick={() => setActiveTab('reviews')}
-                  className="bg-gray-700 hover:bg-gray-600 text-white px-6 py-3 rounded-lg font-bold transition-all duration-200"
-                >
-                  Read Reviews
-                </button>
+            <div className="relative rounded-lg overflow-hidden">
+              <div className="absolute inset-0">
+                <img
+                  src={`${process.env.PUBLIC_URL}/images/camper_with_roam_tent.jpeg`}
+                  alt="Camper with tent"
+                  className="w-full h-full object-cover opacity-20"
+                />
+              </div>
+              <div className="relative bg-gray-800/90 backdrop-blur-sm rounded-lg p-8 text-center">
+                <h3 className="text-2xl font-bold mb-4">Ready to Start Your Adventure?</h3>
+                <p className="text-gray-300 mb-6 max-w-2xl mx-auto">
+                  Choose your model above and start customizing your perfect off-road camper.
+                  Our interactive 3D builder lets you see every option in real-time.
+                </p>
+                <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                  <button
+                    onClick={() => setActiveTab('gallery')}
+                    className="bg-gray-700 hover:bg-gray-600 text-white px-6 py-3 rounded-lg font-bold transition-all duration-200"
+                  >
+                    View Gallery
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('reviews')}
+                    className="bg-gray-700 hover:bg-gray-600 text-white px-6 py-3 rounded-lg font-bold transition-all duration-200"
+                  >
+                    Read Reviews
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -524,10 +573,57 @@ const JeepersCampers = () => {
 
         {/* BUILDER TAB */}
         {activeTab === 'builder' && (
-          <div className="grid grid-cols-2 gap-2 sm:gap-4 lg:gap-8">
-            {/* OPTIONS PANEL - Left Side (Scrollable) */}
-            <div className="bg-gray-800 rounded-lg p-1 sm:p-2 lg:p-3 shadow-xl overflow-y-auto" style={{ maxHeight: 'calc(100vh - 120px)' }}>
-              <h2 className="text-xs sm:text-sm lg:text-base font-bold mb-1 sm:mb-2 lg:mb-4 text-center">Build Your Camper</h2>
+          <div>
+            {/* Inspiration Gallery Banner */}
+            <div className="mb-4 lg:mb-6 bg-gray-800 rounded-lg overflow-hidden">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-2 p-2">
+                <div className="relative group cursor-pointer" onClick={() => { setActiveTab('gallery'); setSelectedMedia(4); setShowLightbox(true); }}>
+                  <img
+                    src={`${process.env.PUBLIC_URL}/images/camper_back_view_opened.jpeg`}
+                    alt="Kitchen Setup"
+                    className="w-full h-24 sm:h-32 object-cover rounded transition-transform duration-300 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-black bg-opacity-40 group-hover:bg-opacity-20 transition-all rounded flex items-center justify-center">
+                    <span className="text-white text-xs sm:text-sm font-bold">Kitchen</span>
+                  </div>
+                </div>
+                <div className="relative group cursor-pointer" onClick={() => { setActiveTab('gallery'); setSelectedMedia(2); setShowLightbox(true); }}>
+                  <img
+                    src={`${process.env.PUBLIC_URL}/images/camper_with_roam_tent.jpeg`}
+                    alt="Roof Tent"
+                    className="w-full h-24 sm:h-32 object-cover rounded transition-transform duration-300 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-black bg-opacity-40 group-hover:bg-opacity-20 transition-all rounded flex items-center justify-center">
+                    <span className="text-white text-xs sm:text-sm font-bold">Roof Tent</span>
+                  </div>
+                </div>
+                <div className="relative group cursor-pointer" onClick={() => { setActiveTab('gallery'); setSelectedMedia(5); setShowLightbox(true); }}>
+                  <img
+                    src={`${process.env.PUBLIC_URL}/images/camper_interior.jpeg`}
+                    alt="Interior"
+                    className="w-full h-24 sm:h-32 object-cover rounded transition-transform duration-300 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-black bg-opacity-40 group-hover:bg-opacity-20 transition-all rounded flex items-center justify-center">
+                    <span className="text-white text-xs sm:text-sm font-bold">Interior</span>
+                  </div>
+                </div>
+                <div className="relative group cursor-pointer" onClick={() => { setActiveTab('gallery'); setSelectedMedia(6); setShowLightbox(true); }}>
+                  <img
+                    src={`${process.env.PUBLIC_URL}/images/camper_in_tow.jpeg`}
+                    alt="In Action"
+                    className="w-full h-24 sm:h-32 object-cover rounded transition-transform duration-300 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-black bg-opacity-40 group-hover:bg-opacity-20 transition-all rounded flex items-center justify-center">
+                    <span className="text-white text-xs sm:text-sm font-bold">In Action</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-2 sm:gap-4 lg:gap-8">
+              {/* OPTIONS PANEL - Left Side (Scrollable) */}
+              <div className="bg-gray-800 rounded-lg p-1 sm:p-2 lg:p-3 shadow-xl overflow-y-auto" style={{ maxHeight: 'calc(100vh - 120px)' }}>
+                <h2 className="text-xs sm:text-sm lg:text-base font-bold mb-1 sm:mb-2 lg:mb-4 text-center">Build Your Camper</h2>
 
               {/* Frame Type - Standard Only */}
               <div className="mb-1 sm:mb-2 lg:mb-3">
@@ -1187,6 +1283,7 @@ const JeepersCampers = () => {
               </button>
             </div>
           </div>
+          </div>
         )}
 
         {/* GALLERY TAB */}
@@ -1274,55 +1371,110 @@ const JeepersCampers = () => {
 
         {/* ABOUT TAB */}
         {activeTab === 'about' && (
-          <div className="max-w-4xl mx-auto">
+          <div className="max-w-6xl mx-auto">
             <div className="bg-gray-800 rounded-lg p-8">
               <h2 className="text-3xl font-bold mb-6 text-center">About Badland Campers</h2>
-              
+
+              {/* Main Image Grid */}
               <div className="grid md:grid-cols-2 gap-8 mb-8">
-                <div>
+                <div className="space-y-4">
                   <img
                     src={`${process.env.PUBLIC_URL}/images/camper_at_park_with_car.jpeg`}
-                    alt="Jeepers Campers in action"
-                    className="w-full h-48 object-cover rounded-lg"
+                    alt="Badland Campers at the park"
+                    className="w-full h-64 object-cover rounded-lg shadow-lg"
+                    onError={(e) => {
+                      e.currentTarget.style.display = 'none';
+                    }}
+                  />
+                  <img
+                    src={`${process.env.PUBLIC_URL}/images/camper_in_tow.jpeg`}
+                    alt="Badland Campers in tow"
+                    className="w-full h-48 object-cover rounded-lg shadow-lg"
                     onError={(e) => {
                       e.currentTarget.style.display = 'none';
                     }}
                   />
                 </div>
                 <div className="space-y-4">
-                  <p className="text-gray-300">
-                    At Jeepers Campers, we build adventure-ready trailers that combine durability, 
-                    functionality, and comfort. Each model is hand-crafted for the modern explorer 
+                  <p className="text-gray-300 text-lg">
+                    At Badland Campers, we build adventure-ready trailers that combine durability,
+                    functionality, and comfort. Each model is hand-crafted for the modern explorer
                     who demands quality and reliability on every journey.
                   </p>
                   <p className="text-gray-300">
-                    Our modular design approach allows you to customize your camper exactly to your 
+                    Our modular design approach allows you to customize your camper exactly to your
                     needs, whether you're planning weekend getaways or extended off-grid adventures.
                   </p>
+                  <img
+                    src={`${process.env.PUBLIC_URL}/images/camper_side_view.jpeg`}
+                    alt="Badland Campers side view"
+                    className="w-full h-48 object-cover rounded-lg shadow-lg"
+                    onError={(e) => {
+                      e.currentTarget.style.display = 'none';
+                    }}
+                  />
                 </div>
               </div>
 
-              <div className="grid md:grid-cols-3 gap-6">
-                <div className="text-center">
+              {/* Features Grid */}
+              <div className="grid md:grid-cols-3 gap-6 mb-8">
+                <div className="text-center bg-gray-700 p-6 rounded-lg">
                   <div className="bg-orange-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                     <Truck size={32} />
                   </div>
-                  <h3 className="font-bold mb-2">Built Tough</h3>
+                  <h3 className="font-bold mb-2 text-lg">Built Tough</h3>
                   <p className="text-gray-400 text-sm">Military-grade materials and construction for any terrain</p>
                 </div>
-                <div className="text-center">
+                <div className="text-center bg-gray-700 p-6 rounded-lg">
                   <div className="bg-orange-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                     <Wrench size={32} />
                   </div>
-                  <h3 className="font-bold mb-2">Fully Customizable</h3>
+                  <h3 className="font-bold mb-2 text-lg">Fully Customizable</h3>
                   <p className="text-gray-400 text-sm">Configure every aspect to match your adventure style</p>
                 </div>
-                <div className="text-center">
+                <div className="text-center bg-gray-700 p-6 rounded-lg">
                   <div className="bg-orange-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                     <Home size={32} />
                   </div>
-                  <h3 className="font-bold mb-2">Home Away From Home</h3>
+                  <h3 className="font-bold mb-2 text-lg">Home Away From Home</h3>
                   <p className="text-gray-400 text-sm">Comfort and convenience wherever the road takes you</p>
+                </div>
+              </div>
+
+              {/* Additional Feature Images */}
+              <div className="grid md:grid-cols-3 gap-4">
+                <div className="relative rounded-lg overflow-hidden shadow-lg group">
+                  <img
+                    src={`${process.env.PUBLIC_URL}/images/camper_back_view_opened.jpeg`}
+                    alt="Kitchen fully deployed"
+                    className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-110"
+                  />
+                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-4">
+                    <h4 className="text-white font-bold">Full Kitchen</h4>
+                    <p className="text-gray-300 text-sm">Complete cooking setup</p>
+                  </div>
+                </div>
+                <div className="relative rounded-lg overflow-hidden shadow-lg group">
+                  <img
+                    src={`${process.env.PUBLIC_URL}/images/camper_with_roam_tent.jpeg`}
+                    alt="Roof tent deployed"
+                    className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-110"
+                  />
+                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-4">
+                    <h4 className="text-white font-bold">Roof Top Tent</h4>
+                    <p className="text-gray-300 text-sm">Sleep under the stars</p>
+                  </div>
+                </div>
+                <div className="relative rounded-lg overflow-hidden shadow-lg group">
+                  <img
+                    src={`${process.env.PUBLIC_URL}/images/camper_interior.jpeg`}
+                    alt="Interior space"
+                    className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-110"
+                  />
+                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-4">
+                    <h4 className="text-white font-bold">Premium Interior</h4>
+                    <p className="text-gray-300 text-sm">Comfort and storage</p>
+                  </div>
                 </div>
               </div>
             </div>
