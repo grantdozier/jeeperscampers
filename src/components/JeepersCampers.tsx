@@ -404,7 +404,7 @@ const JeepersCampers = () => {
               >
                 <div className="relative h-64 sm:h-80 bg-gray-900 flex items-center justify-center overflow-hidden">
                   <img
-                    src={`${process.env.PUBLIC_URL}/images/camper_side_view.jpeg`}
+                    src={`${process.env.PUBLIC_URL}/images/camper_alternate_side_view.jpeg`}
                     alt="Badlands Camper"
                     className="w-full h-full object-cover"
                     onError={(e) => {
@@ -455,7 +455,7 @@ const JeepersCampers = () => {
               >
                 <div className="relative h-64 sm:h-80 bg-gray-900 flex items-center justify-center overflow-hidden">
                   <img
-                    src={`${process.env.PUBLIC_URL}/images/camper_alternate_side_view.jpeg`}
+                    src={`${process.env.PUBLIC_URL}/images/jeepers_campers_greg_v2.png`}
                     alt="Jeepers Camper"
                     className="w-full h-full object-cover"
                     onError={(e) => {
