@@ -59,17 +59,17 @@ const CamperConfigurator: React.FC<CamperConfiguratorProps> = ({ config }) => {
     return { x: isoX, y: isoY };
   };
 
-  // Enhanced wheel specifications
+  // Enhanced wheel specifications - BIGGER
   const getWheelSpecs = () => {
     switch (config.wheels) {
       case 'standard':
-        return { radius: 35, treadDepth: 5, rimSize: 24, spokeCount: 6, color: '#2a2a2a' };
+        return { radius: 45, treadDepth: 6, rimSize: 30, spokeCount: 6, color: '#2a2a2a' };
       case 'offroad':
-        return { radius: 38, treadDepth: 8, rimSize: 26, spokeCount: 8, color: '#1a1a1a' };
+        return { radius: 50, treadDepth: 9, rimSize: 34, spokeCount: 8, color: '#1a1a1a' };
       case 'extreme':
-        return { radius: 42, treadDepth: 10, rimSize: 28, spokeCount: 10, color: '#0a0a0a' };
+        return { radius: 55, treadDepth: 12, rimSize: 38, spokeCount: 10, color: '#0a0a0a' };
       default:
-        return { radius: 35, treadDepth: 5, rimSize: 24, spokeCount: 6, color: '#2a2a2a' };
+        return { radius: 45, treadDepth: 6, rimSize: 30, spokeCount: 6, color: '#2a2a2a' };
     }
   };
 
@@ -553,127 +553,180 @@ const CamperConfigurator: React.FC<CamperConfiguratorProps> = ({ config }) => {
         </g>
       )}
 
-      {/* Premium wheels and axle */}
+      {/* Premium wheels and axle - MOVED FORWARD */}
       <g>
         {(() => {
-          const axleX = frameSize.length / 2.3;
-          const wheelY = frameSize.width / 2 + 8;
-          const leftWheel = iso(axleX, -wheelY, 0);
-          const rightWheel = iso(axleX, wheelY, 0);
-          const axleLeft = iso(axleX, -wheelY, 10);
-          const axleRight = iso(axleX, wheelY, 10);
+          const axleX = frameSize.length / 4; // MOVED FORWARD from 2.3 to 4
+          const wheelY = frameSize.width / 2 + 10;
+          const nearWheel = iso(axleX, wheelY, 0); // Near wheel (visible)
+          const farWheel = iso(axleX, -wheelY, 0); // Far wheel (partially hidden)
+          const axleNear = iso(axleX, wheelY, 12);
+          const axleFar = iso(axleX, -wheelY, 12);
 
           return (
             <>
               {/* Axle tube with shadow */}
-              <line x1={axleLeft.x} y1={axleLeft.y + 2} x2={axleRight.x} y2={axleRight.y + 2} stroke="rgba(0,0,0,0.3)" strokeWidth="8" />
-              <line x1={axleLeft.x} y1={axleLeft.y} x2={axleRight.x} y2={axleRight.y} stroke="url(#metalGradient)" strokeWidth="8" />
+              <line x1={axleFar.x} y1={axleFar.y + 2} x2={axleNear.x} y2={axleNear.y + 2} stroke="rgba(0,0,0,0.3)" strokeWidth="10" />
+              <line x1={axleFar.x} y1={axleFar.y} x2={axleNear.x} y2={axleNear.y} stroke="url(#metalGradient)" strokeWidth="10" />
 
-              {/* Left wheel with enhanced details */}
+              {/* Far wheel (left/back) - PARTIALLY HIDDEN, RENDER FIRST */}
+              <g opacity="0.6">
+                {/* Tire shadow */}
+                <ellipse cx={farWheel.x + 2} cy={farWheel.y + 3} rx={wheelSpecs.radius * 0.4} ry={wheelSpecs.radius * 0.4} fill="rgba(0,0,0,0.2)" />
+                {/* Tire - only show partial */}
+                <ellipse cx={farWheel.x} cy={farWheel.y} rx={wheelSpecs.radius * 0.35} ry={wheelSpecs.radius} fill={wheelSpecs.color} stroke="#000" strokeWidth="2" />
+                {/* Rim - only show partial */}
+                <ellipse cx={farWheel.x} cy={farWheel.y} rx={wheelSpecs.rimSize * 0.35} ry={wheelSpecs.rimSize} fill={COLORS.rim} stroke="#000" strokeWidth="2" />
+              </g>
+
+              {/* LEFT/FAR FENDER - covers far wheel */}
+              <g>
+                <path
+                  d={`
+                    M ${iso(axleX - 25, -wheelY - 15, wheelSpecs.radius + 15).x} ${iso(axleX - 25, -wheelY - 15, wheelSpecs.radius + 15).y}
+                    Q ${iso(axleX, -wheelY - 18, wheelSpecs.radius + 20).x} ${iso(axleX, -wheelY - 18, wheelSpecs.radius + 20).y}
+                      ${iso(axleX + 35, -wheelY - 15, wheelSpecs.radius + 15).x} ${iso(axleX + 35, -wheelY - 15, wheelSpecs.radius + 15).y}
+                    L ${iso(axleX + 35, -wheelY + 15, wheelSpecs.radius + 15).x} ${iso(axleX + 35, -wheelY + 15, wheelSpecs.radius + 15).y}
+                    Q ${iso(axleX, -wheelY + 18, wheelSpecs.radius + 20).x} ${iso(axleX, -wheelY + 18, wheelSpecs.radius + 20).y}
+                      ${iso(axleX - 25, -wheelY + 15, wheelSpecs.radius + 15).x} ${iso(axleX - 25, -wheelY + 15, wheelSpecs.radius + 15).y}
+                    Z
+                  `}
+                  fill="url(#panelGradient)"
+                  stroke={COLORS.accent}
+                  strokeWidth="2.5"
+                  opacity="0.95"
+                />
+                {/* Fender detail lines */}
+                <path
+                  d={`
+                    M ${iso(axleX - 20, -wheelY - 10, wheelSpecs.radius + 16).x} ${iso(axleX - 20, -wheelY - 10, wheelSpecs.radius + 16).y}
+                    Q ${iso(axleX, -wheelY - 13, wheelSpecs.radius + 18).x} ${iso(axleX, -wheelY - 13, wheelSpecs.radius + 18).y}
+                      ${iso(axleX + 30, -wheelY - 10, wheelSpecs.radius + 16).x} ${iso(axleX + 30, -wheelY - 10, wheelSpecs.radius + 16).y}
+                  `}
+                  stroke="#666"
+                  strokeWidth="1.5"
+                  fill="none"
+                />
+              </g>
+
+              {/* LEFT/FAR RUNNING BOARD */}
+              <rect
+                x={iso(axleX - 35, -wheelY - 12, 5).x - 40}
+                y={iso(axleX - 35, -wheelY - 12, 5).y - 6}
+                width="150"
+                height="12"
+                rx="2"
+                fill={COLORS.steelLight}
+                stroke="#000"
+                strokeWidth="2"
+              />
+
+              {/* Near wheel (right/front) - FULLY VISIBLE, RENDER ON TOP */}
               <g>
                 {/* Tire shadow */}
-                <ellipse cx={leftWheel.x + 2} cy={leftWheel.y + 3} rx={wheelSpecs.radius + 2} ry={wheelSpecs.radius + 2} fill="rgba(0,0,0,0.3)" />
+                <ellipse cx={nearWheel.x + 3} cy={nearWheel.y + 4} rx={wheelSpecs.radius + 3} ry={wheelSpecs.radius + 3} fill="rgba(0,0,0,0.3)" />
                 {/* Tire */}
-                <circle cx={leftWheel.x} cy={leftWheel.y} r={wheelSpecs.radius} fill={wheelSpecs.color} stroke="#000" strokeWidth="2.5" />
+                <circle cx={nearWheel.x} cy={nearWheel.y} r={wheelSpecs.radius} fill={wheelSpecs.color} stroke="#000" strokeWidth="3" />
                 {/* Tire sidewall detail */}
-                <circle cx={leftWheel.x} cy={leftWheel.y} r={wheelSpecs.radius - 4} fill={COLORS.tireDetail} opacity="0.8" />
+                <circle cx={nearWheel.x} cy={nearWheel.y} r={wheelSpecs.radius - 5} fill={COLORS.tireDetail} opacity="0.8" />
 
                 {/* Aggressive tread pattern */}
-                {Array.from({ length: 24 }).map((_, i) => {
-                  const angle = (i / 24) * Math.PI * 2;
-                  const x1 = leftWheel.x + Math.cos(angle) * (wheelSpecs.radius - 2);
-                  const y1 = leftWheel.y + Math.sin(angle) * (wheelSpecs.radius - 2);
-                  const x2 = leftWheel.x + Math.cos(angle) * (wheelSpecs.radius - wheelSpecs.treadDepth);
-                  const y2 = leftWheel.y + Math.sin(angle) * (wheelSpecs.radius - wheelSpecs.treadDepth);
-                  return <line key={`tread-l-${i}`} x1={x1} y1={y1} x2={x2} y2={y2} stroke="#444" strokeWidth="2.5" />;
+                {Array.from({ length: 28 }).map((_, i) => {
+                  const angle = (i / 28) * Math.PI * 2;
+                  const x1 = nearWheel.x + Math.cos(angle) * (wheelSpecs.radius - 2);
+                  const y1 = nearWheel.y + Math.sin(angle) * (wheelSpecs.radius - 2);
+                  const x2 = nearWheel.x + Math.cos(angle) * (wheelSpecs.radius - wheelSpecs.treadDepth);
+                  const y2 = nearWheel.y + Math.sin(angle) * (wheelSpecs.radius - wheelSpecs.treadDepth);
+                  return <line key={`tread-n-${i}`} x1={x1} y1={y1} x2={x2} y2={y2} stroke="#444" strokeWidth="3" />;
                 })}
 
                 {/* Rim with gradient */}
-                <circle cx={leftWheel.x} cy={leftWheel.y} r={wheelSpecs.rimSize} fill={COLORS.rim} stroke="#000" strokeWidth="2.5" />
-                <circle cx={leftWheel.x} cy={leftWheel.y} r={wheelSpecs.rimSize - 3} fill={COLORS.rimShine} opacity="0.6" />
+                <circle cx={nearWheel.x} cy={nearWheel.y} r={wheelSpecs.rimSize} fill={COLORS.rim} stroke="#000" strokeWidth="3" />
+                <circle cx={nearWheel.x} cy={nearWheel.y} r={wheelSpecs.rimSize - 4} fill={COLORS.rimShine} opacity="0.6" />
 
                 {/* Center cap */}
-                <circle cx={leftWheel.x} cy={leftWheel.y} r="8" fill={COLORS.steel} stroke="#000" strokeWidth="2" />
+                <circle cx={nearWheel.x} cy={nearWheel.y} r="10" fill={COLORS.steel} stroke="#000" strokeWidth="2.5" />
 
                 {/* Spokes */}
                 {Array.from({ length: wheelSpecs.spokeCount }).map((_, i) => {
                   const angle = (i / wheelSpecs.spokeCount) * Math.PI * 2;
-                  const x1 = leftWheel.x + Math.cos(angle) * 8;
-                  const y1 = leftWheel.y + Math.sin(angle) * 8;
-                  const x2 = leftWheel.x + Math.cos(angle) * (wheelSpecs.rimSize - 3);
-                  const y2 = leftWheel.y + Math.sin(angle) * (wheelSpecs.rimSize - 3);
+                  const x1 = nearWheel.x + Math.cos(angle) * 10;
+                  const y1 = nearWheel.y + Math.sin(angle) * 10;
+                  const x2 = nearWheel.x + Math.cos(angle) * (wheelSpecs.rimSize - 4);
+                  const y2 = nearWheel.y + Math.sin(angle) * (wheelSpecs.rimSize - 4);
                   return (
                     <line
-                      key={`spoke-l-${i}`}
+                      key={`spoke-n-${i}`}
                       x1={x1}
                       y1={y1}
                       x2={x2}
                       y2={y2}
                       stroke={COLORS.steel}
-                      strokeWidth="3"
+                      strokeWidth="4"
                     />
                   );
                 })}
               </g>
 
-              {/* Right wheel (mirror of left) */}
+              {/* RIGHT/NEAR FENDER - around near wheel */}
               <g>
-                <ellipse cx={rightWheel.x + 2} cy={rightWheel.y + 3} rx={wheelSpecs.radius + 2} ry={wheelSpecs.radius + 2} fill="rgba(0,0,0,0.3)" />
-                <circle cx={rightWheel.x} cy={rightWheel.y} r={wheelSpecs.radius} fill={wheelSpecs.color} stroke="#000" strokeWidth="2.5" />
-                <circle cx={rightWheel.x} cy={rightWheel.y} r={wheelSpecs.radius - 4} fill={COLORS.tireDetail} opacity="0.8" />
-
-                {Array.from({ length: 24 }).map((_, i) => {
-                  const angle = (i / 24) * Math.PI * 2;
-                  const x1 = rightWheel.x + Math.cos(angle) * (wheelSpecs.radius - 2);
-                  const y1 = rightWheel.y + Math.sin(angle) * (wheelSpecs.radius - 2);
-                  const x2 = rightWheel.x + Math.cos(angle) * (wheelSpecs.radius - wheelSpecs.treadDepth);
-                  const y2 = rightWheel.y + Math.sin(angle) * (wheelSpecs.radius - wheelSpecs.treadDepth);
-                  return <line key={`tread-r-${i}`} x1={x1} y1={y1} x2={x2} y2={y2} stroke="#444" strokeWidth="2.5" />;
-                })}
-
-                <circle cx={rightWheel.x} cy={rightWheel.y} r={wheelSpecs.rimSize} fill={COLORS.rim} stroke="#000" strokeWidth="2.5" />
-                <circle cx={rightWheel.x} cy={rightWheel.y} r={wheelSpecs.rimSize - 3} fill={COLORS.rimShine} opacity="0.6" />
-                <circle cx={rightWheel.x} cy={rightWheel.y} r="8" fill={COLORS.steel} stroke="#000" strokeWidth="2" />
-
-                {Array.from({ length: wheelSpecs.spokeCount }).map((_, i) => {
-                  const angle = (i / wheelSpecs.spokeCount) * Math.PI * 2;
-                  const x1 = rightWheel.x + Math.cos(angle) * 8;
-                  const y1 = rightWheel.y + Math.sin(angle) * 8;
-                  const x2 = rightWheel.x + Math.cos(angle) * (wheelSpecs.rimSize - 3);
-                  const y2 = rightWheel.y + Math.sin(angle) * (wheelSpecs.rimSize - 3);
-                  return (
-                    <line
-                      key={`spoke-r-${i}`}
-                      x1={x1}
-                      y1={y1}
-                      x2={x2}
-                      y2={y2}
-                      stroke={COLORS.steel}
-                      strokeWidth="3"
-                    />
-                  );
-                })}
+                <path
+                  d={`
+                    M ${iso(axleX - 25, wheelY - 15, wheelSpecs.radius + 15).x} ${iso(axleX - 25, wheelY - 15, wheelSpecs.radius + 15).y}
+                    Q ${iso(axleX, wheelY - 18, wheelSpecs.radius + 20).x} ${iso(axleX, wheelY - 18, wheelSpecs.radius + 20).y}
+                      ${iso(axleX + 35, wheelY - 15, wheelSpecs.radius + 15).x} ${iso(axleX + 35, wheelY - 15, wheelSpecs.radius + 15).y}
+                    L ${iso(axleX + 35, wheelY + 15, wheelSpecs.radius + 15).x} ${iso(axleX + 35, wheelY + 15, wheelSpecs.radius + 15).y}
+                    Q ${iso(axleX, wheelY + 18, wheelSpecs.radius + 20).x} ${iso(axleX, wheelY + 18, wheelSpecs.radius + 20).y}
+                      ${iso(axleX - 25, wheelY + 15, wheelSpecs.radius + 15).x} ${iso(axleX - 25, wheelY + 15, wheelSpecs.radius + 15).y}
+                    Z
+                  `}
+                  fill="url(#panelGradient)"
+                  stroke={COLORS.accent}
+                  strokeWidth="2.5"
+                  opacity="0.95"
+                />
+                {/* Fender detail lines */}
+                <path
+                  d={`
+                    M ${iso(axleX - 20, wheelY - 10, wheelSpecs.radius + 16).x} ${iso(axleX - 20, wheelY - 10, wheelSpecs.radius + 16).y}
+                    Q ${iso(axleX, wheelY - 13, wheelSpecs.radius + 18).x} ${iso(axleX, wheelY - 13, wheelSpecs.radius + 18).y}
+                      ${iso(axleX + 30, wheelY - 10, wheelSpecs.radius + 16).x} ${iso(axleX + 30, wheelY - 10, wheelSpecs.radius + 16).y}
+                  `}
+                  stroke="#666"
+                  strokeWidth="1.5"
+                  fill="none"
+                />
               </g>
+
+              {/* RIGHT/NEAR RUNNING BOARD */}
+              <rect
+                x={iso(axleX - 35, wheelY + 12, 5).x - 40}
+                y={iso(axleX - 35, wheelY + 12, 5).y - 6}
+                width="150"
+                height="12"
+                rx="2"
+                fill={COLORS.steelLight}
+                stroke="#000"
+                strokeWidth="2"
+              />
             </>
           );
         })()}
       </g>
 
-      {/* Roof platform */}
-      {config.roofTent && (
-        <path
-          d={`
-            M ${iso(-frameSize.length / 2 + 10, -frameSize.width / 2 + 10, frameSize.height).x} ${iso(-frameSize.length / 2 + 10, -frameSize.width / 2 + 10, frameSize.height).y}
-            L ${iso(frameSize.length / 2 - 10, -frameSize.width / 2 + 10, frameSize.height).x} ${iso(frameSize.length / 2 - 10, -frameSize.width / 2 + 10, frameSize.height).y}
-            L ${iso(frameSize.length / 2 - 10, frameSize.width / 2 - 10, frameSize.height).x} ${iso(frameSize.length / 2 - 10, frameSize.width / 2 - 10, frameSize.height).y}
-            L ${iso(-frameSize.length / 2 + 10, frameSize.width / 2 - 10, frameSize.height).x} ${iso(-frameSize.length / 2 + 10, frameSize.width / 2 - 10, frameSize.height).y}
-            Z
-          `}
-          fill="#3a3a3a"
-          stroke="#000"
-          strokeWidth="2.5"
-        />
-      )}
+      {/* Closed roof top - always present */}
+      <path
+        d={`
+          M ${iso(-frameSize.length / 2, -frameSize.width / 2, frameSize.height).x} ${iso(-frameSize.length / 2, -frameSize.width / 2, frameSize.height).y}
+          L ${iso(frameSize.length / 2, -frameSize.width / 2, frameSize.height).x} ${iso(frameSize.length / 2, -frameSize.width / 2, frameSize.height).y}
+          L ${iso(frameSize.length / 2, frameSize.width / 2, frameSize.height).x} ${iso(frameSize.length / 2, frameSize.width / 2, frameSize.height).y}
+          L ${iso(-frameSize.length / 2, frameSize.width / 2, frameSize.height).x} ${iso(-frameSize.length / 2, frameSize.width / 2, frameSize.height).y}
+          Z
+        `}
+        fill="#3a3a3a"
+        stroke={COLORS.accent}
+        strokeWidth="2.5"
+      />
 
       {/* Roof rack */}
       {config.roofTent && (
@@ -777,43 +830,6 @@ const CamperConfigurator: React.FC<CamperConfiguratorProps> = ({ config }) => {
         </g>
       )}
 
-      {/* Roof access steps */}
-      {config.roofTopAccessSteps && (
-        <>
-          {/* Left side steps */}
-          <g>
-            {[0, 1, 2].map((i) => (
-              <rect
-                key={`step-l-${i}`}
-                x={iso(frameSize.length / 3, -frameSize.width / 2 - 2, (i + 1) * (frameSize.height / 4)).x - 12}
-                y={iso(frameSize.length / 3, -frameSize.width / 2 - 2, (i + 1) * (frameSize.height / 4)).y - 3}
-                width="24"
-                height="6"
-                rx="1"
-                fill={COLORS.steel}
-                stroke="#000"
-                strokeWidth="1.5"
-              />
-            ))}
-          </g>
-          {/* Right side steps */}
-          <g>
-            {[0, 1, 2].map((i) => (
-              <rect
-                key={`step-r-${i}`}
-                x={iso(frameSize.length / 3, frameSize.width / 2 + 2, (i + 1) * (frameSize.height / 4)).x - 12}
-                y={iso(frameSize.length / 3, frameSize.width / 2 + 2, (i + 1) * (frameSize.height / 4)).y - 3}
-                width="24"
-                height="6"
-                rx="1"
-                fill={COLORS.steel}
-                stroke="#000"
-                strokeWidth="1.5"
-              />
-            ))}
-          </g>
-        </>
-      )}
     </svg>
   );
 };
