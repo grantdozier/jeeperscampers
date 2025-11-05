@@ -13,37 +13,50 @@ const JeepersCampers = () => {
 
   const [config, setConfig] = useState({
     frame: 'standard',
-    wheels: 'standard',
-    sidePanels: true,
-    frontPanel: true,
-    rearPanel: false,
-    diamondPlate: true,
-    roofPlatform: true,
-    roofRack: true,
-    roofTent: true,
-    roofLadder: true,
-    rearKitchen: true,
-    propaneTank: true,
-    kitchenCounter: true,
-    sideAccessDoors: true,
-    storageBoxes: true,
-    jerryCanMounts: false,
-    toolBox: false,
-    fenders: true,
-    runningBoards: true,
-    lightingKit: false,
-    solarPanel: false,
-    waterTank: false,
-    batterySystem: false,
+    wheels: 'offroad',
+    breakingHubs: true,
+    // Enclosure options
+    enclosureType: 'dual-door', // 'single-door' or 'dual-door'
+    rearHatch: true,
+    // Kitchen options
+    partitionKitchenCounter: true,
+    kitchenStoveTop: true,
+    kitchenFridge: true,
+    kitchenCabinet: true,
+    kitchenFaucet: true,
+    kitchenDrawers: true,
+    refrigerator: true,
+    // Roof options
+    roofTent: 'premium',
+    // Exterior options
+    diamondPlateFrontExterior: true,
+    diamondPlatePowderCoat: false, // Powder coat options off by default
+    vNoseFrontStorage: true,
+    vNosePowderCoat: false, // Powder coat options off by default
+    fullyArticulatedHitch: true,
+    frontStorageBoxes: true,
+    toolBoxDPlated: true,
+    toolBoxPowderCoat: false, // Powder coat options off by default
+    rearReceiverHitch: true,
+    trailerWiringLights: true,
+    roofTopAccessSteps: true,
+    // Interior options
+    interiorWiringPackage: true,
+    lithiumBattery: true,
+    onboardBatteryCharger: true,
+    redarcCharger: true,
+    interiorLightingPackage: true,
+    tenSpeedFan: true,
+    onboardWaterTank: true,
+    onboardPropaneTank: true,
+    campluxOutdoorShower: true,
+    roamShowerRoom: true,
+    // Interior packages
+    basicInteriorPackage: false,
+    premiumInteriorPackage: true,
   });
 
   const [cart, setCart] = useState<any[]>([]);
-  const [orderForm, setOrderForm] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    address: '',
-  });
 
   const reviews = [
     { id: 1, name: 'Mike T.', rating: 5, comment: 'Took this beauty through the Rockies. Handled like a dream! The build quality is exceptional and it towed perfectly behind my Jeep.', date: '2024-09-15' },
@@ -54,48 +67,91 @@ const JeepersCampers = () => {
   ];
 
   const prices = {
-    minimalist: 3999,
+    // Base frame (only standard now)
     standard: 5999,
-    heavy: 7999,
+    // Wheel packages
     wheels_standard: 800,
     wheels_offroad: 1400,
     wheels_extreme: 2200,
-    sidePanels: 1200,
-    frontPanel: 400,
-    rearPanel: 400,
-    diamondPlate: 600,
-    roofPlatform: 500,
-    roofRack: 400,
-    roofTent: 2500,
-    roofLadder: 300,
-    rearKitchen: 1800,
-    propaneTank: 200,
-    kitchenCounter: 400,
-    sideAccessDoors: 600,
-    storageBoxes: 400,
-    jerryCanMounts: 150,
-    toolBox: 300,
-    fenders: 300,
-    runningBoards: 250,
-    lightingKit: 450,
-    solarPanel: 1200,
-    waterTank: 800,
-    batterySystem: 900,
+    // Breaking hubs
+    breakingHubs: 0, // Price TBD
+    // Enclosure options
+    enclosureType_singleDoor: 1600,
+    enclosureType_dualDoor: 2000,
+    rearHatch: 400,
+    // Kitchen options
+    partitionKitchenCounter: 1200,
+    kitchenStoveTop: 0, // Included with partition
+    kitchenFridge: 0, // Included with partition
+    kitchenCabinet: 0, // Included with partition
+    kitchenFaucet: 0, // Included with partition
+    kitchenDrawers: 300,
+    refrigerator: 500,
+    // Roof tent options (multiple options available)
+    roofTent_basic: 2500,
+    roofTent_premium: 3500,
+    roofTent_luxury: 4500,
+    // Exterior options
+    diamondPlateFrontExterior: 600,
+    diamondPlatePowderCoat: 200,
+    vNoseFrontStorage: 800,
+    vNosePowderCoat: 200,
+    fullyArticulatedHitch: 600,
+    frontStorageBoxes: 400,
+    toolBoxDPlated: 300,
+    toolBoxPowderCoat: 150,
+    rearReceiverHitch: 100,
+    trailerWiringLights: 250,
+    roofTopAccessSteps: 100,
+    // Interior options
+    interiorWiringPackage: 400,
+    lithiumBattery: 800,
+    onboardBatteryCharger: 500,
+    redarcCharger: 600,
+    interiorLightingPackage: 300,
+    tenSpeedFan: 150,
+    onboardWaterTank: 600,
+    onboardPropaneTank: 200,
+    campluxOutdoorShower: 400,
+    roamShowerRoom: 300,
+    // Interior packages
+    basicInteriorPackage: 1000,
+    premiumInteriorPackage: 2500,
   };
 
   const calculatePrice = () => {
-    let total = prices[config.frame as keyof typeof prices] + prices[('wheels_' + config.wheels) as keyof typeof prices];
+    let total = prices.standard + prices[('wheels_' + config.wheels) as keyof typeof prices];
+
+    // Handle enclosure type
+    if (config.enclosureType === 'single-door') {
+      total += prices.enclosureType_singleDoor;
+    } else if (config.enclosureType === 'dual-door') {
+      total += prices.enclosureType_dualDoor;
+    }
+
+    // Handle roof tent
+    if (config.roofTent === 'basic') {
+      total += prices.roofTent_basic;
+    } else if (config.roofTent === 'premium') {
+      total += prices.roofTent_premium;
+    } else if (config.roofTent === 'luxury') {
+      total += prices.roofTent_luxury;
+    }
+
+    // Handle boolean options
     Object.keys(config).forEach((key) => {
       if (config[key as keyof typeof config] === true && prices[key as keyof typeof prices]) {
         total += prices[key as keyof typeof prices];
       }
     });
+
     return total;
   };
 
   const toggleConfig = (key: string) => setConfig((prev) => ({ ...prev, [key]: !prev[key as keyof typeof prev] }));
-  const setFrameType = (frame: string) => setConfig((prev) => ({ ...prev, frame }));
   const setWheelType = (wheels: string) => setConfig((prev) => ({ ...prev, wheels }));
+  const setEnclosureType = (enclosureType: string) => setConfig((prev) => ({ ...prev, enclosureType }));
+  const setRoofTent = (roofTent: string) => setConfig((prev) => ({ ...prev, roofTent }));
 
   const addToCart = () => {
     const item = {
@@ -111,22 +167,29 @@ const JeepersCampers = () => {
 
   const getConfigDisplay = (cfg: any) => {
     const parts = [];
-    parts.push(cfg.frame.charAt(0).toUpperCase() + cfg.frame.slice(1) + ' Frame');
+    parts.push('Standard Frame');
     parts.push(cfg.wheels.charAt(0).toUpperCase() + cfg.wheels.slice(1) + ' Wheels');
-    if (cfg.sidePanels) parts.push('Side Panels');
-    if (cfg.roofTent) parts.push('Roof Tent');
-    if (cfg.rearKitchen) parts.push('Kitchen');
-    if (cfg.solarPanel) parts.push('Solar');
+    if (cfg.enclosureType === 'single-door') parts.push('Single Door Enclosure');
+    if (cfg.enclosureType === 'dual-door') parts.push('Dual Door Enclosure');
+    if (cfg.rearHatch) parts.push('Rear Hatch');
+    if (cfg.partitionKitchenCounter) parts.push('Kitchen Counter');
+    if (cfg.roofTent === 'basic') parts.push('Basic Roof Tent');
+    if (cfg.roofTent === 'premium') parts.push('Premium Roof Tent');
+    if (cfg.roofTent === 'luxury') parts.push('Luxury Roof Tent');
+    if (cfg.basicInteriorPackage) parts.push('Basic Interior');
+    if (cfg.premiumInteriorPackage) parts.push('Premium Interior');
     return parts.join(', ');
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const getFrameDimensions = () => {
     if (config.frame === 'minimalist') return { width: 240, height: 120 };
     if (config.frame === 'standard') return { width: 300, height: 140 };
     return { width: 340, height: 160 };
   };
 
-  const dims = getFrameDimensions();
+  // Dimensions available for future use
+  // const dims = getFrameDimensions();
 
   // Enhanced gallery media data with intuitive labels based on filenames
   const galleryMedia = [
@@ -311,189 +374,34 @@ const JeepersCampers = () => {
       )}
 
       {/* MAIN CONTENT */}
-      <main className="container mx-auto px-4 py-8">
-        {/* HOME TAB */}
-        {activeTab === 'home' && (
-          <div className="max-w-7xl mx-auto">
-            <div className="text-center mb-12">
-              <h1 className="text-4xl md:text-5xl font-bold mb-4">
-                <span className="text-orange-500">BADLAND</span> CAMPERS
-              </h1>
-              <p className="text-xl text-gray-300 mb-2">Choose Your Adventure</p>
-              <p className="text-gray-400">Two legendary models, endless possibilities</p>
-            </div>
-
-            <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
-              {/* JEEPERS MODEL */}
-              <div className="bg-gray-800 rounded-lg overflow-hidden shadow-2xl hover:shadow-orange-500/20 transition-shadow duration-300">
-                <div className="relative">
-                  <img
-                    src={`${process.env.PUBLIC_URL}/images/jeepers_campers_greg_v2.png`}
-                    alt="Jeepers Camper Model"
-                    className="w-full h-64 md:h-80 object-cover"
-                    onError={(e) => {
-                      e.currentTarget.style.display = 'none';
-                    }}
-                  />
-                  <div className="absolute top-4 left-4 bg-orange-500 text-white px-4 py-2 rounded-full font-bold">
-                    JEEPERS
-                  </div>
-                </div>
-                <div className="p-6">
-                  <h2 className="text-2xl font-bold mb-3 text-orange-500">Jeepers Model</h2>
-                  <p className="text-gray-300 mb-4">
-                    The original adventure companion. Compact, rugged, and ready for any trail. 
-                    Perfect for weekend warriors and off-road enthusiasts who demand reliability.
-                  </p>
-                  <ul className="text-gray-400 mb-6 space-y-2">
-                    <li className="flex items-center">
-                      <span className="text-orange-500 mr-2">✓</span>
-                      Lightweight & Maneuverable
-                    </li>
-                    <li className="flex items-center">
-                      <span className="text-orange-500 mr-2">✓</span>
-                      Trail-Ready Design
-                    </li>
-                    <li className="flex items-center">
-                      <span className="text-orange-500 mr-2">✓</span>
-                      Essential Features
-                    </li>
-                  </ul>
-                  <button
-                    onClick={() => {
-                      setCamperModel('jeepers');
-                      setActiveTab('builder');
-                    }}
-                    className="w-full bg-orange-500 hover:bg-orange-600 text-white py-3 px-6 rounded-lg font-bold text-lg transition-colors duration-200 flex items-center justify-center space-x-2"
-                  >
-                    <Wrench size={20} />
-                    <span>Build Jeepers</span>
-                  </button>
-                </div>
-              </div>
-
-              {/* BADLANDS MODEL */}
-              <div className="bg-gray-800 rounded-lg overflow-hidden shadow-2xl hover:shadow-orange-500/20 transition-shadow duration-300">
-                <div className="relative">
-                  <img
-                    src={`${process.env.PUBLIC_URL}/images/camper_alternate_side_view.jpeg`}
-                    alt="Badlands Camper Model"
-                    className="w-full h-64 md:h-80 object-cover"
-                    onError={(e) => {
-                      e.currentTarget.style.display = 'none';
-                    }}
-                  />
-                  <div className="absolute top-4 left-4 bg-orange-500 text-white px-4 py-2 rounded-full font-bold">
-                    BADLANDS
-                  </div>
-                </div>
-                <div className="p-6">
-                  <h2 className="text-2xl font-bold mb-3 text-orange-500">Badlands Model</h2>
-                  <p className="text-gray-300 mb-4">
-                    The ultimate overland machine. Built for extended expeditions with premium features 
-                    and maximum comfort. Your basecamp anywhere adventure takes you.
-                  </p>
-                  <ul className="text-gray-400 mb-6 space-y-2">
-                    <li className="flex items-center">
-                      <span className="text-orange-500 mr-2">✓</span>
-                      Premium Construction
-                    </li>
-                    <li className="flex items-center">
-                      <span className="text-orange-500 mr-2">✓</span>
-                      Extended Living Space
-                    </li>
-                    <li className="flex items-center">
-                      <span className="text-orange-500 mr-2">✓</span>
-                      Full Feature Set
-                    </li>
-                  </ul>
-                  <button
-                    onClick={() => {
-                      setCamperModel('badlands');
-                      setActiveTab('builder');
-                    }}
-                    className="w-full bg-orange-500 hover:bg-orange-600 text-white py-3 px-6 rounded-lg font-bold text-lg transition-colors duration-200 flex items-center justify-center space-x-2"
-                  >
-                    <Wrench size={20} />
-                    <span>Build Badlands</span>
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* COMPARISON SECTION */}
-            <div className="mt-12 bg-gray-800 rounded-lg p-8">
-              <h3 className="text-2xl font-bold text-center mb-8">Model Comparison</h3>
-              <div className="grid md:grid-cols-2 gap-8">
-                <div>
-                  <h4 className="text-xl font-bold text-orange-500 mb-4">Jeepers</h4>
-                  <ul className="space-y-2 text-gray-300">
-                    <li>• Starting at $3,999</li>
-                    <li>• Compact 5' x 8' footprint</li>
-                    <li>• Perfect for tight trails</li>
-                    <li>• Lightweight towing</li>
-                    <li>• Essential camping features</li>
-                  </ul>
-                </div>
-                <div>
-                  <h4 className="text-xl font-bold text-orange-500 mb-4">Badlands</h4>
-                  <ul className="space-y-2 text-gray-300">
-                    <li>• Starting at $5,999</li>
-                    <li>• Spacious 6' x 10' design</li>
-                    <li>• Extended off-grid capability</li>
-                    <li>• Premium materials & finish</li>
-                    <li>• Full kitchen & living setup</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
+      <main className="container mx-auto px-2 sm:px-4 py-2 sm:py-4 lg:py-8">
         {/* BUILDER TAB */}
         {activeTab === 'builder' && (
-          <div className="grid grid-cols-2 gap-2 sm:gap-4 md:gap-6 lg:gap-8" style={{ gridTemplateColumns: '1fr 1.5fr' }}>
-            {/* CONFIGURATOR PANEL */}
-            <div className="bg-gray-800 rounded-lg p-2 sm:p-3 lg:p-4">
-              <div className="text-center mb-2 lg:mb-4">
-                <h2 className="text-base sm:text-xl lg:text-2xl font-bold">Build Your Camper</h2>
-                <p className="text-xs sm:text-sm text-orange-500 font-semibold mt-1">
-                  {camperModel === 'jeepers' ? 'JEEPERS MODEL' : 'BADLANDS MODEL'}
-                </p>
-              </div>
-              
-              {/* Frame Selection */}
-              <div className="mb-3 lg:mb-6">
-                <h3 className="text-sm sm:text-base lg:text-lg font-bold mb-2 lg:mb-3 flex items-center">
-                  <Truck className="mr-1 sm:mr-2 text-orange-500" size={16} />
+          <div className="grid grid-cols-2 gap-2 sm:gap-4 lg:gap-8">
+            {/* OPTIONS PANEL - Left Side (Scrollable) */}
+            <div className="bg-gray-800 rounded-lg p-1 sm:p-2 lg:p-3 shadow-xl overflow-y-auto" style={{ maxHeight: 'calc(100vh - 120px)' }}>
+              <h2 className="text-xs sm:text-sm lg:text-base font-bold mb-1 sm:mb-2 lg:mb-4 text-center">Build Your Camper</h2>
+
+              {/* Frame Type - Standard Only */}
+              <div className="mb-1 sm:mb-2 lg:mb-3">
+                <h3 className="text-xs sm:text-sm lg:text-base font-bold mb-1 sm:mb-2 flex items-center">
+                  <Truck className="mr-1 text-orange-500" size={12} />
                   Frame Type
                 </h3>
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-1 sm:gap-2 lg:gap-3">
-                  {['minimalist', 'standard', 'heavy'].map((frame) => (
-                    <button
-                      key={frame}
-                      onClick={() => setFrameType(frame)}
-                      className={`p-1 sm:p-2 lg:p-3 rounded border-2 transition ${
-                        config.frame === frame
-                          ? 'border-orange-500 bg-orange-500/20'
-                          : 'border-gray-600 hover:border-orange-300'
-                      }`}
-                    >
-                      <div className="text-center">
-                        <div className="font-bold text-xs lg:text-sm capitalize">{frame}</div>
-                        <div className="text-orange-500 text-xs lg:text-sm">
-                          ${prices[frame as keyof typeof prices].toLocaleString()}
-                        </div>
-                      </div>
-                    </button>
-                  ))}
+                <div className="bg-gray-700 p-1 sm:p-2 rounded border-2 border-orange-500">
+                  <div className="text-center">
+                    <div className="font-bold text-xs sm:text-sm lg:text-base">Standard Frame</div>
+                    <div className="text-orange-500 text-xs sm:text-sm lg:text-base">
+                      ${prices.standard.toLocaleString()}
+                    </div>
+                  </div>
                 </div>
               </div>
 
               {/* Wheel Selection */}
-              <div className="mb-3 lg:mb-6">
-                <h3 className="text-sm sm:text-base lg:text-lg font-bold mb-2 lg:mb-3">Wheel Package</h3>
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-1 sm:gap-2 lg:gap-3">
+              <div className="mb-1 sm:mb-2 lg:mb-3">
+                <h3 className="text-xs sm:text-sm lg:text-base font-bold mb-1 sm:mb-2">Wheel Package</h3>
+                <div className="grid grid-cols-1 gap-1 sm:gap-2">
                   {['standard', 'offroad', 'extreme'].map((wheel) => (
                     <button
                       key={wheel}
@@ -505,8 +413,8 @@ const JeepersCampers = () => {
                       }`}
                     >
                       <div className="text-center">
-                        <div className="font-bold text-xs lg:text-sm capitalize">{wheel}</div>
-                        <div className="text-orange-500 text-xs lg:text-sm">
+                        <div className="font-bold text-xs sm:text-sm lg:text-base capitalize">{wheel}</div>
+                        <div className="text-orange-500 text-xs sm:text-sm lg:text-base">
                           ${prices[('wheels_' + wheel) as keyof typeof prices].toLocaleString()}
                         </div>
                       </div>
@@ -515,47 +423,607 @@ const JeepersCampers = () => {
                 </div>
               </div>
 
-              {/* Options Grid */}
-              <div className="mb-3 lg:mb-6">
-                <h3 className="text-sm sm:text-base lg:text-lg font-bold mb-2 lg:mb-3 flex items-center">
-                  <Wrench className="mr-1 sm:mr-2 text-orange-500" size={16} />
-                  Options & Accessories
+              {/* Breaking Hubs */}
+              <div className="mb-1 sm:mb-2 lg:mb-3">
+                <h3 className="text-xs sm:text-sm lg:text-base font-bold mb-1 sm:mb-2">Breaking Hubs</h3>
+                <label className="flex items-center justify-between p-1 sm:p-2 lg:p-3 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition">
+                  <div className="flex items-center">
+                    <input
+                      type="checkbox"
+                      checked={config.breakingHubs}
+                      onChange={() => toggleConfig('breakingHubs')}
+                      className="mr-1 sm:mr-2 w-3 h-3 sm:w-4 sm:h-4 text-orange-500 bg-gray-600 border-gray-500 rounded focus:ring-orange-500"
+                    />
+                    <span className="text-xs sm:text-sm lg:text-base">Breaking Hubs (Trailer Brakes)</span>
+                  </div>
+                </label>
+              </div>
+
+              {/* Enclosure Options */}
+              <div className="mb-1 sm:mb-2 lg:mb-3">
+                <h3 className="text-xs sm:text-sm lg:text-base font-bold mb-1 sm:mb-2 flex items-center">
+                  <Wrench className="mr-1 text-orange-500" size={12} />
+                  Enclosure Options
                 </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-1 sm:gap-2 lg:gap-3">
-                  {Object.entries(prices).filter(([key]) => 
-                    !key.startsWith('wheels_') && !['minimalist', 'standard', 'heavy'].includes(key)
-                  ).map(([key, price]) => (
-                    <label key={key} className="flex items-center justify-between p-1 sm:p-2 lg:p-3 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition">
-                      <div className="flex items-center">
-                        <input
-                          type="checkbox"
-                          checked={config[key as keyof typeof config] as boolean}
-                          onChange={() => toggleConfig(key)}
-                          className="mr-2 w-3 h-3 sm:w-4 sm:h-4 text-orange-500 bg-gray-600 border-gray-500 rounded focus:ring-orange-500"
-                        />
-                        <span className="capitalize text-xs sm:text-sm lg:text-base">{key.replace(/([A-Z])/g, ' $1').trim()}</span>
-                      </div>
-                      <span className="text-orange-500 font-bold text-xs sm:text-sm lg:text-base">${price.toLocaleString()}</span>
-                    </label>
-                  ))}
+                <div className="grid grid-cols-1 gap-1 sm:gap-2">
+                  <button
+                    onClick={() => setEnclosureType('single-door')}
+                    className={`p-1 sm:p-2 lg:p-3 rounded border-2 transition ${
+                      config.enclosureType === 'single-door'
+                        ? 'border-orange-500 bg-orange-500/20'
+                        : 'border-gray-600 hover:border-orange-300'
+                    }`}
+                  >
+                    <div className="flex justify-between items-center">
+                      <span className="font-bold text-xs sm:text-sm lg:text-base">Single Door</span>
+                      <span className="text-orange-500 text-xs sm:text-sm lg:text-base">${prices.enclosureType_singleDoor.toLocaleString()}</span>
+                    </div>
+                  </button>
+                  <button
+                    onClick={() => setEnclosureType('dual-door')}
+                    className={`p-1 sm:p-2 lg:p-3 rounded border-2 transition ${
+                      config.enclosureType === 'dual-door'
+                        ? 'border-orange-500 bg-orange-500/20'
+                        : 'border-gray-600 hover:border-orange-300'
+                    }`}
+                  >
+                    <div className="flex justify-between items-center">
+                      <span className="font-bold text-xs sm:text-sm lg:text-base">Dual Doors</span>
+                      <span className="text-orange-500 text-xs sm:text-sm lg:text-base">${prices.enclosureType_dualDoor.toLocaleString()}</span>
+                    </div>
+                  </button>
                 </div>
               </div>
 
-              {/* Pricing Summary */}
-              <div className="bg-gray-700 rounded-lg p-2 sm:p-3 lg:p-4 mb-3 lg:mb-6">
-                <h3 className="font-bold mb-2 text-sm lg:text-base">Configuration Summary</h3>
+              {/* Rear Hatch */}
+              <div className="mb-1 sm:mb-2 lg:mb-3">
+                <h3 className="text-xs sm:text-sm lg:text-base font-bold mb-1 sm:mb-2">Rear Hatch</h3>
+                <label className="flex items-center justify-between p-1 sm:p-2 lg:p-3 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition">
+                  <div className="flex items-center">
+                    <input
+                      type="checkbox"
+                      checked={config.rearHatch}
+                      onChange={() => toggleConfig('rearHatch')}
+                      className="mr-1 sm:mr-2 w-3 h-3 sm:w-4 sm:h-4 text-orange-500 bg-gray-600 border-gray-500 rounded focus:ring-orange-500"
+                    />
+                    <span className="text-xs sm:text-sm lg:text-base">Rear Hatch</span>
+                  </div>
+                  <span className="text-orange-500 font-bold text-xs sm:text-sm lg:text-base">${prices.rearHatch.toLocaleString()}</span>
+                </label>
+              </div>
+
+              {/* Kitchen Options */}
+              <div className="mb-1 sm:mb-2 lg:mb-3">
+                <h3 className="text-xs sm:text-sm lg:text-base font-bold mb-1 sm:mb-2">Kitchen Options</h3>
+                <div className="space-y-1">
+                  {/* Partition - Kitchen Counter */}
+                  <label className="flex items-center justify-between p-1 sm:p-2 lg:p-3 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition">
+                    <div className="flex items-center">
+                      <input
+                        type="checkbox"
+                        checked={config.partitionKitchenCounter}
+                        onChange={() => {
+                          // Auto-enable sub-options when partition is selected
+                          if (!config.partitionKitchenCounter) {
+                            setConfig((prev) => ({
+                              ...prev,
+                              partitionKitchenCounter: true,
+                              kitchenStoveTop: true,
+                              kitchenFridge: true,
+                              kitchenCabinet: true,
+                              kitchenFaucet: true,
+                            }));
+                          } else {
+                            setConfig((prev) => ({
+                              ...prev,
+                              partitionKitchenCounter: false,
+                              kitchenStoveTop: false,
+                              kitchenFridge: false,
+                              kitchenCabinet: false,
+                              kitchenFaucet: false,
+                            }));
+                          }
+                        }}
+                        className="mr-1 sm:mr-2 w-3 h-3 sm:w-4 sm:h-4 text-orange-500 bg-gray-600 border-gray-500 rounded focus:ring-orange-500"
+                      />
+                      <span className="text-xs sm:text-sm lg:text-base">Kitchen Counter</span>
+                    </div>
+                    <span className="text-orange-500 font-bold text-xs sm:text-sm lg:text-base">${prices.partitionKitchenCounter.toLocaleString()}</span>
+                  </label>
+
+                  {/* Sub-options (toggleable individually) */}
+                  {config.partitionKitchenCounter && (
+                    <div className="ml-2 sm:ml-4 space-y-1">
+                      <label className="flex items-center p-1 bg-gray-600 rounded cursor-pointer hover:bg-gray-500 transition">
+                        <input
+                          type="checkbox"
+                          checked={config.kitchenStoveTop}
+                          onChange={() => toggleConfig('kitchenStoveTop')}
+                          className="mr-1 w-2 h-2 sm:w-3 sm:h-3 text-orange-500 bg-gray-700 border-gray-600 rounded focus:ring-orange-500"
+                        />
+                        <span className="text-xs text-gray-300">Stove Top</span>
+                      </label>
+                      <label className="flex items-center p-1 bg-gray-600 rounded cursor-pointer hover:bg-gray-500 transition">
+                        <input
+                          type="checkbox"
+                          checked={config.kitchenFridge}
+                          onChange={() => toggleConfig('kitchenFridge')}
+                          className="mr-1 w-2 h-2 sm:w-3 sm:h-3 text-orange-500 bg-gray-700 border-gray-600 rounded focus:ring-orange-500"
+                        />
+                        <span className="text-xs text-gray-300">Fridge</span>
+                      </label>
+                      <label className="flex items-center p-1 bg-gray-600 rounded cursor-pointer hover:bg-gray-500 transition">
+                        <input
+                          type="checkbox"
+                          checked={config.kitchenCabinet}
+                          onChange={() => toggleConfig('kitchenCabinet')}
+                          className="mr-1 w-2 h-2 sm:w-3 sm:h-3 text-orange-500 bg-gray-700 border-gray-600 rounded focus:ring-orange-500"
+                        />
+                        <span className="text-xs text-gray-300">Cabinet</span>
+                      </label>
+                      <label className="flex items-center p-1 bg-gray-600 rounded cursor-pointer hover:bg-gray-500 transition">
+                        <input
+                          type="checkbox"
+                          checked={config.kitchenFaucet}
+                          onChange={() => toggleConfig('kitchenFaucet')}
+                          className="mr-1 w-2 h-2 sm:w-3 sm:h-3 text-orange-500 bg-gray-700 border-gray-600 rounded focus:ring-orange-500"
+                        />
+                        <span className="text-xs text-gray-300">Faucet</span>
+                      </label>
+                    </div>
+                  )}
+
+                  {/* Additional Back Hatch Options */}
+                  <label className="flex items-center justify-between p-1 sm:p-2 lg:p-3 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition">
+                    <div className="flex items-center">
+                      <input
+                        type="checkbox"
+                        checked={config.kitchenDrawers}
+                        onChange={() => toggleConfig('kitchenDrawers')}
+                        className="mr-1 sm:mr-2 w-3 h-3 sm:w-4 sm:h-4 text-orange-500 bg-gray-600 border-gray-500 rounded focus:ring-orange-500"
+                      />
+                      <span className="text-xs sm:text-sm lg:text-base">Kitchen Drawers</span>
+                    </div>
+                    <span className="text-orange-500 font-bold text-xs sm:text-sm lg:text-base">${prices.kitchenDrawers.toLocaleString()}</span>
+                  </label>
+
+                  <label className="flex items-center justify-between p-1 sm:p-2 lg:p-3 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition">
+                    <div className="flex items-center">
+                      <input
+                        type="checkbox"
+                        checked={config.refrigerator}
+                        onChange={() => toggleConfig('refrigerator')}
+                        className="mr-1 sm:mr-2 w-3 h-3 sm:w-4 sm:h-4 text-orange-500 bg-gray-600 border-gray-500 rounded focus:ring-orange-500"
+                      />
+                      <span className="text-xs sm:text-sm lg:text-base">Refrigerator</span>
+                    </div>
+                    <span className="text-orange-500 font-bold text-xs sm:text-sm lg:text-base">${prices.refrigerator.toLocaleString()}</span>
+                  </label>
+                </div>
+              </div>
+
+              {/* Roof Tent Options */}
+              <div className="mb-1 sm:mb-2 lg:mb-3">
+                <h3 className="text-xs sm:text-sm lg:text-base font-bold mb-1 sm:mb-2">Roof Tent Options</h3>
+                <div className="grid grid-cols-1 gap-1 sm:gap-2">
+                  <button
+                    onClick={() => setRoofTent(config.roofTent === 'basic' ? '' : 'basic')}
+                    className={`p-1 sm:p-2 lg:p-3 rounded border-2 transition ${
+                      config.roofTent === 'basic'
+                        ? 'border-orange-500 bg-orange-500/20'
+                        : 'border-gray-600 hover:border-orange-300'
+                    }`}
+                  >
+                    <div className="flex justify-between items-center">
+                      <span className="font-bold text-xs sm:text-sm lg:text-base">Basic</span>
+                      <span className="text-orange-500 text-xs sm:text-sm lg:text-base">${prices.roofTent_basic.toLocaleString()}</span>
+                    </div>
+                  </button>
+                  <button
+                    onClick={() => setRoofTent(config.roofTent === 'premium' ? '' : 'premium')}
+                    className={`p-1 sm:p-2 lg:p-3 rounded border-2 transition ${
+                      config.roofTent === 'premium'
+                        ? 'border-orange-500 bg-orange-500/20'
+                        : 'border-gray-600 hover:border-orange-300'
+                    }`}
+                  >
+                    <div className="flex justify-between items-center">
+                      <span className="font-bold text-xs sm:text-sm lg:text-base">Premium</span>
+                      <span className="text-orange-500 text-xs sm:text-sm lg:text-base">${prices.roofTent_premium.toLocaleString()}</span>
+                    </div>
+                  </button>
+                  <button
+                    onClick={() => setRoofTent(config.roofTent === 'luxury' ? '' : 'luxury')}
+                    className={`p-1 sm:p-2 lg:p-3 rounded border-2 transition ${
+                      config.roofTent === 'luxury'
+                        ? 'border-orange-500 bg-orange-500/20'
+                        : 'border-gray-600 hover:border-orange-300'
+                    }`}
+                  >
+                    <div className="flex justify-between items-center">
+                      <span className="font-bold text-xs sm:text-sm lg:text-base">Luxury</span>
+                      <span className="text-orange-500 text-xs sm:text-sm lg:text-base">${prices.roofTent_luxury.toLocaleString()}</span>
+                    </div>
+                  </button>
+                </div>
+              </div>
+
+              {/* Exterior Options */}
+              <div className="mb-1 sm:mb-2 lg:mb-3">
+                <h3 className="text-xs sm:text-sm lg:text-base font-bold mb-1 sm:mb-2">Exterior Options</h3>
+                <div className="space-y-1">
+                  <label className="flex items-center justify-between p-1 sm:p-2 lg:p-3 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition">
+                    <div className="flex items-center">
+                      <input
+                        type="checkbox"
+                        checked={config.diamondPlateFrontExterior}
+                        onChange={() => toggleConfig('diamondPlateFrontExterior')}
+                        className="mr-1 sm:mr-2 w-3 h-3 sm:w-4 sm:h-4 text-orange-500 bg-gray-600 border-gray-500 rounded focus:ring-orange-500"
+                      />
+                      <span className="text-xs sm:text-sm lg:text-base">Diamond Plate</span>
+                    </div>
+                    <span className="text-orange-500 font-bold text-xs sm:text-sm lg:text-base">${prices.diamondPlateFrontExterior.toLocaleString()}</span>
+                  </label>
+
+                  {config.diamondPlateFrontExterior && (
+                    <label className="ml-2 sm:ml-4 flex items-center justify-between p-1 sm:p-2 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition">
+                      <div className="flex items-center">
+                        <input
+                          type="checkbox"
+                          checked={config.diamondPlatePowderCoat}
+                          onChange={() => toggleConfig('diamondPlatePowderCoat')}
+                          className="mr-1 w-2 h-2 sm:w-3 sm:h-3 text-orange-500 bg-gray-600 border-gray-500 rounded focus:ring-orange-500"
+                        />
+                        <span className="text-xs">Powder Coat</span>
+                      </div>
+                      <span className="text-orange-500 font-bold text-xs sm:text-sm">${prices.diamondPlatePowderCoat.toLocaleString()}</span>
+                    </label>
+                  )}
+
+                  <label className="flex items-center justify-between p-1 sm:p-2 lg:p-3 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition">
+                    <div className="flex items-center">
+                      <input
+                        type="checkbox"
+                        checked={config.vNoseFrontStorage}
+                        onChange={() => toggleConfig('vNoseFrontStorage')}
+                        className="mr-1 sm:mr-2 w-3 h-3 sm:w-4 sm:h-4 text-orange-500 bg-gray-600 border-gray-500 rounded focus:ring-orange-500"
+                      />
+                      <span className="text-xs sm:text-sm lg:text-base">V-Nose Storage</span>
+                    </div>
+                    <span className="text-orange-500 font-bold text-xs sm:text-sm lg:text-base">${prices.vNoseFrontStorage.toLocaleString()}</span>
+                  </label>
+
+                  {config.vNoseFrontStorage && (
+                    <label className="ml-2 sm:ml-4 flex items-center justify-between p-1 sm:p-2 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition">
+                      <div className="flex items-center">
+                        <input
+                          type="checkbox"
+                          checked={config.vNosePowderCoat}
+                          onChange={() => toggleConfig('vNosePowderCoat')}
+                          className="mr-1 w-2 h-2 sm:w-3 sm:h-3 text-orange-500 bg-gray-600 border-gray-500 rounded focus:ring-orange-500"
+                        />
+                        <span className="text-xs">Powder Coat</span>
+                      </div>
+                      <span className="text-orange-500 font-bold text-xs sm:text-sm">${prices.vNosePowderCoat.toLocaleString()}</span>
+                    </label>
+                  )}
+
+                  <label className="flex items-center justify-between p-1 sm:p-2 lg:p-3 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition">
+                    <div className="flex items-center">
+                      <input
+                        type="checkbox"
+                        checked={config.fullyArticulatedHitch}
+                        onChange={() => toggleConfig('fullyArticulatedHitch')}
+                        className="mr-1 sm:mr-2 w-3 h-3 sm:w-4 sm:h-4 text-orange-500 bg-gray-600 border-gray-500 rounded focus:ring-orange-500"
+                      />
+                      <span className="text-xs sm:text-sm lg:text-base">Articulated Hitch</span>
+                    </div>
+                    <span className="text-orange-500 font-bold text-xs sm:text-sm lg:text-base">${prices.fullyArticulatedHitch.toLocaleString()}</span>
+                  </label>
+
+                  <label className="flex items-center justify-between p-1 sm:p-2 lg:p-3 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition">
+                    <div className="flex items-center">
+                      <input
+                        type="checkbox"
+                        checked={config.frontStorageBoxes}
+                        onChange={() => toggleConfig('frontStorageBoxes')}
+                        className="mr-1 sm:mr-2 w-3 h-3 sm:w-4 sm:h-4 text-orange-500 bg-gray-600 border-gray-500 rounded focus:ring-orange-500"
+                      />
+                      <span className="text-xs sm:text-sm lg:text-base">Storage Boxes</span>
+                    </div>
+                    <span className="text-orange-500 font-bold text-xs sm:text-sm lg:text-base">${prices.frontStorageBoxes.toLocaleString()}</span>
+                  </label>
+
+                  <label className="flex items-center justify-between p-1 sm:p-2 lg:p-3 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition">
+                    <div className="flex items-center">
+                      <input
+                        type="checkbox"
+                        checked={config.toolBoxDPlated}
+                        onChange={() => toggleConfig('toolBoxDPlated')}
+                        className="mr-1 sm:mr-2 w-3 h-3 sm:w-4 sm:h-4 text-orange-500 bg-gray-600 border-gray-500 rounded focus:ring-orange-500"
+                      />
+                      <span className="text-xs sm:text-sm lg:text-base">Tool Box</span>
+                    </div>
+                    <span className="text-orange-500 font-bold text-xs sm:text-sm lg:text-base">${prices.toolBoxDPlated.toLocaleString()}</span>
+                  </label>
+
+                  {config.toolBoxDPlated && (
+                    <label className="ml-2 sm:ml-4 flex items-center justify-between p-1 sm:p-2 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition">
+                      <div className="flex items-center">
+                        <input
+                          type="checkbox"
+                          checked={config.toolBoxPowderCoat}
+                          onChange={() => toggleConfig('toolBoxPowderCoat')}
+                          className="mr-1 w-2 h-2 sm:w-3 sm:h-3 text-orange-500 bg-gray-600 border-gray-500 rounded focus:ring-orange-500"
+                        />
+                        <span className="text-xs">Powder Coat</span>
+                      </div>
+                      <span className="text-orange-500 font-bold text-xs sm:text-sm">${prices.toolBoxPowderCoat.toLocaleString()}</span>
+                    </label>
+                  )}
+
+                  <label className="flex items-center justify-between p-1 sm:p-2 lg:p-3 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition">
+                    <div className="flex items-center">
+                      <input
+                        type="checkbox"
+                        checked={config.rearReceiverHitch}
+                        onChange={() => toggleConfig('rearReceiverHitch')}
+                        className="mr-1 sm:mr-2 w-3 h-3 sm:w-4 sm:h-4 text-orange-500 bg-gray-600 border-gray-500 rounded focus:ring-orange-500"
+                      />
+                      <span className="text-xs sm:text-sm lg:text-base">Rear Hitch</span>
+                    </div>
+                    <span className="text-orange-500 font-bold text-xs sm:text-sm lg:text-base">${prices.rearReceiverHitch.toLocaleString()}</span>
+                  </label>
+
+                  <label className="flex items-center justify-between p-1 sm:p-2 lg:p-3 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition">
+                    <div className="flex items-center">
+                      <input
+                        type="checkbox"
+                        checked={config.trailerWiringLights}
+                        onChange={() => toggleConfig('trailerWiringLights')}
+                        className="mr-1 sm:mr-2 w-3 h-3 sm:w-4 sm:h-4 text-orange-500 bg-gray-600 border-gray-500 rounded focus:ring-orange-500"
+                      />
+                      <span className="text-xs sm:text-sm lg:text-base">Wiring + Lights</span>
+                    </div>
+                    <span className="text-orange-500 font-bold text-xs sm:text-sm lg:text-base">${prices.trailerWiringLights.toLocaleString()}</span>
+                  </label>
+
+                  <label className="flex items-center justify-between p-1 sm:p-2 lg:p-3 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition">
+                    <div className="flex items-center">
+                      <input
+                        type="checkbox"
+                        checked={config.roofTopAccessSteps}
+                        onChange={() => toggleConfig('roofTopAccessSteps')}
+                        className="mr-1 sm:mr-2 w-3 h-3 sm:w-4 sm:h-4 text-orange-500 bg-gray-600 border-gray-500 rounded focus:ring-orange-500"
+                      />
+                      <span className="text-xs sm:text-sm lg:text-base">Roof Steps</span>
+                    </div>
+                    <span className="text-orange-500 font-bold text-xs sm:text-sm lg:text-base">${prices.roofTopAccessSteps.toLocaleString()}</span>
+                  </label>
+                </div>
+              </div>
+
+              {/* Interior Options */}
+              <div className="mb-1 sm:mb-2 lg:mb-3">
+                <h3 className="text-xs sm:text-sm lg:text-base font-bold mb-1 sm:mb-2">Interior Options</h3>
+                <div className="space-y-1">
+                  <label className="flex items-center justify-between p-1 sm:p-2 lg:p-3 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition">
+                    <div className="flex items-center">
+                      <input
+                        type="checkbox"
+                        checked={config.interiorWiringPackage}
+                        onChange={() => toggleConfig('interiorWiringPackage')}
+                        className="mr-1 sm:mr-2 w-3 h-3 sm:w-4 sm:h-4 text-orange-500 bg-gray-600 border-gray-500 rounded focus:ring-orange-500"
+                      />
+                      <span className="text-xs sm:text-sm lg:text-base">Wiring Package</span>
+                    </div>
+                    <span className="text-orange-500 font-bold text-xs sm:text-sm lg:text-base">${prices.interiorWiringPackage.toLocaleString()}</span>
+                  </label>
+
+                  <label className="flex items-center justify-between p-1 sm:p-2 lg:p-3 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition">
+                    <div className="flex items-center">
+                      <input
+                        type="checkbox"
+                        checked={config.lithiumBattery}
+                        onChange={() => toggleConfig('lithiumBattery')}
+                        className="mr-1 sm:mr-2 w-3 h-3 sm:w-4 sm:h-4 text-orange-500 bg-gray-600 border-gray-500 rounded focus:ring-orange-500"
+                      />
+                      <span className="text-xs sm:text-sm lg:text-base">Lithium Battery</span>
+                    </div>
+                    <span className="text-orange-500 font-bold text-xs sm:text-sm lg:text-base">${prices.lithiumBattery.toLocaleString()}</span>
+                  </label>
+
+                  <label className="flex items-center justify-between p-1 sm:p-2 lg:p-3 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition">
+                    <div className="flex items-center">
+                      <input
+                        type="checkbox"
+                        checked={config.onboardBatteryCharger}
+                        onChange={() => toggleConfig('onboardBatteryCharger')}
+                        className="mr-1 sm:mr-2 w-3 h-3 sm:w-4 sm:h-4 text-orange-500 bg-gray-600 border-gray-500 rounded focus:ring-orange-500"
+                      />
+                      <span className="text-xs sm:text-sm lg:text-base">Battery Charger</span>
+                    </div>
+                    <span className="text-orange-500 font-bold text-xs sm:text-sm lg:text-base">${prices.onboardBatteryCharger.toLocaleString()}</span>
+                  </label>
+
+                  <label className="flex items-center justify-between p-1 sm:p-2 lg:p-3 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition">
+                    <div className="flex items-center">
+                      <input
+                        type="checkbox"
+                        checked={config.redarcCharger}
+                        onChange={() => toggleConfig('redarcCharger')}
+                        className="mr-1 sm:mr-2 w-3 h-3 sm:w-4 sm:h-4 text-orange-500 bg-gray-600 border-gray-500 rounded focus:ring-orange-500"
+                      />
+                      <span className="text-xs sm:text-sm lg:text-base">REDARC Charger</span>
+                    </div>
+                    <span className="text-orange-500 font-bold text-xs sm:text-sm lg:text-base">${prices.redarcCharger.toLocaleString()}</span>
+                  </label>
+
+                  <label className="flex items-center justify-between p-1 sm:p-2 lg:p-3 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition">
+                    <div className="flex items-center">
+                      <input
+                        type="checkbox"
+                        checked={config.interiorLightingPackage}
+                        onChange={() => toggleConfig('interiorLightingPackage')}
+                        className="mr-1 sm:mr-2 w-3 h-3 sm:w-4 sm:h-4 text-orange-500 bg-gray-600 border-gray-500 rounded focus:ring-orange-500"
+                      />
+                      <span className="text-xs sm:text-sm lg:text-base">Lighting Package</span>
+                    </div>
+                    <span className="text-orange-500 font-bold text-xs sm:text-sm lg:text-base">${prices.interiorLightingPackage.toLocaleString()}</span>
+                  </label>
+
+                  <label className="flex items-center justify-between p-1 sm:p-2 lg:p-3 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition">
+                    <div className="flex items-center">
+                      <input
+                        type="checkbox"
+                        checked={config.tenSpeedFan}
+                        onChange={() => toggleConfig('tenSpeedFan')}
+                        className="mr-1 sm:mr-2 w-3 h-3 sm:w-4 sm:h-4 text-orange-500 bg-gray-600 border-gray-500 rounded focus:ring-orange-500"
+                      />
+                      <span className="text-xs sm:text-sm lg:text-base">10 Speed Fan</span>
+                    </div>
+                    <span className="text-orange-500 font-bold text-xs sm:text-sm lg:text-base">${prices.tenSpeedFan.toLocaleString()}</span>
+                  </label>
+
+                  <label className="flex items-center justify-between p-1 sm:p-2 lg:p-3 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition">
+                    <div className="flex items-center">
+                      <input
+                        type="checkbox"
+                        checked={config.onboardWaterTank}
+                        onChange={() => toggleConfig('onboardWaterTank')}
+                        className="mr-1 sm:mr-2 w-3 h-3 sm:w-4 sm:h-4 text-orange-500 bg-gray-600 border-gray-500 rounded focus:ring-orange-500"
+                      />
+                      <span className="text-xs sm:text-sm lg:text-base">Water Tank + Pump</span>
+                    </div>
+                    <span className="text-orange-500 font-bold text-xs sm:text-sm lg:text-base">${prices.onboardWaterTank.toLocaleString()}</span>
+                  </label>
+
+                  <label className="flex items-center justify-between p-1 sm:p-2 lg:p-3 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition">
+                    <div className="flex items-center">
+                      <input
+                        type="checkbox"
+                        checked={config.onboardPropaneTank}
+                        onChange={() => toggleConfig('onboardPropaneTank')}
+                        className="mr-1 sm:mr-2 w-3 h-3 sm:w-4 sm:h-4 text-orange-500 bg-gray-600 border-gray-500 rounded focus:ring-orange-500"
+                      />
+                      <span className="text-xs sm:text-sm lg:text-base">Propane Tank</span>
+                    </div>
+                    <span className="text-orange-500 font-bold text-xs sm:text-sm lg:text-base">${prices.onboardPropaneTank.toLocaleString()}</span>
+                  </label>
+
+                  <label className="flex items-center justify-between p-1 sm:p-2 lg:p-3 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition">
+                    <div className="flex items-center">
+                      <input
+                        type="checkbox"
+                        checked={config.campluxOutdoorShower}
+                        onChange={() => toggleConfig('campluxOutdoorShower')}
+                        className="mr-1 sm:mr-2 w-3 h-3 sm:w-4 sm:h-4 text-orange-500 bg-gray-600 border-gray-500 rounded focus:ring-orange-500"
+                      />
+                      <span className="text-xs sm:text-sm lg:text-base">Outdoor Shower</span>
+                    </div>
+                    <span className="text-orange-500 font-bold text-xs sm:text-sm lg:text-base">${prices.campluxOutdoorShower.toLocaleString()}</span>
+                  </label>
+
+                  <label className="flex items-center justify-between p-1 sm:p-2 lg:p-3 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition">
+                    <div className="flex items-center">
+                      <input
+                        type="checkbox"
+                        checked={config.roamShowerRoom}
+                        onChange={() => toggleConfig('roamShowerRoom')}
+                        className="mr-1 sm:mr-2 w-3 h-3 sm:w-4 sm:h-4 text-orange-500 bg-gray-600 border-gray-500 rounded focus:ring-orange-500"
+                      />
+                      <span className="text-xs sm:text-sm lg:text-base">Shower Room</span>
+                    </div>
+                    <span className="text-orange-500 font-bold text-xs sm:text-sm lg:text-base">${prices.roamShowerRoom.toLocaleString()}</span>
+                  </label>
+                </div>
+              </div>
+
+              {/* Interior Packages */}
+              <div className="mb-1 sm:mb-2 lg:mb-3">
+                <h3 className="text-xs sm:text-sm lg:text-base font-bold mb-1 sm:mb-2">Interior Packages</h3>
+                <div className="space-y-1">
+                  <label className="flex items-start justify-between p-1 sm:p-2 lg:p-3 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition">
+                    <div className="flex items-start">
+                      <input
+                        type="checkbox"
+                        checked={config.basicInteriorPackage}
+                        onChange={() => {
+                          toggleConfig('basicInteriorPackage');
+                          if (!config.basicInteriorPackage && config.premiumInteriorPackage) {
+                            toggleConfig('premiumInteriorPackage');
+                          }
+                        }}
+                        className="mr-1 sm:mr-2 w-3 h-3 sm:w-4 sm:h-4 mt-0.5 text-orange-500 bg-gray-600 border-gray-500 rounded focus:ring-orange-500"
+                      />
+                      <div>
+                        <span className="text-xs sm:text-sm lg:text-base font-bold">Basic</span>
+                        <div className="text-xs text-gray-400">Particle board</div>
+                      </div>
+                    </div>
+                    <span className="text-orange-500 font-bold text-xs sm:text-sm lg:text-base">${prices.basicInteriorPackage.toLocaleString()}</span>
+                  </label>
+
+                  <label className="flex items-start justify-between p-1 sm:p-2 lg:p-3 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition">
+                    <div className="flex items-start">
+                      <input
+                        type="checkbox"
+                        checked={config.premiumInteriorPackage}
+                        onChange={() => {
+                          toggleConfig('premiumInteriorPackage');
+                          if (!config.premiumInteriorPackage && config.basicInteriorPackage) {
+                            toggleConfig('basicInteriorPackage');
+                          }
+                        }}
+                        className="mr-1 sm:mr-2 w-3 h-3 sm:w-4 sm:h-4 mt-0.5 text-orange-500 bg-gray-600 border-gray-500 rounded focus:ring-orange-500"
+                      />
+                      <div>
+                        <span className="text-xs sm:text-sm lg:text-base font-bold">Premium</span>
+                        <div className="text-xs text-gray-400">Cedar/Teak</div>
+                      </div>
+                    </div>
+                    <span className="text-orange-500 font-bold text-xs sm:text-sm lg:text-base">${prices.premiumInteriorPackage.toLocaleString()}</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            {/* VISUAL PREVIEW - Right Side (Sticky) */}
+            <div className="sticky top-2 bg-gray-800 rounded-lg p-1 sm:p-2 lg:p-3 shadow-2xl" style={{ maxHeight: 'calc(100vh - 120px)' }}>
+              <h3 className="text-xs sm:text-sm lg:text-base font-bold mb-1 sm:mb-2 lg:mb-3 text-center text-orange-500">Your Build</h3>
+
+              {/* Interactive 3D Configurator */}
+              <div className="mb-1 sm:mb-2 lg:mb-3 bg-gray-900 rounded-lg p-1 sm:p-2 lg:p-3 shadow-inner" style={{ minHeight: '200px' }}>
+                <CamperConfigurator config={config} />
+              </div>
+
+              {/* Configuration Summary */}
+              <div className="bg-gray-700 rounded-lg p-1 sm:p-2 lg:p-3 mb-1 sm:mb-2 lg:mb-3">
+                <h4 className="font-bold mb-1 sm:mb-2 text-xs sm:text-sm lg:text-base border-b border-gray-600 pb-1">Config</h4>
                 <div className="space-y-1 text-xs sm:text-sm">
                   <div className="flex justify-between">
-                    <span>Frame:</span>
-                    <span className="text-orange-500 capitalize">{config.frame}</span>
+                    <span className="text-gray-300">Frame:</span>
+                    <span className="text-orange-500 font-semibold">Standard</span>
                   </div>
                   <div className="flex justify-between">
-                    <span>Wheels:</span>
-                    <span className="text-orange-500 capitalize">{config.wheels}</span>
+                    <span className="text-gray-300">Wheels:</span>
+                    <span className="text-orange-500 font-semibold capitalize">{config.wheels}</span>
                   </div>
-                  <div className="border-t border-gray-600 pt-2 mt-2">
-                    <div className="flex justify-between font-bold text-sm lg:text-lg">
-                      <span>Total:</span>
+                  {config.enclosureType && (
+                    <div className="flex justify-between">
+                      <span className="text-gray-300">Enclosure:</span>
+                      <span className="text-orange-500 font-semibold">{config.enclosureType === 'single-door' ? 'Single' : 'Dual'}</span>
+                    </div>
+                  )}
+                  {config.roofTent && (
+                    <div className="flex justify-between">
+                      <span className="text-gray-300">Tent:</span>
+                      <span className="text-orange-500 font-semibold capitalize">{config.roofTent}</span>
+                    </div>
+                  )}
+                  <div className="border-t border-gray-600 pt-1 mt-1">
+                    <div className="flex justify-between font-bold text-xs sm:text-sm lg:text-base">
+                      <span className="text-white">Total:</span>
                       <span className="text-orange-500">${calculatePrice().toLocaleString()}</span>
                     </div>
                   </div>
@@ -565,83 +1033,11 @@ const JeepersCampers = () => {
               {/* Add to Cart */}
               <button
                 onClick={addToCart}
-                className="w-full bg-orange-500 hover:bg-orange-600 text-white py-2 sm:py-3 lg:py-4 rounded-lg font-bold text-sm sm:text-base lg:text-xl transition flex items-center justify-center"
+                className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white py-2 sm:py-3 lg:py-4 rounded-lg font-bold text-xs sm:text-sm lg:text-base transition-all duration-200 flex items-center justify-center shadow-lg hover:shadow-xl"
               >
-                <ShoppingCart className="mr-1 sm:mr-2" size={16} />
+                <ShoppingCart className="mr-1 sm:mr-2" size={14} />
                 Add to Cart
               </button>
-            </div>
-
-            {/* VISUAL PREVIEW */}
-            <div className="bg-gray-800 rounded-lg p-2 sm:p-3 lg:p-4 sticky top-4">
-              <h3 className="text-base sm:text-lg lg:text-xl font-bold mb-2 lg:mb-4 text-center">Your Camper Preview</h3>
-              
-              {/* Interactive 3D Configurator */}
-              <div className="mb-2 lg:mb-4 bg-gray-700 rounded-lg p-1 sm:p-2 lg:p-3" style={{ minHeight: '300px' }}>
-                <CamperConfigurator config={config} />
-              </div>
-
-              {/* Configuration Summary */}
-              <div className="bg-gray-700 rounded-lg p-2 lg:p-3 mb-2 lg:mb-3">
-                <h4 className="font-bold mb-2 text-sm lg:text-base">Current Configuration:</h4>
-                <div className="space-y-1 text-xs lg:text-sm">
-                  <div className="flex justify-between">
-                    <span>Frame:</span>
-                    <span className="text-orange-500 capitalize">{config.frame}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Wheels:</span>
-                    <span className="text-orange-500 capitalize">{config.wheels}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Dimensions:</span>
-                    <span className="text-orange-500">{dims.width}" × {dims.height}"</span>
-                  </div>
-                  <div className="border-t border-gray-600 pt-2 mt-2">
-                    <div className="flex justify-between font-bold text-sm lg:text-lg">
-                      <span>Total:</span>
-                      <span className="text-orange-500">${calculatePrice().toLocaleString()}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Image Gallery */}
-              <div className="hidden lg:block">
-                <h4 className="font-bold mb-2 text-sm">Gallery</h4>
-                <div className="grid grid-cols-2 gap-2">
-                  {galleryMedia.map((media, idx) => (
-                    <button
-                      key={idx}
-                      onClick={() => {
-                        setSelectedMedia(idx);
-                        setShowLightbox(true);
-                      }}
-                      className="w-full h-16 object-cover rounded cursor-pointer hover:opacity-80 transition"
-                    >
-                      {media.type === 'image' ? (
-                        <img
-                          src={media.src}
-                          alt={media.title}
-                          className="w-full h-full object-cover"
-                          onError={(e) => {
-                            e.currentTarget.style.display = 'none';
-                          }}
-                        />
-                      ) : (
-                        <video
-                          src={media.src}
-                          title={media.title}
-                          className="w-full h-full object-cover"
-                          onError={(e) => {
-                            e.currentTarget.style.display = 'none';
-                          }}
-                        />
-                      )}
-                    </button>
-                  ))}
-                </div>
-              </div>
             </div>
           </div>
         )}
@@ -805,7 +1201,6 @@ const JeepersCampers = () => {
                 cart={cart}
                 onOrderComplete={() => {
                   setCart([]);
-                  setOrderForm({ name: '', email: '', phone: '', address: '' });
                 }}
                 onBackToBuilder={() => setActiveTab('builder')}
                 getConfigDisplay={getConfigDisplay}
