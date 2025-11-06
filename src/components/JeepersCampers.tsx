@@ -730,7 +730,24 @@ const JeepersCampers = () => {
                     <input
                       type="checkbox"
                       checked={config.rearHatch}
-                      onChange={() => toggleConfig('rearHatch')}
+                      onChange={() => {
+                        // Disable kitchen options when rear hatch is disabled
+                        if (config.rearHatch) {
+                          setConfig((prev) => ({
+                            ...prev,
+                            rearHatch: false,
+                            partitionKitchenCounter: false,
+                            kitchenStoveTop: false,
+                            kitchenFridge: false,
+                            kitchenCabinet: false,
+                            kitchenFaucet: false,
+                            kitchenDrawers: false,
+                            refrigerator: false,
+                          }));
+                        } else {
+                          toggleConfig('rearHatch');
+                        }
+                      }}
                       className="mr-1 sm:mr-2 w-3 h-3 sm:w-4 sm:h-4 text-orange-500 bg-gray-600 border-gray-500 rounded focus:ring-orange-500"
                     />
                     <span className="text-xs sm:text-sm lg:text-base">Rear Hatch</span>
@@ -739,7 +756,8 @@ const JeepersCampers = () => {
                 </label>
               </div>
 
-              {/* Kitchen Options */}
+              {/* Kitchen Options - Only available when Rear Hatch is enabled */}
+              {config.rearHatch && (
               <div className="mb-1 sm:mb-2 lg:mb-3">
                 <h3 className="text-xs sm:text-sm lg:text-base font-bold mb-1 sm:mb-2">Kitchen Options</h3>
                 <div className="space-y-1">
@@ -773,7 +791,7 @@ const JeepersCampers = () => {
                         }}
                         className="mr-1 sm:mr-2 w-3 h-3 sm:w-4 sm:h-4 text-orange-500 bg-gray-600 border-gray-500 rounded focus:ring-orange-500"
                       />
-                      <span className="text-xs sm:text-sm lg:text-base">Kitchen Counter</span>
+                      <span className="text-xs sm:text-sm lg:text-base">Kitchen Partition (splits back in half)</span>
                     </div>
                     <span className="text-orange-500 font-bold text-xs sm:text-sm lg:text-base">${prices.partitionKitchenCounter.toLocaleString()}</span>
                   </label>
@@ -848,6 +866,7 @@ const JeepersCampers = () => {
                   </label>
                 </div>
               </div>
+              )}
 
               {/* Roof Tent Options */}
               <div className="mb-1 sm:mb-2 lg:mb-3">
