@@ -1,15 +1,15 @@
-import React, { useState } from 'react';
-import { ShoppingCart, Star, Menu, X, Wrench, Truck, Home } from 'lucide-react';
-import CamperConfigurator from './CamperConfigurator';
+import React, { useState, useEffect } from 'react';
+import { ShoppingCart, Star, Menu, X, Wrench, Truck, Home, CheckCircle } from 'lucide-react';
 import { OrderForm } from './OrderForm'; // Import the new OrderForm component
+import { PRICES, calculatePrice as computePrice } from '../lib/pricing';
 
 const JeepersCampers = () => {
   const [activeTab, setActiveTab] = useState('home');
-  const [camperModel, setCamperModel] = useState<'jeepers' | 'badlands'>('badlands');
   const [mobileMenu, setMobileMenu] = useState(false);
   const [showCart, setShowCart] = useState(false);
   const [selectedMedia, setSelectedMedia] = useState<number>(0);
   const [showLightbox, setShowLightbox] = useState(false);
+  const [checkoutStatus, setCheckoutStatus] = useState<'success' | 'cancel' | 'verifying' | 'unconfirmed' | null>(null);
 
   const [config, setConfig] = useState({
     frame: 'standard',
@@ -56,7 +56,62 @@ const JeepersCampers = () => {
     premiumInteriorPackage: true,
   });
 
-  const [cart, setCart] = useState<any[]>([]);
+  const [cart, setCart] = useState<any[]>(() => {
+    // Persist the cart so it survives the full-page redirect to Stripe and back
+    // (in-memory state is destroyed by the cross-origin navigation).
+    try {
+      const saved = localStorage.getItem('bc_cart');
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('bc_cart', JSON.stringify(cart));
+    } catch {
+      /* ignore storage errors (private mode / quota) */
+    }
+  }, [cart]);
+
+  // When Stripe redirects the customer back after (or instead of) paying, show the
+  // right confirmation. success_url / cancel_url carry a ?checkout= query param, and
+  // success also carries the Stripe session_id, which we verify server-side before
+  // treating the visit as a genuinely paid confirmation (so a bookmarked/shared
+  // "?checkout=success" URL can't fake it or wipe the cart).
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const status = params.get('checkout');
+    const sessionId = params.get('session_id');
+    if (status === 'success') {
+      setActiveTab('order');
+      window.history.replaceState({}, document.title, window.location.pathname);
+      const apiBase = (process.env.REACT_APP_CHECKOUT_API_BASE || '').trim().replace(/\/+$/, '');
+      if (apiBase && sessionId) {
+        setCheckoutStatus('verifying');
+        fetch(`${apiBase}/api/verify-session?session_id=${encodeURIComponent(sessionId)}`)
+          .then((r) => r.json())
+          .then((d) => {
+            if (d && d.paid) {
+              setCheckoutStatus('success');
+              setCart([]); // clears the persisted cart too (via the persist effect)
+            } else {
+              setCheckoutStatus('unconfirmed');
+            }
+          })
+          .catch(() => setCheckoutStatus('unconfirmed'));
+      } else {
+        // Can't verify (no session id / API base) — show success but keep the cart.
+        setCheckoutStatus('success');
+      }
+    } else if (status === 'cancel') {
+      setCheckoutStatus('cancel');
+      setActiveTab('order');
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const reviews = [
     { id: 1, name: 'Mike T.', rating: 5, comment: 'Took this beauty through the Rockies. Handled like a dream! The build quality is exceptional and it towed perfectly behind my Jeep.', date: '2024-09-15' },
@@ -66,87 +121,13 @@ const JeepersCampers = () => {
     { id: 5, name: 'Dave R.', rating: 5, comment: 'This camper has been to 15 states with us. Rock solid construction and the roof tent is amazing!', date: '2024-05-10' },
   ];
 
-  const prices = {
-    // Base frame (only standard now)
-    standard: 5999,
-    // Wheel packages
-    wheels_standard: 800,
-    wheels_offroad: 1400,
-    wheels_extreme: 2200,
-    // Breaking hubs
-    breakingHubs: 0, // Price TBD
-    // Enclosure options
-    enclosureType_singleDoor: 1600,
-    enclosureType_dualDoor: 2000,
-    rearHatch: 400,
-    // Kitchen options
-    partitionKitchenCounter: 1200,
-    kitchenStoveTop: 0, // Included with partition
-    kitchenFridge: 0, // Included with partition
-    kitchenCabinet: 0, // Included with partition
-    kitchenFaucet: 0, // Included with partition
-    kitchenDrawers: 300,
-    refrigerator: 500,
-    // Roof tent options (multiple options available)
-    roofTent_basic: 2500,
-    roofTent_premium: 3500,
-    roofTent_luxury: 4500,
-    // Exterior options
-    diamondPlateFrontExterior: 600,
-    diamondPlatePowderCoat: 200,
-    vNoseFrontStorage: 800,
-    vNosePowderCoat: 200,
-    fullyArticulatedHitch: 600,
-    frontStorageBoxes: 400,
-    toolBoxDPlated: 300,
-    toolBoxPowderCoat: 150,
-    rearReceiverHitch: 100,
-    trailerWiringLights: 250,
-    roofTopAccessSteps: 100,
-    // Interior options
-    interiorWiringPackage: 400,
-    lithiumBattery: 800,
-    onboardBatteryCharger: 500,
-    redarcCharger: 600,
-    interiorLightingPackage: 300,
-    tenSpeedFan: 150,
-    onboardWaterTank: 600,
-    onboardPropaneTank: 200,
-    campluxOutdoorShower: 400,
-    roamShowerRoom: 300,
-    // Interior packages
-    basicInteriorPackage: 1000,
-    premiumInteriorPackage: 2500,
-  };
+  // Pricing table + calculation now live in a shared, framework-neutral module
+  // (src/lib/pricing.ts) so the Stripe server function recomputes the exact same
+  // total server-side. `prices` is aliased here to keep all existing JSX
+  // references (e.g. prices.standard) working unchanged.
+  const prices = PRICES;
 
-  const calculatePrice = () => {
-    let total = prices.standard + prices[('wheels_' + config.wheels) as keyof typeof prices];
-
-    // Handle enclosure type
-    if (config.enclosureType === 'single-door') {
-      total += prices.enclosureType_singleDoor;
-    } else if (config.enclosureType === 'dual-door') {
-      total += prices.enclosureType_dualDoor;
-    }
-
-    // Handle roof tent
-    if (config.roofTent === 'basic') {
-      total += prices.roofTent_basic;
-    } else if (config.roofTent === 'premium') {
-      total += prices.roofTent_premium;
-    } else if (config.roofTent === 'luxury') {
-      total += prices.roofTent_luxury;
-    }
-
-    // Handle boolean options
-    Object.keys(config).forEach((key) => {
-      if (config[key as keyof typeof config] === true && prices[key as keyof typeof prices]) {
-        total += prices[key as keyof typeof prices];
-      }
-    });
-
-    return total;
-  };
+  const calculatePrice = () => computePrice(config);
 
   const toggleConfig = (key: string) => setConfig((prev) => ({ ...prev, [key]: !prev[key as keyof typeof prev] }));
   const setWheelType = (wheels: string) => setConfig((prev) => ({ ...prev, wheels }));
@@ -398,7 +379,7 @@ const JeepersCampers = () => {
                 />
               </div>
               <p className="text-xl sm:text-2xl text-gray-300 mb-2">
-                Premium Off-Road Trailer Configurator
+                Premium Off-Road Camper Trailers
               </p>
               <p className="text-gray-400 max-w-2xl mx-auto">
                 Design and customize your perfect off-road camper trailer.
@@ -406,12 +387,10 @@ const JeepersCampers = () => {
               </p>
             </div>
 
-            {/* Two Side-by-Side Campers */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 mb-12">
+            <div className="max-w-3xl mx-auto mb-12">
               {/* Badlands Camper */}
               <div
                 onClick={() => {
-                  setCamperModel('badlands');
                   setActiveTab('builder');
                 }}
                 className="bg-gray-800 rounded-lg overflow-hidden cursor-pointer transform transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 border-transparent hover:border-orange-500"
@@ -459,56 +438,6 @@ const JeepersCampers = () => {
                 </div>
               </div>
 
-              {/* Jeepers Camper */}
-              <div
-                onClick={() => {
-                  setCamperModel('jeepers');
-                  setActiveTab('builder');
-                }}
-                className="bg-gray-800 rounded-lg overflow-hidden cursor-pointer transform transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 border-transparent hover:border-orange-500"
-              >
-                <div className="relative h-64 sm:h-80 bg-gray-900 flex items-center justify-center overflow-hidden">
-                  <img
-                    src={`${process.env.PUBLIC_URL}/images/jeepers_campers_greg_v2.png`}
-                    alt="Jeepers Camper"
-                    className="w-full h-full object-cover"
-                    onError={(e) => {
-                      e.currentTarget.style.display = 'none';
-                    }}
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-transparent to-transparent"></div>
-                  <div className="absolute bottom-4 left-4 right-4">
-                    <h2 className="text-3xl font-bold text-white mb-2">JEEPERS</h2>
-                    <p className="text-gray-300 text-sm">Compact & Capable</p>
-                  </div>
-                </div>
-                <div className="p-6">
-                  <p className="text-gray-300 mb-4">
-                    Perfect for weekend warriors and tight trails. All the features you need
-                    in a nimble package.
-                  </p>
-                  <div className="space-y-2 mb-4">
-                    <div className="flex items-center text-sm text-gray-400">
-                      <Truck className="mr-2 text-orange-500" size={16} />
-                      <span>Lightweight Design</span>
-                    </div>
-                    <div className="flex items-center text-sm text-gray-400">
-                      <Wrench className="mr-2 text-orange-500" size={16} />
-                      <span>Essential Options</span>
-                    </div>
-                    <div className="flex items-center text-sm text-gray-400">
-                      <Home className="mr-2 text-orange-500" size={16} />
-                      <span>Comfortable Interior</span>
-                    </div>
-                  </div>
-                  <div className="text-center">
-                    <button className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-lg font-bold transition-all duration-200 w-full">
-                      Build Your Jeepers
-                    </button>
-                    <p className="text-gray-400 text-sm mt-2">Starting at $5,999</p>
-                  </div>
-                </div>
-              </div>
             </div>
 
             {/* Adventure Showcase Section */}
@@ -554,7 +483,7 @@ const JeepersCampers = () => {
                 <h3 className="text-2xl font-bold mb-4">Ready to Start Your Adventure?</h3>
                 <p className="text-gray-300 mb-6 max-w-2xl mx-auto">
                   Choose your model above and start customizing your perfect off-road camper.
-                  Our interactive 3D builder lets you see every option in real-time.
+                  Choose the features that fit your trips and see transparent pricing in real time.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                   <button
@@ -1258,10 +1187,11 @@ const JeepersCampers = () => {
             <div className="sticky top-2 bg-gray-800 rounded-lg p-1 sm:p-2 lg:p-3 shadow-2xl" style={{ maxHeight: 'calc(100vh - 120px)' }}>
               <h3 className="text-xs sm:text-sm lg:text-base font-bold mb-1 sm:mb-2 lg:mb-3 text-center text-orange-500">Your Build</h3>
 
-              {/* Interactive 3D Configurator */}
-              <div className="mb-1 sm:mb-2 lg:mb-3 bg-gray-900 rounded-lg p-1 sm:p-2 lg:p-3 shadow-inner" style={{ minHeight: '200px' }}>
-                <CamperConfigurator config={config} />
-              </div>
+              <img
+                src={`${process.env.PUBLIC_URL}/images/camper_alternate_side_view.jpeg`}
+                alt="Badland camper side view"
+                className="w-full max-h-72 object-cover rounded-lg mb-3"
+              />
 
               {/* Configuration Summary */}
               <div className="bg-gray-700 rounded-lg p-1 sm:p-2 lg:p-3 mb-1 sm:mb-2 lg:mb-3">
@@ -1507,7 +1437,51 @@ const JeepersCampers = () => {
         {/* ORDER TAB */}
         {activeTab === 'order' && (
           <div className="max-w-4xl mx-auto">
-            {cart.length === 0 ? (
+            {checkoutStatus === 'verifying' ? (
+              <div className="bg-gray-800 rounded-lg p-8 text-center">
+                <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-orange-500 mx-auto mb-4"></div>
+                <h2 className="text-2xl font-bold mb-2">Confirming your payment…</h2>
+                <p className="text-gray-400">One moment while we verify your order with Stripe.</p>
+              </div>
+            ) : checkoutStatus === 'unconfirmed' ? (
+              <div className="bg-gray-800 rounded-lg p-8 text-center">
+                <h2 className="text-2xl font-bold mb-3">Thanks — we’re finalizing your payment</h2>
+                <p className="text-gray-300 mb-2">
+                  If your payment went through, you’ll get a confirmation email shortly and we’ll be in touch.
+                  Nothing was charged twice — your build is still saved if you need to try again.
+                </p>
+                <button
+                  onClick={() => {
+                    setCheckoutStatus(null);
+                    setActiveTab('builder');
+                  }}
+                  className="mt-4 bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded font-bold"
+                >
+                  Back to Builder
+                </button>
+              </div>
+            ) : checkoutStatus === 'success' ? (
+              <div className="bg-gray-800 rounded-lg p-8 text-center">
+                <CheckCircle className="mx-auto text-green-500 mb-4" size={64} />
+                <h2 className="text-3xl font-bold text-green-500 mb-3">Payment received — thank you!</h2>
+                <p className="text-gray-300 mb-2">
+                  Your order is confirmed. We’ve emailed a receipt and will contact you within 24 hours to
+                  confirm the details of your build.
+                </p>
+                <p className="text-gray-400 mb-6 text-sm">
+                  If you paid a 50% deposit, we’ll invoice the remaining balance as your build nears completion.
+                </p>
+                <button
+                  onClick={() => {
+                    setCheckoutStatus(null);
+                    setActiveTab('home');
+                  }}
+                  className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded font-bold"
+                >
+                  Back to Home
+                </button>
+              </div>
+            ) : cart.length === 0 ? (
               <div className="bg-gray-800 rounded-lg p-8 text-center">
                 <h2 className="text-2xl font-bold mb-4">Your cart is empty</h2>
                 <p className="text-gray-400 mb-6">Add some campers to your cart before placing an order.</p>
@@ -1519,14 +1493,19 @@ const JeepersCampers = () => {
                 </button>
               </div>
             ) : (
-              <OrderForm
-                cart={cart}
-                onOrderComplete={() => {
-                  setCart([]);
-                }}
-                onBackToBuilder={() => setActiveTab('builder')}
-                getConfigDisplay={getConfigDisplay}
-              />
+              <>
+                {checkoutStatus === 'cancel' && (
+                  <div className="mb-4 bg-yellow-900/30 border border-yellow-700 rounded-lg p-4 text-sm text-yellow-200">
+                    Payment was canceled — no charge was made. Your build is still saved below, so you can try
+                    again whenever you’re ready.
+                  </div>
+                )}
+                <OrderForm
+                  cart={cart}
+                  onBackToBuilder={() => setActiveTab('builder')}
+                  getConfigDisplay={getConfigDisplay}
+                />
+              </>
             )}
           </div>
         )}

@@ -1,0 +1,6 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
+  "buildCommand": "echo 'Functions-only deploy — the website itself is hosted on GitHub Pages'",
+  "outputDirectory": "public"
+}

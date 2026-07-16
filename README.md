@@ -1,4 +1,22 @@
-# Getting Started with Create React App
+# Badland Campers
+
+Customer-facing storefront and option builder for Badland off-road camper trailers. Customers can configure a camper, review transparent pricing, and pay in full or reserve a build with a 50% deposit through Stripe Checkout.
+
+## Local development
+
+1. Run `npm install`.
+2. Copy `.env.example` to `.env.local` and set `REACT_APP_CHECKOUT_API_BASE` to the deployed Vercel project URL.
+3. Run `npm start`.
+
+Use `npm test -- --watchAll=false` for the test suite and `npm run build` for a production build. Stripe/Vercel setup and sandbox test instructions are in [SETUP.md](SETUP.md).
+
+## Deployment
+
+The storefront deploys to GitHub Pages when `main` is pushed. The Stripe API routes in `api/` deploy separately on Vercel and require the environment variables documented in [SETUP.md](SETUP.md).
+
+---
+
+## Create React App reference
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 

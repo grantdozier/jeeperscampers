@@ -1,5 +1,26 @@
 import React, { useState } from 'react';
-import { ShoppingCart, User, Mail, Phone, MapPin, CheckCircle } from 'lucide-react';
+import {
+  ShoppingCart,
+  User,
+  Mail,
+  Phone,
+  MapPin,
+  CreditCard,
+  Clock,
+  ShieldCheck,
+  ChevronDown,
+  ChevronUp,
+  AlertCircle,
+  Info,
+} from 'lucide-react';
+import { calculateDeposit, DEPOSIT_PERCENT } from '../lib/pricing';
+import {
+  DEPOSIT_TERMS,
+  DEPOSIT_TERMS_VERSION,
+  DEPOSIT_TERMS_IS_DRAFT,
+  DEPOSIT_INFO_BULLETS,
+  DEPOSIT_CONSENT_LINE,
+} from '../lib/terms';
 
 interface CartItem {
   id: string;
@@ -9,7 +30,6 @@ interface CartItem {
 
 interface OrderFormProps {
   cart: CartItem[];
-  onOrderComplete: () => void;
   onBackToBuilder: () => void;
   getConfigDisplay: (config: any) => string;
 }
@@ -22,118 +42,147 @@ interface OrderFormData {
   specialRequests: string;
 }
 
-export const OrderForm: React.FC<OrderFormProps> = ({
-  cart,
-  onOrderComplete,
-  onBackToBuilder,
-  getConfigDisplay
-}) => {
+type PaymentMode = 'full' | 'deposit';
+
+// Base URL of the Vercel deployment hosting the /api functions.
+// Set REACT_APP_CHECKOUT_API_BASE at build time (see .env.example).
+const API_BASE = (process.env.REACT_APP_CHECKOUT_API_BASE || '').trim().replace(/\/+$/, '');
+
+const FORMSPREE_URL = 'https://formspree.io/f/xblzbazr';
+
+export const OrderForm: React.FC<OrderFormProps> = ({ cart, onBackToBuilder, getConfigDisplay }) => {
   const [formData, setFormData] = useState<OrderFormData>({
     name: '',
     email: '',
     phone: '',
     address: '',
-    specialRequests: ''
+    specialRequests: '',
   });
-  
+
+  const [paymentMode, setPaymentMode] = useState<PaymentMode>('full');
+  const [termsAccepted, setTermsAccepted] = useState(false);
+  const [showTerms, setShowTerms] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitSuccess, setSubmitSuccess] = useState(false);
+  const [paymentError, setPaymentError] = useState<string | null>(null);
 
   const orderTotal = cart.reduce((sum, item) => sum + item.price, 0);
+  const depositAmount = calculateDeposit(orderTotal);
+  const balanceDue = orderTotal - depositAmount;
+  const amountNow = paymentMode === 'deposit' ? depositAmount : orderTotal;
 
-  const formatOrderDetails = () => {
-    return cart.map((item, index) => {
-      const config = item.config;
-      return `CAMPER #${index + 1}:
-Frame Type: ${config.frame?.charAt(0).toUpperCase() + config.frame?.slice(1)} 
+  const formatOrderDetails = () =>
+    cart
+      .map((item, index) => {
+        const config = item.config;
+        const accessories =
+          Object.entries(config)
+            .filter(([key, value]) => !['frame', 'wheels'].includes(key) && value === true)
+            .map(([key]) => key.replace(/([A-Z])/g, ' $1').replace(/^./, (s) => s.toUpperCase()))
+            .join(', ') || 'None';
+        return `CAMPER #${index + 1}:
+Frame Type: ${config.frame?.charAt(0).toUpperCase() + config.frame?.slice(1)}
 Wheel Package: ${config.wheels?.charAt(0).toUpperCase() + config.wheels?.slice(1)}
-Accessories: ${Object.entries(config)
-  .filter(([key, value]) => !['frame', 'wheels'].includes(key) && value === true)
-  .map(([key]) => key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase()))
-  .join(', ') || 'None'}
+Accessories: ${accessories}
 Price: $${item.price.toLocaleString()}
 `;
-    }).join('\n');
+      })
+      .join('\n');
+
+  // Fire-and-forget lead capture with the FULL configuration (Stripe metadata is
+  // size-limited, so we email the complete build details here before redirecting).
+  const sendPendingNotification = (orderId: string) => {
+    const payload = {
+      _subject: `⏳ PENDING PAYMENT (${paymentMode === 'deposit' ? '50% deposit' : 'full'}) — Badland Campers — ${formData.name} — $${amountNow.toLocaleString()}`,
+      _replyto: formData.email,
+      _cc: 'grant@doziertechgroup.com',
+      company_name: 'Badland Campers',
+      order_id: orderId,
+      payment_mode: paymentMode,
+      customer_name: formData.name,
+      customer_email: formData.email,
+      customer_phone: formData.phone,
+      delivery_address: formData.address,
+      special_requests: formData.specialRequests,
+      order_details: formatOrderDetails(),
+      order_total: `$${orderTotal.toLocaleString()}`,
+      amount_due_now: `$${amountNow.toLocaleString()}`,
+      balance_due_later: paymentMode === 'deposit' ? `$${balanceDue.toLocaleString()}` : '$0',
+      order_count: cart.length,
+      order_timestamp: new Date().toLocaleString(),
+      status: 'Customer sent to Stripe checkout — not yet paid.',
+    };
+    fetch(FORMSPREE_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    }).catch(() => {
+      /* best-effort — never block checkout on the notification */
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+    if (isSubmitting) return; // guard against a fast double-submit before the button disables
+    setPaymentError(null);
+
     if (!formData.name || !formData.email) {
-      alert('Please fill in your name and email address.');
+      setPaymentError('Please enter your name and email address.');
+      return;
+    }
+    if (paymentMode === 'deposit' && !termsAccepted) {
+      setPaymentError('Please read and accept the 50% deposit terms to reserve your build.');
+      setShowTerms(true);
+      return;
+    }
+    if (!API_BASE) {
+      setPaymentError(
+        'Online payment isn’t configured yet. Please contact us at grant@doziertechgroup.com to complete your order.',
+      );
       return;
     }
 
     setIsSubmitting(true);
-
     try {
-      const orderDetails = formatOrderDetails();
-      
-      const response = await fetch('https://formspree.io/f/xblzbazr', {
+      const orderId = `BC-${Date.now()}`;
+
+      const res = await fetch(`${API_BASE}/api/create-checkout`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          // Customer Information
-          customer_name: formData.name,
-          customer_email: formData.email,
-          customer_phone: formData.phone,
-          delivery_address: formData.address,
-          special_requests: formData.specialRequests,
-          
-          // Order Details
-          order_details: orderDetails,
-          order_total: `$${orderTotal.toLocaleString()}`,
-          order_count: cart.length,
-          order_timestamp: new Date().toLocaleString(),
-          
-          // Formspree Configuration
-          _replyto: formData.email,
-          _subject: `New Badland Campers Order - ${formData.name} - $${orderTotal.toLocaleString()}`,
-          _cc: 'grant@doziertechgroup.com',
-          
-          // Email Template Data
-          company_name: 'Badland Campers',
-          order_id: `BC-${Date.now()}`,
+          cart: cart.map((i) => ({ config: i.config })),
+          paymentOption: paymentMode,
+          customer: {
+            name: formData.name,
+            email: formData.email,
+            phone: formData.phone,
+            address: formData.address,
+            specialRequests: formData.specialRequests,
+          },
+          termsAccepted: paymentMode === 'deposit' ? termsAccepted : undefined,
+          termsVersion: DEPOSIT_TERMS_VERSION,
+          orderId,
         }),
       });
 
-      if (response.ok) {
-        setSubmitSuccess(true);
-        setTimeout(() => {
-          onOrderComplete();
-          onBackToBuilder();
-        }, 3000);
-      } else {
-        throw new Error('Failed to submit order');
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.url) {
+        throw new Error(data.error || 'We couldn’t start checkout. Please try again.');
       }
-    } catch (error) {
-      console.error('Order submission error:', error);
-      alert('There was an error submitting your order. Please try again or contact us directly at grant@doziertechgroup.com');
-    } finally {
+
+      // Session created — now send the lead/pending email (with the full config),
+      // then redirect to Stripe's hosted Checkout page. Sending only after success
+      // avoids phantom "pending" emails when checkout creation fails.
+      sendPendingNotification(orderId);
+      window.location.href = data.url;
+    } catch (err: any) {
+      setPaymentError(
+        err?.message || 'There was a problem starting your payment. Please try again or contact us.',
+      );
       setIsSubmitting(false);
     }
   };
 
-  if (submitSuccess) {
-    return (
-      <div className="max-w-2xl mx-auto bg-gray-800 rounded-lg p-8 text-center">
-        <CheckCircle className="mx-auto text-green-500 mb-4" size={64} />
-        <h2 className="text-3xl font-bold text-green-500 mb-4">Order Submitted Successfully!</h2>
-        <p className="text-gray-300 mb-6">
-          Thank you, {formData.name}! Your order for ${orderTotal.toLocaleString()} has been received.
-        </p>
-        <p className="text-gray-400 mb-4">
-          Confirmation emails have been sent to both you and our team.
-          We'll contact you within 24 hours to confirm your order details.
-        </p>
-        <p className="text-sm text-gray-500">
-          Redirecting to builder in a few seconds...
-        </p>
-      </div>
-    );
-  }
+  const payDisabled = isSubmitting || (paymentMode === 'deposit' && !termsAccepted);
 
   return (
     <div className="max-w-4xl mx-auto">
@@ -154,14 +203,140 @@ Price: $${item.price.toLocaleString()}
                 <p className="text-lg font-bold">${item.price.toLocaleString()}</p>
               </div>
             ))}
-            <div className="flex justify-between items-center text-2xl font-bold pt-4">
-              <span>Total:</span>
+            <div className="flex justify-between items-center text-2xl font-bold pt-2">
+              <span>Build Total:</span>
               <span className="text-orange-500">${orderTotal.toLocaleString()}</span>
             </div>
           </div>
         </div>
 
-        {/* Order Form */}
+        {/* Payment option selector */}
+        <div className="mb-6">
+          <h3 className="text-xl font-bold mb-4">Choose how to pay</h3>
+          <div className="grid md:grid-cols-2 gap-4" role="radiogroup" aria-label="Payment option">
+            {/* Pay in full */}
+            <button
+              type="button"
+              role="radio"
+              aria-checked={paymentMode === 'full'}
+              onClick={() => {
+                if (paymentMode !== 'full') {
+                  setPaymentMode('full');
+                  setTermsAccepted(false);
+                }
+              }}
+              className={`text-left p-5 rounded-lg border-2 transition ${
+                paymentMode === 'full'
+                  ? 'border-orange-500 bg-gray-700'
+                  : 'border-gray-600 bg-gray-800 hover:border-gray-500'
+              }`}
+            >
+              <div className="flex items-center mb-2">
+                <CreditCard className="mr-2 text-orange-500" size={20} />
+                <span className="font-bold">Pay in Full</span>
+              </div>
+              <p className="text-2xl font-bold mb-1">${orderTotal.toLocaleString()}</p>
+              <p className="text-sm text-gray-400">
+                Card and other methods. Or <span className="text-orange-400 font-semibold">finance with Affirm</span>{' '}
+                at checkout — subject to approval.
+              </p>
+            </button>
+
+            {/* 50% deposit */}
+            <button
+              type="button"
+              role="radio"
+              aria-checked={paymentMode === 'deposit'}
+              onClick={() => {
+                if (paymentMode !== 'deposit') {
+                  setPaymentMode('deposit');
+                  setTermsAccepted(false);
+                }
+              }}
+              className={`text-left p-5 rounded-lg border-2 transition ${
+                paymentMode === 'deposit'
+                  ? 'border-orange-500 bg-gray-700'
+                  : 'border-gray-600 bg-gray-800 hover:border-gray-500'
+              }`}
+            >
+              <div className="flex items-center mb-2">
+                <Clock className="mr-2 text-orange-500" size={20} />
+                <span className="font-bold">Reserve with {DEPOSIT_PERCENT}% Deposit</span>
+              </div>
+              <p className="text-2xl font-bold mb-1">${depositAmount.toLocaleString()} now</p>
+              <p className="text-sm text-gray-400">
+                Lock in your build. Remaining{' '}
+                <span className="text-gray-200 font-semibold">${balanceDue.toLocaleString()}</span> due within 30
+                days of completion.
+              </p>
+            </button>
+          </div>
+        </div>
+
+        {/* Deposit terms box — required before the deposit path can proceed */}
+        {paymentMode === 'deposit' && (
+          <div className="mb-6 bg-gray-700 rounded-lg border border-gray-600 overflow-hidden">
+            <button
+              type="button"
+              onClick={() => setShowTerms((s) => !s)}
+              className="w-full flex items-center justify-between p-4 text-left"
+            >
+              <span className="flex items-center font-bold">
+                <ShieldCheck className="mr-2 text-orange-500" size={20} />
+                50% Deposit Terms
+              </span>
+              {showTerms ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+            </button>
+
+            <div className="px-4 pb-2">
+              <ul className="space-y-1.5 text-sm text-gray-300">
+                {DEPOSIT_INFO_BULLETS.map((b, i) => (
+                  <li key={i} className="flex">
+                    <span className="text-orange-500 mr-2">•</span>
+                    <span>{b}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {showTerms && (
+              <div className="px-4 pb-4 pt-2 max-h-72 overflow-y-auto border-t border-gray-600 mt-2 space-y-3">
+                {DEPOSIT_TERMS_IS_DRAFT && (
+                  <p className="flex items-start text-xs text-yellow-300 bg-yellow-900/30 rounded p-2">
+                    <Info size={14} className="mr-2 mt-0.5 flex-shrink-0" />
+                    These terms are being finalized. Bracketed items will be confirmed in writing before your
+                    purchase is completed.
+                  </p>
+                )}
+                {DEPOSIT_TERMS.map((section) => (
+                  <div key={section.title}>
+                    <h5 className="font-bold text-sm text-orange-400 mb-1">{section.title}</h5>
+                    <ul className="space-y-1 text-xs text-gray-300">
+                      {section.items.map((item, i) => (
+                        <li key={i} className="flex">
+                          <span className="text-gray-500 mr-2">–</span>
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <label className="flex items-start p-4 border-t border-gray-600 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={termsAccepted}
+                onChange={(e) => setTermsAccepted(e.target.checked)}
+                className="mt-1 mr-3 h-4 w-4 accent-orange-500 flex-shrink-0"
+              />
+              <span className="text-sm text-gray-300">{DEPOSIT_CONSENT_LINE}</span>
+            </label>
+          </div>
+        )}
+
+        {/* Contact / delivery form */}
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid md:grid-cols-2 gap-6">
             <div>
@@ -224,9 +399,7 @@ Price: $${item.price.toLocaleString()}
           </div>
 
           <div>
-            <label className="block text-sm font-bold mb-2">
-              Special Requests or Notes
-            </label>
+            <label className="block text-sm font-bold mb-2">Special Requests or Notes</label>
             <textarea
               value={formData.specialRequests}
               onChange={(e) => setFormData({ ...formData, specialRequests: e.target.value })}
@@ -235,7 +408,18 @@ Price: $${item.price.toLocaleString()}
             />
           </div>
 
-          <div className="flex gap-4">
+          {paymentError && (
+            <div
+              role="alert"
+              aria-live="assertive"
+              className="flex items-start bg-red-900/40 border border-red-700 rounded-lg p-4 text-sm text-red-200"
+            >
+              <AlertCircle size={18} className="mr-2 mt-0.5 flex-shrink-0" />
+              <span>{paymentError}</span>
+            </div>
+          )}
+
+          <div className="flex flex-col sm:flex-row gap-4">
             <button
               type="button"
               onClick={onBackToBuilder}
@@ -243,32 +427,32 @@ Price: $${item.price.toLocaleString()}
             >
               Back to Builder
             </button>
-            
+
             <button
               type="submit"
-              disabled={isSubmitting}
-              className="flex-1 bg-orange-500 hover:bg-orange-600 disabled:bg-orange-300 text-white py-4 rounded-lg font-bold text-lg transition flex items-center justify-center"
+              disabled={payDisabled}
+              className="flex-1 bg-orange-500 hover:bg-orange-600 disabled:bg-orange-500/40 disabled:cursor-not-allowed text-white py-4 rounded-lg font-bold text-lg transition flex items-center justify-center"
             >
               {isSubmitting ? (
                 <>
                   <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                  Submitting Order...
+                  Redirecting to secure checkout...
                 </>
               ) : (
                 <>
-                  <ShoppingCart className="mr-2" size={20} />
-                  Submit Order - ${orderTotal.toLocaleString()}
+                  <CreditCard className="mr-2" size={20} />
+                  {paymentMode === 'deposit'
+                    ? `Pay ${DEPOSIT_PERCENT}% Deposit — $${depositAmount.toLocaleString()}`
+                    : `Pay in Full — $${orderTotal.toLocaleString()}`}
                 </>
               )}
             </button>
           </div>
         </form>
 
-        <div className="mt-6 p-4 bg-gray-700 rounded-lg">
-          <p className="text-sm text-gray-400 text-center">
-            By submitting this order, you agree to be contacted by Badland Campers regarding your purchase.
-            We'll send confirmation emails to both you and our team for your records.
-          </p>
+        <div className="mt-6 flex items-center justify-center text-sm text-gray-400">
+          <ShieldCheck size={16} className="mr-2 text-gray-500" />
+          Secure payment processed by Stripe. You’ll be redirected to complete your purchase.
         </div>
       </div>
     </div>
