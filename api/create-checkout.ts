@@ -228,6 +228,15 @@ async function handler(request: Request): Promise<Response> {
     client_reference_id: orderId,
     metadata,
     payment_intent_data: { description: lineName, metadata },
+    invoice_creation: {
+      enabled: true,
+      invoice_data: {
+        description: lineDescription,
+        footer:
+          'Badland Campers • Veteran owned • Questions? Call or text Matt at (843) 540-8503.',
+        metadata,
+      },
+    },
     success_url: `${siteBase}/?checkout=success&session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${siteBase}/?checkout=cancel`,
   };

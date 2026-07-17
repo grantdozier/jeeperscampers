@@ -12,6 +12,9 @@ import {
   ChevronUp,
   AlertCircle,
   Info,
+  Lock,
+  FileText,
+  CheckCircle,
 } from 'lucide-react';
 import { calculateDeposit, DEPOSIT_PERCENT } from '../lib/pricing';
 import {
@@ -187,16 +190,37 @@ Price: $${item.price.toLocaleString()}
   const payDisabled = isSubmitting || (paymentMode === 'deposit' && !termsAccepted);
 
   return (
-    <div className="max-w-4xl mx-auto">
-      <div className="bg-gray-800 rounded-lg p-6 mb-6">
-        <h2 className="text-2xl font-bold mb-6 flex items-center">
-          <ShoppingCart className="mr-3 text-orange-500" size={28} />
-          Complete Your Order
-        </h2>
+    <div className="mx-auto max-w-6xl">
+      <div className="mb-6 overflow-hidden rounded-2xl border border-gray-700 bg-gray-900 p-5 shadow-2xl sm:p-8">
+        <div className="mb-8 rounded-xl border border-gray-700 bg-gradient-to-r from-orange-500/15 via-gray-900 to-gray-900 p-6 sm:p-8">
+          <p className="mb-2 text-xs font-black uppercase tracking-[0.24em] text-orange-400">Secure checkout</p>
+          <h2 className="flex items-center text-3xl font-black sm:text-4xl">
+            <ShoppingCart className="mr-3 text-orange-500" size={32} />
+            Complete Your Order
+          </h2>
+          <p className="mt-3 max-w-2xl text-gray-300">
+            Review your build, choose how you want to pay, and finish securely through Stripe.
+          </p>
+          <div className="mt-6 grid gap-3 text-sm sm:grid-cols-3">
+            {[
+              [CheckCircle, '1. Build reviewed'],
+              [CreditCard, '2. Choose payment'],
+              [Lock, '3. Pay securely'],
+            ].map(([Icon, label]: any) => (
+              <div key={label} className="flex items-center rounded-lg border border-gray-700 bg-black/20 px-4 py-3 font-bold text-gray-200">
+                <Icon className="mr-2 text-orange-400" size={18} />
+                {label}
+              </div>
+            ))}
+          </div>
+        </div>
 
         {/* Order Summary */}
-        <div className="bg-gray-700 rounded-lg p-6 mb-6">
-          <h3 className="text-xl font-bold mb-4">Order Summary</h3>
+        <div className="mb-8 rounded-xl border border-gray-700 bg-gray-800 p-5 sm:p-6">
+          <h3 className="mb-4 flex items-center text-xl font-black">
+            <FileText className="mr-2 text-orange-400" size={21} />
+            Build summary
+          </h3>
           <div className="space-y-4">
             {cart.map((item, index) => (
               <div key={item.id} className="border-b border-gray-600 pb-4">
@@ -213,8 +237,11 @@ Price: $${item.price.toLocaleString()}
         </div>
 
         {/* Payment option selector */}
-        <div className="mb-6">
-          <h3 className="text-xl font-bold mb-4">Choose how to pay</h3>
+        <div className="mb-8">
+          <div className="mb-4">
+            <h3 className="text-xl font-black">Choose how to pay</h3>
+            <p className="mt-1 text-sm text-gray-400">Your selection determines the amount collected today.</p>
+          </div>
           <div className="grid md:grid-cols-2 gap-4" role="radiogroup" aria-label="Payment option">
             {/* Pay in full */}
             <button
@@ -264,6 +291,9 @@ Price: $${item.price.toLocaleString()}
               <div className="flex items-center mb-2">
                 <Clock className="mr-2 text-orange-500" size={20} />
                 <span className="font-bold">Reserve with {DEPOSIT_PERCENT}% Deposit</span>
+                <span className="ml-auto rounded-full bg-orange-500/20 px-2 py-1 text-[10px] font-black uppercase tracking-wider text-orange-300">
+                  Build reservation
+                </span>
               </div>
               <p className="text-2xl font-bold mb-1">${depositAmount.toLocaleString()} now</p>
               <p className="text-sm text-gray-400">
@@ -272,6 +302,10 @@ Price: $${item.price.toLocaleString()}
                 days of completion.
               </p>
             </button>
+          </div>
+          <div className="mt-4 flex items-start rounded-lg border border-blue-400/20 bg-blue-400/10 p-4 text-sm text-blue-100">
+            <Info className="mr-2 mt-0.5 shrink-0 text-blue-300" size={17} />
+            Financing options shown by Stripe, including Affirm when eligible, are offered by third parties and are subject to approval and their terms.
           </div>
         </div>
 
@@ -339,7 +373,11 @@ Price: $${item.price.toLocaleString()}
         )}
 
         {/* Contact / delivery form */}
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-6 rounded-xl border border-gray-700 bg-gray-800 p-5 sm:p-6">
+          <div>
+            <h3 className="text-xl font-black">Contact and delivery details</h3>
+            <p className="mt-1 text-sm text-gray-400">We use this information to confirm your build and coordinate next steps.</p>
+          </div>
           <div className="grid md:grid-cols-2 gap-6">
             <div>
               <label className="block text-sm font-bold mb-2 flex items-center">
@@ -421,7 +459,7 @@ Price: $${item.price.toLocaleString()}
             </div>
           )}
 
-          <div className="flex flex-col sm:flex-row gap-4">
+          <div className="flex flex-col-reverse gap-4 border-t border-gray-700 pt-6 sm:flex-row">
             <button
               type="button"
               onClick={onBackToBuilder}
@@ -433,7 +471,7 @@ Price: $${item.price.toLocaleString()}
             <button
               type="submit"
               disabled={payDisabled}
-              className="flex-1 bg-orange-500 hover:bg-orange-600 disabled:bg-orange-500/40 disabled:cursor-not-allowed text-white py-4 rounded-lg font-bold text-lg transition flex items-center justify-center"
+              className="flex-[1.35] bg-orange-500 hover:bg-orange-600 disabled:bg-orange-500/40 disabled:cursor-not-allowed text-white py-4 rounded-lg font-black text-lg transition flex items-center justify-center shadow-lg shadow-orange-950/30"
             >
               {isSubmitting ? (
                 <>
@@ -451,6 +489,11 @@ Price: $${item.price.toLocaleString()}
             </button>
           </div>
         </form>
+
+        <div className="mx-auto mt-6 max-w-3xl rounded-lg border border-gray-700 bg-black/20 p-4 text-center text-xs leading-relaxed text-gray-400">
+          Prices exclude applicable taxes, title, registration, government charges, freight, and delivery unless stated otherwise.
+          Your selected configuration and accepted deposit terms control the order. Completing payment authorizes the selected charge.
+        </div>
 
         <div className="mt-6 flex items-center justify-center text-sm text-gray-400">
           <ShieldCheck size={16} className="mr-2 text-gray-500" />
