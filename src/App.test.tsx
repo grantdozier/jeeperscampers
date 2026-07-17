@@ -8,6 +8,8 @@ test('renders the Badland Campers storefront', () => {
   expect(screen.getByText(/premium off-road camper trailers/i)).toBeInTheDocument();
   expect(screen.getByRole('button', { name: /build the buffalo/i })).toBeInTheDocument();
   expect(screen.getByRole('button', { name: /build the goat/i })).toBeInTheDocument();
+  expect(screen.getByText(/save 10% on roam gear/i)).toBeInTheDocument();
+  expect(screen.queryByRole('button', { name: /reviews/i })).not.toBeInTheDocument();
 
   fireEvent.click(screen.getByRole('button', { name: /build the buffalo/i }));
   expect(window.scrollTo).toHaveBeenLastCalledWith({ top: 0, left: 0, behavior: 'smooth' });

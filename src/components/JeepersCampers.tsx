@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ShoppingCart, Star, Menu, X, Wrench, Truck, Home, CheckCircle } from 'lucide-react';
+import { ShoppingCart, Menu, X, Wrench, Truck, Home, CheckCircle } from 'lucide-react';
 import { OrderForm } from './OrderForm'; // Import the new OrderForm component
 import ContactForm from './ContactForm';
 import {
@@ -137,14 +137,6 @@ const JeepersCampers = () => {
     window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
     document.getElementById('page-content')?.focus({ preventScroll: true });
   }, [activeTab]);
-
-  const reviews = [
-    { id: 1, name: 'Mike T.', rating: 5, comment: 'Took this beauty through the Rockies. Handled like a dream! The build quality is exceptional and it towed perfectly behind my Jeep.', date: '2024-09-15' },
-    { id: 2, name: 'Sarah K.', rating: 5, comment: 'Perfect for weekend adventures. The kitchen setup is genius! Love how everything folds out so smoothly.', date: '2024-08-22' },
-    { id: 3, name: 'John D.', rating: 4, comment: 'Great build quality. Only wish it came with more storage options. But overall very happy with the purchase.', date: '2024-07-30' },
-    { id: 4, name: 'Lisa M.', rating: 5, comment: 'Worth every penny. Customer service was excellent too! They helped customize exactly what we needed.', date: '2024-06-18' },
-    { id: 5, name: 'Dave R.', rating: 5, comment: 'This camper has been to 15 states with us. Rock solid construction and the roof tent is amazing!', date: '2024-05-10' },
-  ];
 
   // Pricing table + calculation now live in a shared, framework-neutral module
   // (src/lib/pricing.ts) so the Stripe server function recomputes the exact same
@@ -312,7 +304,7 @@ const JeepersCampers = () => {
             />
           </div>
           <nav className="hidden md:flex space-x-6">
-            {['home', 'builder', 'reviews', 'gallery', 'about'].map((tab) => (
+            {['home', 'builder', 'gallery', 'about'].map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
@@ -340,7 +332,7 @@ const JeepersCampers = () => {
         </div>
         {mobileMenu && (
           <nav className="md:hidden mt-4 flex flex-col space-y-2 px-4 pb-4">
-            {['home', 'builder', 'reviews', 'gallery', 'about'].map((tab) => (
+            {['home', 'builder', 'gallery', 'about'].map((tab) => (
               <button
                 key={tab}
                 onClick={() => {
@@ -359,7 +351,7 @@ const JeepersCampers = () => {
       {/* Mobile Navigation - Always Visible */}
       <nav className="md:hidden bg-gray-700 px-4 py-2">
         <div className="flex space-x-1 overflow-x-auto">
-          {['home', 'builder', 'gallery', 'reviews', 'about'].map((tab) => (
+          {['home', 'builder', 'gallery', 'about'].map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
@@ -510,6 +502,25 @@ const JeepersCampers = () => {
               </div>
             </section>
 
+            <section className="mb-12 overflow-hidden rounded-2xl border border-orange-500/40 bg-gradient-to-r from-orange-500/15 via-gray-900 to-gray-900 p-6 shadow-xl sm:p-8">
+              <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+                <div className="max-w-3xl">
+                  <p className="mb-2 text-sm font-black uppercase tracking-[0.24em] text-orange-400">ROAM Partner Gear</p>
+                  <h2 className="text-3xl font-black text-white sm:text-4xl">Save 10% on ROAM gear.</h2>
+                  <p className="mt-3 leading-relaxed text-gray-300">
+                    Outfit your camper through Badland Campers and receive 10% off eligible ROAM Adventure Co. gear.
+                    The direct affiliate checkout link is coming soon; contact Matt in the meantime to order at the partner rate.
+                  </p>
+                </div>
+                <button
+                  onClick={() => setActiveTab('builder')}
+                  className="shrink-0 rounded-lg bg-orange-500 px-6 py-3 font-black text-white transition hover:bg-orange-600"
+                >
+                  Explore ROAM Options
+                </button>
+              </div>
+            </section>
+
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 mb-12">
               {/* The Buffalo */}
               <div
@@ -655,20 +666,12 @@ const JeepersCampers = () => {
                   Choose your model above and start customizing your perfect off-road camper.
                   Choose the features that fit your trips and see transparent pricing in real time.
                 </p>
-                <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                  <button
-                    onClick={() => setActiveTab('gallery')}
-                    className="bg-gray-700 hover:bg-gray-600 text-white px-6 py-3 rounded-lg font-bold transition-all duration-200"
-                  >
-                    View Gallery
-                  </button>
-                  <button
-                    onClick={() => setActiveTab('reviews')}
-                    className="bg-gray-700 hover:bg-gray-600 text-white px-6 py-3 rounded-lg font-bold transition-all duration-200"
-                  >
-                    Read Reviews
-                  </button>
-                </div>
+                <button
+                  onClick={() => setActiveTab('gallery')}
+                  className="bg-gray-700 hover:bg-gray-600 text-white px-6 py-3 rounded-lg font-bold transition-all duration-200"
+                >
+                  View Gallery
+                </button>
               </div>
             </div>
           </div>
@@ -677,6 +680,16 @@ const JeepersCampers = () => {
         {/* BUILDER TAB */}
         {activeTab === 'builder' && (
           <div>
+            <section className="mb-4 rounded-xl border border-orange-500/40 bg-orange-500/10 px-5 py-4 lg:mb-6">
+              <p className="text-xs font-black uppercase tracking-[0.22em] text-orange-400">Badland × ROAM</p>
+              <div className="mt-1 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                <p className="text-sm text-gray-200 sm:text-base">
+                  Save 10% on eligible ROAM gear ordered through Badland Campers. Affiliate checkout is coming soon.
+                </p>
+                <span className="shrink-0 text-sm font-black text-white">Contact Matt for partner pricing</span>
+              </div>
+            </section>
+
             {/* Inspiration Gallery Banner */}
             <div className="mb-4 lg:mb-6 bg-gray-800 rounded-lg overflow-hidden">
               <div className="grid grid-cols-2 md:grid-cols-4 gap-2 p-2">
@@ -779,7 +792,14 @@ const JeepersCampers = () => {
                               onChange={() => toggleConfig(key)}
                               className="mr-2 w-4 h-4 accent-orange-500"
                             />
-                            <span className="text-xs sm:text-sm">{label}</span>
+                            <span className="text-xs sm:text-sm">
+                              {label}
+                              {(key === 'roamShowerRoom' || key === 'arc270Awning') && (
+                                <span className="ml-2 rounded-full bg-orange-500/20 px-2 py-0.5 text-[10px] font-black uppercase tracking-wider text-orange-300">
+                                  10% off
+                                </span>
+                              )}
+                            </span>
                           </div>
                           <span className="text-orange-500 font-bold text-xs sm:text-sm">
                             ${price.toLocaleString()}
@@ -808,7 +828,12 @@ const JeepersCampers = () => {
                         }`}
                       >
                         <div className="flex justify-between items-center">
-                          <span className="font-bold text-xs sm:text-sm">{label}</span>
+                          <span className="font-bold text-xs sm:text-sm">
+                            {label}
+                            <span className="ml-2 rounded-full bg-orange-500/20 px-2 py-0.5 text-[10px] font-black uppercase tracking-wider text-orange-300">
+                              10% off
+                            </span>
+                          </span>
                           <span className="text-orange-500 text-xs sm:text-sm">
                             ${price.toLocaleString()}
                           </span>
@@ -817,7 +842,7 @@ const JeepersCampers = () => {
                     ))}
                   </div>
                   <p className="text-xs text-gray-400 mt-2">
-                    Regular retail pricing verified from ROAM. Final availability and dealer pricing will sync through Shopify Collective.
+                    Prices shown are regular retail. The 10% partner savings will be available through Matt's affiliate ordering flow; contact Matt until the direct link is live.
                   </p>
                   <a
                     href="https://www.roamadventureco.com/collections/tents"
@@ -1569,35 +1594,6 @@ const JeepersCampers = () => {
                     <h3 className="font-bold text-lg mb-2 text-orange-500">{media.title}</h3>
                     <p className="text-gray-400 text-sm">{media.description}</p>
                   </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* REVIEWS TAB */}
-        {activeTab === 'reviews' && (
-          <div className="max-w-4xl mx-auto">
-            <h2 className="text-3xl font-bold mb-8 text-center">Customer Reviews</h2>
-            <div className="grid gap-6">
-              {reviews.map((r) => (
-                <div key={r.id} className="bg-gray-800 p-6 rounded-lg">
-                  <div className="flex justify-between mb-4">
-                    <div>
-                      <h3 className="font-bold text-lg">{r.name}</h3>
-                      <div className="flex space-x-1 mt-1">
-                        {[...Array(5)].map((_, i) => (
-                          <Star
-                            key={i}
-                            size={16}
-                            className={i < r.rating ? 'fill-orange-500 text-orange-500' : 'text-gray-600'}
-                          />
-                        ))}
-                      </div>
-                    </div>
-                    <span className="text-sm text-gray-400">{r.date}</span>
-                  </div>
-                  <p className="text-gray-300">{r.comment}</p>
                 </div>
               ))}
             </div>
