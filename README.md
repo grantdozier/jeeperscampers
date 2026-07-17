@@ -14,6 +14,12 @@ Use `npm test -- --watchAll=false` for the test suite and `npm run build` for a 
 
 The storefront deploys to GitHub Pages when `main` is pushed. The Stripe API routes in `api/` deploy separately on Vercel and require the environment variables documented in [SETUP.md](SETUP.md).
 
+Launch runbooks:
+
+- [Stripe Checkout](STRIPE-LAUNCH.md)
+- [ROAM / Shopify Collective](ROAM-SHOPIFY-COLLECTIVE.md)
+- [Deposit Terms](TERMS-DRAFT.md)
+
 ---
 
 ## Create React App reference

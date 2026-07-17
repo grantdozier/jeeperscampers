@@ -53,7 +53,7 @@ function json(obj: unknown, status: number, headers: Record<string, string>): Re
 // A short, human-readable summary of a build for the Stripe metadata / receipt.
 function summarizeConfig(config: Record<string, any>): string {
   const parts: string[] = [];
-  parts.push(config.model === 'goat' ? 'The Goat' : 'The Buffalo');
+  parts.push(config.model === 'goat' ? 'The Goat base package' : 'The Buffalo base package');
   if (config.roofTent) parts.push(`${config.roofTent} rooftop tent`);
   const addOns = Object.keys(config).filter((k) => config[k] === true).length;
   if (addOns) parts.push(`${addOns} add-ons`);

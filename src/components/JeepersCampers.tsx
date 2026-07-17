@@ -1,7 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { ShoppingCart, Star, Menu, X, Wrench, Truck, Home, CheckCircle } from 'lucide-react';
 import { OrderForm } from './OrderForm'; // Import the new OrderForm component
-import { PRICES, calculatePrice as computePrice } from '../lib/pricing';
+import {
+  MODEL_INCLUDED_UPGRADES,
+  MODEL_NAMES,
+  PRICES,
+  calculatePrice as computePrice,
+} from '../lib/pricing';
 
 const JeepersCampers = () => {
   const [activeTab, setActiveTab] = useState('home');
@@ -152,7 +157,7 @@ const JeepersCampers = () => {
     ['campluxShower', 'CAMPLUX Shower', prices.campluxShower],
   ] as const;
 
-  const calculatePrice = () => computePrice(config);
+  const calculatePrice = () => computePrice({ model: camperModel, ...config });
 
   const toggleConfig = (key: string) => setConfig((prev) => ({ ...prev, [key]: !prev[key as keyof typeof prev] }));
   const setWheelType = (wheels: string) => setConfig((prev) => ({ ...prev, wheels }));
@@ -175,16 +180,18 @@ const JeepersCampers = () => {
     const parts = [];
     parts.push(cfg.model === 'goat' ? 'The Goat' : 'The Buffalo');
     parts.push('Rolling Camper Frame');
+    parts.push('Enclosed Cabin with Single Door');
+    if (cfg.model === 'buffalo') parts.push('Second Cabin Door');
+    if (cfg.model === 'buffalo') parts.push('Rear Doors');
     if (cfg.premiumOffroadWheels) parts.push('Premium Offroad Wheel & Tire Package');
-    if (cfg.enclosedCabinSingleDoor) parts.push('Enclosed Cabin with Single Door');
-    if (cfg.secondCabinDoor) parts.push('Second Cabin Door');
-    if (cfg.rearDoors) parts.push('Rear Doors');
+    if (cfg.model !== 'buffalo' && cfg.secondCabinDoor) parts.push('Second Cabin Door');
+    if (cfg.model !== 'buffalo' && cfg.rearDoors) parts.push('Rear Doors');
     if (cfg.fullyArticulatedHitch) parts.push('Fully Articulating Hitch');
     if (cfg.vNoseStorage) parts.push('V-Nose Storage');
     if (cfg.roofRack) parts.push('Roof Rack');
-    if (cfg.roofTent === 'basic') parts.push('Basic Rooftop Tent');
-    if (cfg.roofTent === 'premium') parts.push('Premium Rooftop Tent');
-    if (cfg.roofTent === 'luxury') parts.push('Luxury Rooftop Tent');
+    if (cfg.roofTent === 'vagabond') parts.push('ROAM Vagabond 2.0 Rooftop Tent');
+    if (cfg.roofTent === 'vagabondXl') parts.push('ROAM Vagabond XL 2.0 Rooftop Tent');
+    if (cfg.roofTent === 'desperado') parts.push('ROAM Desperado Hardshell Rooftop Tent');
     if (cfg.interiorPackage) parts.push('Interior Package');
     if (cfg.dualFlowFan) parts.push('Dual Flow Fan');
     if (cfg.countertopsCabinets) parts.push('Countertops and Cabinets');
@@ -457,7 +464,7 @@ const JeepersCampers = () => {
                     <button className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-lg font-bold transition-all duration-200 w-full">
                       Build The Buffalo
                     </button>
-                    <p className="text-gray-400 text-sm mt-2">Starting at $6,000</p>
+                    <p className="text-gray-400 text-sm mt-2">Starting at $11,500</p>
                   </div>
                 </div>
               </div>
@@ -504,7 +511,7 @@ const JeepersCampers = () => {
                     <button className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-lg font-bold transition-all duration-200 w-full">
                       Build The Goat
                     </button>
-                    <p className="text-gray-400 text-sm mt-2">Starting at $6,000</p>
+                    <p className="text-gray-400 text-sm mt-2">Starting at $8,500</p>
                   </div>
                 </div>
               </div>
@@ -623,25 +630,36 @@ const JeepersCampers = () => {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-2 sm:gap-4 lg:gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.15fr)_minmax(360px,0.85fr)] gap-4 lg:gap-8 items-start">
               {/* OPTIONS PANEL - Left Side (Scrollable) */}
-              <div className="bg-gray-800 rounded-lg p-1 sm:p-2 lg:p-3 shadow-xl overflow-y-auto" style={{ maxHeight: 'calc(100vh - 120px)' }}>
+              <div className="bg-gray-800 rounded-xl p-4 lg:p-6 shadow-xl border border-gray-700">
                 <h2 className="text-xs sm:text-sm lg:text-base font-bold mb-2 lg:mb-4 text-center">
                   Build {camperModel === 'goat' ? 'The Goat' : 'The Buffalo'}
                 </h2>
 
-                <div className="mb-3 rounded border-2 border-orange-500 bg-gray-700 p-3">
-                  <div className="font-bold text-xs sm:text-sm lg:text-base">
-                    Rolling Camper Frame
+                <div className="mb-5 rounded-xl border border-orange-500/70 bg-gradient-to-br from-orange-500/15 to-gray-800 p-4">
+                  <div className="flex justify-between gap-4">
+                    <div>
+                      <div className="font-bold text-base">{MODEL_NAMES[camperModel]} Base Package</div>
+                      <div className="text-sm text-gray-300 mt-1">Rolling Camper Frame with Timbren axle-less suspension</div>
+                      <ul className="text-xs text-gray-400 mt-2 space-y-1">
+                        <li>• Enclosed cabin with single door</li>
+                        {camperModel === 'buffalo' && <li>• Second cabin door</li>}
+                        {camperModel === 'buffalo' && <li>• Rear doors</li>}
+                      </ul>
+                    </div>
+                    <div className="text-orange-400 font-bold text-lg whitespace-nowrap">
+                      ${computePrice({ model: camperModel }).toLocaleString()}
+                    </div>
                   </div>
-                  <div className="text-xs text-gray-300">Includes Timbren axle-less suspension</div>
-                  <div className="text-orange-500 font-bold">${prices.rollingCamperFrame.toLocaleString()}</div>
                 </div>
 
                 <div className="mb-3">
                   <h3 className="text-xs sm:text-sm lg:text-base font-bold mb-2">Upgrade Options</h3>
                   <div className="space-y-1">
-                    {upgradeOptions.map(([key, label, price]) => {
+                    {upgradeOptions
+                      .filter(([key]) => !MODEL_INCLUDED_UPGRADES[camperModel].includes(key))
+                      .map(([key, label, price]) => {
                       const checked = Boolean(config[key]);
                       const requiresCabin = key === 'secondCabinDoor';
                       return (
@@ -685,7 +703,11 @@ const JeepersCampers = () => {
                 <div className="mb-3">
                   <h3 className="text-xs sm:text-sm lg:text-base font-bold mb-2">Rooftop Tent Options</h3>
                   <div className="grid grid-cols-1 gap-2">
-                    {(['basic', 'premium', 'luxury'] as const).map((tent) => (
+                    {([
+                      ['vagabond', 'ROAM Vagabond 2.0', prices.roofTent_vagabond],
+                      ['vagabondXl', 'ROAM Vagabond XL 2.0', prices.roofTent_vagabondXl],
+                      ['desperado', 'ROAM Desperado Hardshell', prices.roofTent_desperado],
+                    ] as const).map(([tent, label, price]) => (
                       <button
                         key={tent}
                         onClick={() => setRoofTent(config.roofTent === tent ? '' : tent)}
@@ -696,17 +718,25 @@ const JeepersCampers = () => {
                         }`}
                       >
                         <div className="flex justify-between items-center">
-                          <span className="font-bold text-xs sm:text-sm capitalize">{tent}</span>
+                          <span className="font-bold text-xs sm:text-sm">{label}</span>
                           <span className="text-orange-500 text-xs sm:text-sm">
-                            ${prices[`roofTent_${tent}`].toLocaleString()}
+                            ${price.toLocaleString()}
                           </span>
                         </div>
                       </button>
                     ))}
                   </div>
                   <p className="text-xs text-gray-400 mt-2">
-                    Existing tent pricing retained pending updated ROAM/Shopify Collective product data.
+                    Regular retail pricing verified from ROAM. Final availability and dealer pricing will sync through Shopify Collective.
                   </p>
+                  <a
+                    href="https://www.roamadventureco.com/collections/tents"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-block text-xs text-orange-400 hover:text-orange-300 mt-2"
+                  >
+                    View current ROAM rooftop tents ↗
+                  </a>
                 </div>
 
               {false && (
@@ -1340,7 +1370,7 @@ const JeepersCampers = () => {
             </div>
 
             {/* VISUAL PREVIEW - Right Side (Sticky) */}
-            <div className="sticky top-2 bg-gray-800 rounded-lg p-1 sm:p-2 lg:p-3 shadow-2xl" style={{ maxHeight: 'calc(100vh - 120px)' }}>
+            <div className="lg:sticky lg:top-4 bg-gray-800 rounded-xl p-4 shadow-2xl border border-gray-700">
               <h3 className="text-xs sm:text-sm lg:text-base font-bold mb-1 sm:mb-2 lg:mb-3 text-center text-orange-500">
                 {camperModel === 'goat' ? 'The Goat' : 'The Buffalo'}
               </h3>
@@ -1359,7 +1389,7 @@ const JeepersCampers = () => {
                 <div className="space-y-1 text-xs sm:text-sm">
                   <div className="flex justify-between">
                     <span className="text-gray-300">Base:</span>
-                    <span className="text-orange-500 font-semibold">Rolling Camper Frame</span>
+                    <span className="text-orange-500 font-semibold">{MODEL_NAMES[camperModel]} Package</span>
                   </div>
                   {config.premiumOffroadWheels && (
                     <div className="flex justify-between">
@@ -1370,7 +1400,13 @@ const JeepersCampers = () => {
                   {config.roofTent && (
                     <div className="flex justify-between">
                       <span className="text-gray-300">Rooftop Tent:</span>
-                      <span className="text-orange-500 font-semibold capitalize">{config.roofTent}</span>
+                      <span className="text-orange-500 font-semibold">
+                        {config.roofTent === 'vagabond'
+                          ? 'Vagabond 2.0'
+                          : config.roofTent === 'vagabondXl'
+                            ? 'Vagabond XL 2.0'
+                            : 'Desperado'}
+                      </span>
                     </div>
                   )}
                   <div className="border-t border-gray-600 pt-1 mt-1">

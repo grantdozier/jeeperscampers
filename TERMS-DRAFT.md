@@ -1,99 +1,68 @@
-# 50% Deposit Terms — DRAFT for review
+# Badland Campers 50% Deposit Terms
 
-> ⚠️ **Draft template — not legal advice.** It contains `[BRACKETED PLACEHOLDERS]`
-> that are business/legal decisions you must make, and sample language that has not
-> been reviewed for your jurisdiction. **Have a licensed attorney review this and
-> reconcile it with Badland Campers' actual policies before switching to live Stripe
-> keys.**
+Version: **2026-07-17-v1**
 
-The live text is stored in **`src/lib/terms.ts`** and rendered on the order form when a
-customer chooses "Reserve with 50% Deposit." Editing that file updates the website.
-Once you've finalized the bracketed items, set `DEPOSIT_TERMS_IS_DRAFT = false` in that
-file to remove the "being finalized" banner.
+These operational terms contain no unresolved placeholders and are rendered from `src/lib/terms.ts`. Before enabling live Stripe payments, a licensed attorney in the seller's state should confirm that they comply with local law and match Badland Campers' actual practices.
 
----
+## Policy decisions encoded
 
-## ❓ Decisions needed from you (this is what makes it final)
+- Deposit: 50% of the configured camper price
+- Cancellation window: three business days, unless authorized custom work or non-returnable purchasing has already begun
+- Remaining balance: due 30 calendar days after written completion or availability notice
+- Storage: $25 per day after the 30-day payment deadline, where lawful
+- Extended nonpayment: order may be cancelled and the camper resold after 60 calendar days
+- Change orders: written acceptance required; 50% of any increase is due on approval
+- Refund timing: within 10 business days after the refundable amount is determined
+- Taxes, title, registration, government fees, and delivery: added to the final invoice
+- Governing law and venue: seller's principal-place-of-business state and county, unless law requires otherwise
 
-1. **Refundability** — Are deposits refundable, and for how long (grace period)? What
-   restocking / custom-work fee (%) applies once a build **starts** or after **completion**?
-2. **Balance deadline mechanics** — Confirm the number of days (default **30**) and how/when
-   "completion or availability" is officially communicated (email, phone, written notice)
-   to start the clock.
-3. **Governing law** — Which **state's** law governs, and which **county/state** is the venue
-   for disputes?
-4. **Storage & late fees** — Should storage fees accrue if the balance is late? At what rate
-   (`$/day` or `$/week`) and after how many days? What happens if the balance is **never**
-   paid (cancel, resell, forfeit deposit)?
-5. **Sales tax / title / registration / delivery** — How are these calculated and collected —
-   at deposit, at final payment, or at delivery — and for which states?
-6. **Configuration changes** — Should customer-requested changes after deposit require an
-   additional deposit and/or reset the build timeline and price lock?
+## Required business review
 
-Send me answers to these and I'll drop them straight into `src/lib/terms.ts`.
+The owner should initial each item before live launch:
 
----
+- [ ] The three-business-day cancellation rule matches sales practice.
+- [ ] The business will document when custom work or non-returnable purchasing begins.
+- [ ] The 30-day balance deadline and email notice process are operationally realistic.
+- [ ] The $25 daily storage charge and 60-day resale process will actually be enforced.
+- [ ] Refunds can be processed within 10 business days.
+- [ ] Final invoices correctly add applicable taxes and government, delivery, title, and registration charges.
+- [ ] The principal business state and county are recorded in company files and customer invoices.
+- [ ] Counsel has reviewed the policy for the seller's state and any states where campers are regularly sold.
 
-## Current draft text
+## Customer-facing terms
 
-### 1. Your Deposit
-- Your deposit equals **50% of the total quoted price** of your selected camper build.
-- Placing this deposit **reserves a build slot** and **locks in your chosen configuration
-  and the quoted price** for that build.
-- Because each camper is **custom-built to order**, your deposit authorizes us to begin
-  scheduling, ordering materials, and constructing your unit to the configuration selected.
+### 1. Deposit and Build Authorization
+
+The 50% deposit reserves a build slot, locks the accepted model and configuration price, and authorizes scheduling, design, labor, and material purchasing for the custom camper.
 
 ### 2. Remaining Balance
-- The remaining balance is the **other 50%** of the total quoted price.
-- The balance is due **within [30] days** after we notify you that your build is **complete
-  or otherwise available** for delivery or pickup (by email and/or phone).
-- **Full payment is required before you take delivery or possession.** We cannot release the
-  unit until payment clears in full.
 
-### 3. What the Deposit Secures
-- A confirmed **place in our build queue**.
-- Your **selected configuration** (floor plan, options, and add-ons on your order).
-- The **quoted price**, protected from future price changes per Section 4.
+The remaining balance, plus applicable final-invoice charges, is due within 30 calendar days after Badland Campers emails written notice that the camper is complete or available. The camper will not be released until all amounts clear.
 
-### 4. Price Validity
-- The quoted price is valid for the specific build and configuration on your order.
-- **Changes you request** after your deposit may adjust the total and/or timeline and may
-  require an additional deposit on the increase.
-- Prices for new/future orders are subject to change and not guaranteed until a deposit is placed.
+### 3. Configuration and Price Changes
 
-### 5. Refunds & Cancellation *(you confirm)*
-- Deposits are **[refundable / non-refundable] within [X] days** of being placed.
-- Once your build has **started**, custom-order deposits are **[non-refundable / refundable
-  less a [XX]% restocking or custom-work fee]**.
-- If you cancel after completion, a **[XX]% restocking fee** and incurred costs **[may / will]** apply.
-- Approved refunds are issued to the **original payment method** within **[X] business days**.
+A requested change is effective only after written acceptance. An accepted change may alter price and completion timing, and 50% of any increase is due when approved.
 
-### 6. Late Balance / Storage *(you confirm)*
-- If the balance isn't paid within **[30] days** of the availability notice, **storage fees of
-  [$X per day / per week]** may accrue.
-- If unpaid after **[X] days**, we **[may cancel and apply Section 5 / may resell the unit and
-  retain fees]**.
+### 4. Cancellation and Refunds
 
-### 7. Taxes, Title, Registration & Delivery
-- Prices/deposits **exclude** sales/use tax, title, registration/licensing, and delivery/freight.
-- These are **quoted and billed separately** and are the buyer's responsibility unless stated
-  in writing.
+The buyer may cancel in writing within three business days for a full refund unless authorized custom work or non-returnable purchasing has already begun. After that point, the deposit is non-refundable to the extent of design, labor, processing costs, restocking charges, and committed materials. Refunds due are returned to the original payment method within 10 business days after determination.
 
-### 8. Delivery & Possession
-- Estimated completion dates are **good-faith estimates**, not guarantees.
-- Title and risk of loss transfer to the buyer **only after** the balance is paid in full and
-  the unit is delivered or picked up.
+### 5. Completion, Late Payment, and Storage
 
-### 9. Governing Law
-- Governed by the laws of the **State of [STATE]**; disputes handled in the courts of
-  **[COUNTY/STATE]**.
+Completion dates are good-faith estimates. If the balance is unpaid 30 days after notice, storage may accrue at $25 per day where lawful. After 60 days, Badland Campers may cancel the order, resell the camper, apply payments to documented amounts due, and refund any surplus.
 
-### 10. Agreement
-- By placing your 50% deposit, you acknowledge you have read, understood, and agreed to these terms.
+### 6. Taxes, Title, Registration, and Delivery
 
----
+Website prices exclude taxes, government fees, title, registration, licensing, and delivery or freight unless expressly stated. Applicable charges appear on the final invoice.
 
-### Checkout consent line (next to the required checkbox)
-> I understand my 50% deposit reserves my custom build and locks in my configuration and price,
-> that the remaining 50% balance is due within [30] days of build completion/availability and
-> must be paid in full before I take possession, and I agree to the Deposit Terms.
+### 7. Delivery, Title, and Risk of Loss
+
+Pickup or delivery is scheduled only after payment and paperwork are complete. Title and risk of loss transfer at handoff. Visible issues should be recorded before acceptance.
+
+### 8. Governing Law and Venue
+
+The terms use the law of the state containing Badland Campers' principal place of business. Court proceedings must be brought in the corresponding county unless applicable law requires otherwise.
+
+### 9. Electronic Agreement
+
+Electronic acceptance and payment constitute signature and agreement. The buyer consents to receive order and payment notices at the supplied email address.

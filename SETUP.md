@@ -1,5 +1,8 @@
 # Stripe Checkout Setup — Badland Campers
 
+For the current account-level launch checklist, use **[STRIPE-LAUNCH.md](STRIPE-LAUNCH.md)**.
+This document remains the detailed architecture and operations reference.
+
 This site is a static React app on **GitHub Pages** (`badlandcampers.com`). Stripe
 needs a server to hold the secret key and compute the real price, so we added **two
 tiny serverless functions** that run on **Vercel**. The website itself does not move —
@@ -148,8 +151,8 @@ recorded as `terms_accepted` / `terms_version` in metadata).
 ## Going live
 
 When you're ready to take real money:
-1. Finalize the deposit terms — see `TERMS-DRAFT.md` (refund policy, governing state,
-   late/storage fees, tax handling). Have an attorney review.
+1. Review the generated deposit policy in `TERMS-DRAFT.md` with an attorney in the
+   seller's state and confirm it matches actual cancellation, storage, tax, and delivery practices.
 2. Stripe Dashboard → toggle to **Live mode**, then:
    - Copy the **live** `sk_live_…` into Vercel `STRIPE_SECRET_KEY` (replace the test one).
    - Re-enable Affirm/other methods in **Live** Settings → Payment methods (business

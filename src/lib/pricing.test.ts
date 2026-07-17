@@ -22,30 +22,41 @@ describe('camper pricing', () => {
   });
 
   it('prices a base camper using server-shared rules', () => {
-    expect(calculatePrice({})).toBe(PRICES.rollingCamperFrame);
+    expect(calculatePrice({ model: 'goat' })).toBe(8_500);
+    expect(calculatePrice({ model: 'buffalo' })).toBe(11_500);
+    expect(
+      calculatePrice({
+        model: 'buffalo',
+        enclosedCabinSingleDoor: true,
+        secondCabinDoor: true,
+        rearDoors: true,
+      }),
+    ).toBe(11_500);
   });
 
   it('adds owner-approved upgrades once', () => {
-    const base = calculatePrice({});
+    const base = calculatePrice({ model: 'goat' });
     const configured = calculatePrice({
+      model: 'goat',
       premiumOffroadWheels: true,
-      enclosedCabinSingleDoor: true,
       secondCabinDoor: true,
       rearDoors: true,
     });
 
     expect(configured - base).toBe(
       PRICES.premiumOffroadWheels +
-        PRICES.enclosedCabinSingleDoor +
         PRICES.secondCabinDoor +
         PRICES.rearDoors,
     );
   });
 
   it('retains the renamed rooftop-tent choices', () => {
-    expect(calculatePrice({ roofTent: 'premium' })).toBe(
-      PRICES.rollingCamperFrame + PRICES.roofTent_premium,
+    expect(calculatePrice({ model: 'goat', roofTent: 'vagabond' })).toBe(
+      8_500 + PRICES.roofTent_vagabond,
     );
+    expect(PRICES.roofTent_vagabond).toBe(2_399);
+    expect(PRICES.roofTent_vagabondXl).toBe(2_749);
+    expect(PRICES.roofTent_desperado).toBe(3_199);
   });
 
   it('calculates the advertised deposit', () => {

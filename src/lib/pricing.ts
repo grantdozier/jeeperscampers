@@ -26,10 +26,11 @@ export const PRICES = {
   waterTankFaucet: 1500,
   propaneStovePackage: 1500,
   campluxShower: 1500,
-  // Existing rooftop-tent prices retained until the owner supplies replacements.
-  roofTent_basic: 2500,
-  roofTent_premium: 3500,
-  roofTent_luxury: 4500,
+  // ROAM regular retail prices verified 2026-07-17. Shopify Collective should
+  // become the source of truth after the supplier connection is active.
+  roofTent_vagabond: 2399,
+  roofTent_vagabondXl: 2749,
+  roofTent_desperado: 3199,
   // Zero-value migration aliases referenced only by a non-rendered legacy block.
   standard: 0,
   wheels_standard: 0,
@@ -63,6 +64,9 @@ export const PRICES = {
   roamShowerRoom: 0,
   basicInteriorPackage: 0,
   premiumInteriorPackage: 0,
+  roofTent_basic: 0,
+  roofTent_premium: 0,
+  roofTent_luxury: 0,
 } as const;
 
 export type PriceKey = keyof typeof PRICES;
@@ -71,6 +75,18 @@ export type PriceKey = keyof typeof PRICES;
 // the index signature covers the many boolean accessory toggles.
 export type CamperConfig = { roofTent?: string } & Record<string, string | boolean | undefined>;
 
+export type CamperModel = 'goat' | 'buffalo';
+
+export const MODEL_INCLUDED_UPGRADES: Record<CamperModel, PriceKey[]> = {
+  goat: ['enclosedCabinSingleDoor'],
+  buffalo: ['enclosedCabinSingleDoor', 'secondCabinDoor', 'rearDoors'],
+};
+
+export const MODEL_NAMES: Record<CamperModel, string> = {
+  goat: 'The Goat',
+  buffalo: 'The Buffalo',
+};
+
 /**
  * Compute the full (100%) price of a camper build, in whole US dollars.
  *
@@ -78,19 +94,20 @@ export type CamperConfig = { roofTent?: string } & Record<string, string | boole
  * selections, while the retained rooftop-tent choices are single-select.
  */
 export function calculatePrice(config: Record<string, any>): number {
+  const model: CamperModel = config.model === 'buffalo' ? 'buffalo' : 'goat';
+  const included = MODEL_INCLUDED_UPGRADES[model];
   let total = PRICES.rollingCamperFrame;
 
-  // Roof tent (single-select)
-  if (config.roofTent === 'basic') {
-    total += PRICES.roofTent_basic;
-  } else if (config.roofTent === 'premium') {
-    total += PRICES.roofTent_premium;
-  } else if (config.roofTent === 'luxury') {
-    total += PRICES.roofTent_luxury;
-  }
+  included.forEach((key) => {
+    total += PRICES[key];
+  });
+
+  if (config.roofTent === 'vagabond') total += PRICES.roofTent_vagabond;
+  if (config.roofTent === 'vagabondXl') total += PRICES.roofTent_vagabondXl;
+  if (config.roofTent === 'desperado') total += PRICES.roofTent_desperado;
 
   Object.keys(config).forEach((key) => {
-    if (config[key] === true && PRICES[key as PriceKey]) {
+    if (config[key] === true && !included.includes(key as PriceKey) && PRICES[key as PriceKey]) {
       total += PRICES[key as PriceKey];
     }
   });
