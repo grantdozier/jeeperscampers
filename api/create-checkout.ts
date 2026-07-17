@@ -21,7 +21,11 @@ import Stripe from 'stripe';
 import { calculatePrice, calculateDeposit, DEPOSIT_PERCENT } from '../src/lib/pricing';
 import { DEPOSIT_TERMS_IS_DRAFT } from '../src/lib/terms';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '');
+function stripeClient(): Stripe {
+  const key = process.env.STRIPE_SECRET_KEY;
+  if (!key) throw new Error('STRIPE_SECRET_KEY is not configured');
+  return new Stripe(key);
+}
 
 // Origins allowed to call this endpoint (the live site + local dev).
 const ALLOWED_ORIGINS = [
@@ -204,7 +208,7 @@ async function handler(request: Request): Promise<Response> {
   }
 
   try {
-    const session = await stripe.checkout.sessions.create(params);
+    const session = await stripeClient().checkout.sessions.create(params);
     if (!session.url) {
       return json({ error: 'Stripe did not return a checkout URL.' }, 502, headers);
     }

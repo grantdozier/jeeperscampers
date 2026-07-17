@@ -9,7 +9,11 @@
 
 import Stripe from 'stripe';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '');
+function stripeClient(): Stripe {
+  const key = process.env.STRIPE_SECRET_KEY;
+  if (!key) throw new Error('STRIPE_SECRET_KEY is not configured');
+  return new Stripe(key);
+}
 
 const ALLOWED_ORIGINS = [
   'https://badlandcampers.com',
@@ -56,7 +60,7 @@ async function handler(request: Request): Promise<Response> {
   }
 
   try {
-    const session = await stripe.checkout.sessions.retrieve(sessionId);
+    const session = await stripeClient().checkout.sessions.retrieve(sessionId);
     const paid = session.payment_status === 'paid';
     return json(
       {

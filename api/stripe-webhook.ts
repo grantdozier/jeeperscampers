@@ -25,7 +25,11 @@
 
 import Stripe from 'stripe';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '');
+function stripeClient(): Stripe {
+  const key = process.env.STRIPE_SECRET_KEY;
+  if (!key) throw new Error('STRIPE_SECRET_KEY is not configured');
+  return new Stripe(key);
+}
 const DEFAULT_NOTIFY_URL = 'https://formspree.io/f/xblzbazr';
 
 async function handler(request: Request): Promise<Response> {
@@ -39,7 +43,7 @@ async function handler(request: Request): Promise<Response> {
 
   let event: Stripe.Event;
   try {
-    event = await stripe.webhooks.constructEventAsync(
+    event = await stripeClient().webhooks.constructEventAsync(
       rawBody,
       sig,
       process.env.STRIPE_WEBHOOK_SECRET || '',
