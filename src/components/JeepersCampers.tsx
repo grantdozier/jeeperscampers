@@ -1517,113 +1517,58 @@ const JeepersCampers = () => {
 
         {/* ABOUT TAB */}
         {activeTab === 'about' && (
-          <div className="max-w-6xl mx-auto">
-            <div className="bg-gray-800 rounded-lg p-8">
-              <h2 className="text-3xl font-bold mb-6 text-center">About Badland Campers</h2>
-
-              {/* Main Image Grid */}
-              <div className="grid md:grid-cols-2 gap-8 mb-8">
-                <div className="space-y-4">
-                  <img
-                    src={`${process.env.PUBLIC_URL}/images/camper_at_park_with_car.jpeg`}
-                    alt="Badland Campers at the park"
-                    className="w-full h-64 object-cover rounded-lg shadow-lg"
-                    onError={(e) => {
-                      e.currentTarget.style.display = 'none';
-                    }}
-                  />
-                  <img
-                    src={`${process.env.PUBLIC_URL}/images/camper_in_tow.jpeg`}
-                    alt="Badland Campers in tow"
-                    className="w-full h-48 object-cover rounded-lg shadow-lg"
-                    onError={(e) => {
-                      e.currentTarget.style.display = 'none';
-                    }}
-                  />
-                </div>
-                <div className="space-y-4">
-                  <p className="text-gray-300 text-lg">
-                    At Badland Campers, we build adventure-ready trailers that combine durability,
-                    functionality, and comfort. Each model is hand-crafted for the modern explorer
-                    who demands quality and reliability on every journey.
+          <div className="mx-auto max-w-6xl">
+            <section className="overflow-hidden rounded-2xl border border-gray-700 bg-gray-900">
+              <div className="grid lg:grid-cols-[1.05fr_0.95fr]">
+                <div className="flex flex-col justify-center p-7 sm:p-10 lg:p-14">
+                  <p className="mb-4 text-sm font-bold uppercase tracking-[0.22em] text-orange-500">About Badland</p>
+                  <h2 className="max-w-xl text-4xl font-black leading-tight sm:text-5xl">
+                    Built for the trip, not the driveway.
+                  </h2>
+                  <p className="mt-6 max-w-xl text-lg leading-relaxed text-gray-300">
+                    Badland Campers grew from a simple idea: outdoor equipment should be practical,
+                    dependable, and easy to make your own. We build compact campers for people who
+                    would rather spend their time exploring than wrestling with complicated gear.
                   </p>
-                  <p className="text-gray-300">
-                    Our modular design approach allows you to customize your camper exactly to your
-                    needs, whether you're planning weekend getaways or extended off-grid adventures.
+                  <p className="mt-4 max-w-xl leading-relaxed text-gray-400">
+                    That approach is informed by years around hardworking outdoor products—using them,
+                    improving them, and paying attention to what matters once the pavement ends.
                   </p>
-                  <img
-                    src={`${process.env.PUBLIC_URL}/images/camper_side_view.jpeg`}
-                    alt="Badland Campers side view"
-                    className="w-full h-48 object-cover rounded-lg shadow-lg"
-                    onError={(e) => {
-                      e.currentTarget.style.display = 'none';
-                    }}
-                  />
                 </div>
+                <img
+                  src={`${process.env.PUBLIC_URL}/images/camper_at_park_with_car.jpeg`}
+                  alt="A Badland camper ready for an outdoor trip"
+                  className="h-72 w-full object-cover lg:h-full lg:min-h-[510px]"
+                />
               </div>
+            </section>
 
-              {/* Features Grid */}
-              <div className="grid md:grid-cols-3 gap-6 mb-8">
-                <div className="text-center bg-gray-700 p-6 rounded-lg">
-                  <div className="bg-orange-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Truck size={32} />
-                  </div>
-                  <h3 className="font-bold mb-2 text-lg">Built Tough</h3>
-                  <p className="text-gray-400 text-sm">Military-grade materials and construction for any terrain</p>
+            <section className="grid gap-5 py-10 md:grid-cols-3">
+              {[
+                ['Useful by design', 'Straightforward systems, thoughtful storage, and options that earn their place.'],
+                ['Made for real use', 'The Buffalo and The Goat are configured around how people camp, tow, and travel.'],
+                ['Help from people', 'Questions are handled directly by a team that knows the products and the build.'],
+              ].map(([title, copy], index) => (
+                <div key={title} className="rounded-xl border border-gray-700 bg-gray-900 p-6">
+                  <span className="text-sm font-black text-orange-500">0{index + 1}</span>
+                  <h3 className="mt-4 text-xl font-bold">{title}</h3>
+                  <p className="mt-2 leading-relaxed text-gray-400">{copy}</p>
                 </div>
-                <div className="text-center bg-gray-700 p-6 rounded-lg">
-                  <div className="bg-orange-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Wrench size={32} />
-                  </div>
-                  <h3 className="font-bold mb-2 text-lg">Fully Customizable</h3>
-                  <p className="text-gray-400 text-sm">Configure every aspect to match your adventure style</p>
-                </div>
-                <div className="text-center bg-gray-700 p-6 rounded-lg">
-                  <div className="bg-orange-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Home size={32} />
-                  </div>
-                  <h3 className="font-bold mb-2 text-lg">Home Away From Home</h3>
-                  <p className="text-gray-400 text-sm">Comfort and convenience wherever the road takes you</p>
-                </div>
-              </div>
+              ))}
+            </section>
 
-              {/* Additional Feature Images */}
-              <div className="grid md:grid-cols-3 gap-4">
-                <div className="relative rounded-lg overflow-hidden shadow-lg group">
-                  <img
-                    src={`${process.env.PUBLIC_URL}/images/camper_back_view_opened.jpeg`}
-                    alt="Kitchen fully deployed"
-                    className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-110"
-                  />
-                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-4">
-                    <h4 className="text-white font-bold">Full Kitchen</h4>
-                    <p className="text-gray-300 text-sm">Complete cooking setup</p>
-                  </div>
-                </div>
-                <div className="relative rounded-lg overflow-hidden shadow-lg group">
-                  <img
-                    src={`${process.env.PUBLIC_URL}/images/camper_with_roam_tent.jpeg`}
-                    alt="Roof tent deployed"
-                    className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-110"
-                  />
-                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-4">
-                    <h4 className="text-white font-bold">Roof Top Tent</h4>
-                    <p className="text-gray-300 text-sm">Sleep under the stars</p>
-                  </div>
-                </div>
-                <div className="relative rounded-lg overflow-hidden shadow-lg group">
-                  <img
-                    src={`${process.env.PUBLIC_URL}/images/camper_interior.jpeg`}
-                    alt="Interior space"
-                    className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-110"
-                  />
-                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-4">
-                    <h4 className="text-white font-bold">Premium Interior</h4>
-                    <p className="text-gray-300 text-sm">Comfort and storage</p>
-                  </div>
-                </div>
+            <section className="flex flex-col gap-6 rounded-2xl border border-orange-500/30 bg-orange-500/10 p-7 sm:flex-row sm:items-center sm:justify-between sm:p-9">
+              <div>
+                <h3 className="text-2xl font-black">Start with the camper. Build from there.</h3>
+                <p className="mt-2 text-gray-300">Choose The Buffalo or The Goat, then add only what your trips need.</p>
               </div>
-            </div>
+              <button
+                onClick={() => setActiveTab('builder')}
+                className="shrink-0 rounded-lg bg-orange-500 px-6 py-3 font-black text-white transition hover:bg-orange-600"
+              >
+                Explore the Builder
+              </button>
+            </section>
           </div>
         )}
 
@@ -1704,7 +1649,7 @@ const JeepersCampers = () => {
         )}
       </main>
 
-      <ContactForm />
+      <ContactForm compact={activeTab === 'about'} />
 
       {/* LIGHTBOX */}
       {showLightbox && (

@@ -4,7 +4,7 @@ import { Mail, MessageSquare, Send } from 'lucide-react';
 const API_BASE = (process.env.REACT_APP_CHECKOUT_API_BASE || '').trim().replace(/\/+$/, '');
 const EMPTY = { name: '', email: '', subject: '', message: '', website: '' };
 
-export default function ContactForm() {
+export default function ContactForm({ compact = false }: { compact?: boolean }) {
   const [fields, setFields] = useState(EMPTY);
   const [status, setStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
   const [error, setError] = useState('');
@@ -39,9 +39,9 @@ export default function ContactForm() {
     'mt-2 w-full rounded-lg border border-gray-600 bg-gray-800 px-4 py-3 text-white outline-none transition focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20';
 
   return (
-    <section id="contact" className="border-t border-gray-700 bg-gray-950 px-4 py-16">
-      <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[0.8fr_1.2fr]">
-        <div>
+    <section id="contact" className={`border-t border-gray-700 bg-gray-950 px-4 ${compact ? 'py-10' : 'py-16'}`}>
+      <div className={`mx-auto grid max-w-6xl gap-10 ${compact ? '' : 'lg:grid-cols-[0.8fr_1.2fr]'}`}>
+        {!compact && <div>
           <p className="mb-3 text-sm font-bold uppercase tracking-[0.22em] text-orange-500">Talk with us</p>
           <h2 className="mb-4 text-3xl font-black sm:text-4xl">Let’s plan your Badland camper.</h2>
           <p className="max-w-md text-gray-300">
@@ -52,8 +52,15 @@ export default function ContactForm() {
             <p className="flex items-center gap-3"><Mail className="text-orange-500" size={19} />matthew@badlandcampers.com</p>
             <p className="flex items-center gap-3"><MessageSquare className="text-orange-500" size={19} />Call or text Matt: (843) 540-8503</p>
           </div>
-        </div>
+        </div>}
         <form onSubmit={submit} className="rounded-2xl border border-gray-700 bg-gray-900 p-6 shadow-2xl sm:p-8">
+          {compact && (
+            <div className="mb-6">
+              <p className="text-sm font-bold uppercase tracking-[0.22em] text-orange-500">Talk with us</p>
+              <h2 className="mt-2 text-2xl font-black">Have a question?</h2>
+              <p className="mt-2 text-sm text-gray-400">Send a note and we’ll follow up directly.</p>
+            </div>
+          )}
           <div className="grid gap-5 sm:grid-cols-2">
             <label className="text-sm font-semibold text-gray-200">Name
               <input required maxLength={100} autoComplete="name" value={fields.name} onChange={update('name')} className={fieldClass} />
