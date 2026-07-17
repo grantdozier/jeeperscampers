@@ -18,7 +18,59 @@
 // Vercel's Node runtime recognizes for real Web Request/Response objects.
 
 import Stripe from 'stripe';
-import { calculatePrice, calculateDeposit, DEPOSIT_PERCENT } from '../src/lib/pricing';
+
+// Keep the server's price-of-record inside the function bundle. Importing the
+// browser application's pricing module caused Vercel's function runtime to fail
+// before the handler could run.
+const DEPOSIT_PERCENT = 50;
+const SERVER_PRICES: Record<string, number> = {
+  rollingCamperFrame: 6000,
+  enclosedCabinSingleDoor: 2500,
+  rearDoors: 1500,
+  premiumOffroadWheels: 500,
+  secondCabinDoor: 1500,
+  fullyArticulatedHitch: 750,
+  vNoseStorage: 2500,
+  roofRack: 1000,
+  interiorPackage: 2000,
+  dualFlowFan: 1000,
+  countertopsCabinets: 2000,
+  electricalLightingPackage: 2000,
+  waterTankFaucet: 1500,
+  propaneStovePackage: 1500,
+  campluxShower: 1500,
+  roamShowerRoom: 379,
+  arc270Awning: 999,
+};
+const ROOFTOP_TENT_PRICES: Record<string, number> = {
+  vagabond: 2399,
+  vagabondXl: 2749,
+  desperado: 3199,
+};
+
+function calculatePrice(config: Record<string, any>): number {
+  const isBuffalo = config.model === 'buffalo';
+  const included = isBuffalo
+    ? ['enclosedCabinSingleDoor', 'rearDoors']
+    : ['enclosedCabinSingleDoor'];
+  let total = SERVER_PRICES.rollingCamperFrame;
+  included.forEach((key) => {
+    total += SERVER_PRICES[key];
+  });
+  if (config.roofTent && ROOFTOP_TENT_PRICES[config.roofTent]) {
+    total += ROOFTOP_TENT_PRICES[config.roofTent];
+  }
+  Object.keys(config).forEach((key) => {
+    if (config[key] === true && !included.includes(key) && SERVER_PRICES[key]) {
+      total += SERVER_PRICES[key];
+    }
+  });
+  return total;
+}
+
+function calculateDeposit(fullPrice: number): number {
+  return Math.round((fullPrice * DEPOSIT_PERCENT) / 100);
+}
 
 function stripeClient(): Stripe {
   const key = process.env.STRIPE_SECRET_KEY;
