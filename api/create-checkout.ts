@@ -19,7 +19,6 @@
 
 import Stripe from 'stripe';
 import { calculatePrice, calculateDeposit, DEPOSIT_PERCENT } from '../src/lib/pricing';
-import { DEPOSIT_TERMS_IS_DRAFT } from '../src/lib/terms';
 
 function stripeClient(): Stripe {
   const key = process.env.STRIPE_SECRET_KEY;
@@ -107,15 +106,6 @@ async function handler(request: Request): Promise<Response> {
   if (paymentOption === 'deposit' && !termsAccepted) {
     return json({ error: 'You must accept the deposit terms to reserve a build.' }, 400, headers);
   }
-  // Safety rail: never record acceptance of unfinished terms against a LIVE charge.
-  if (paymentOption === 'deposit' && DEPOSIT_TERMS_IS_DRAFT && secretKey.startsWith('sk_live')) {
-    return json(
-      { error: 'Deposit terms are not finalized for live payments yet. Please contact us to complete your order.' },
-      400,
-      headers,
-    );
-  }
-
   // ---- PRICE OF RECORD: recompute server-side, ignore any client amounts. ----
   const fullTotal = items.reduce((sum, item) => sum + calculatePrice(item?.config || {}), 0);
   if (!(fullTotal > 0)) {

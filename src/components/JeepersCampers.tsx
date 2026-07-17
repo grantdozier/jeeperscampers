@@ -479,25 +479,21 @@ const JeepersCampers = () => {
             </div>
 
             <section className="mb-12 overflow-hidden rounded-2xl border border-gray-700 bg-gray-900 shadow-2xl">
-              <div className="relative">
+              <div className="aspect-[16/9] overflow-hidden bg-black">
                 <img
                   src={`${process.env.PUBLIC_URL}/images/badland_campers_montana_bound.jpg`}
                   alt="Badland Camper in tow at sunset on the way to Montana"
-                  className="h-80 w-full object-cover sm:h-[28rem]"
+                  className="h-full w-full object-cover object-center"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/35 to-transparent sm:bg-gradient-to-r sm:from-black/90 sm:via-black/40 sm:to-transparent" />
-                <div className="absolute inset-0 flex items-end p-6 sm:items-center sm:p-10 lg:p-14">
-                  <div className="max-w-xl">
-                    <span className="mb-4 inline-flex items-center rounded-full border border-orange-400/60 bg-orange-500/15 px-3 py-1 text-xs font-bold uppercase tracking-[0.2em] text-orange-300">
-                      On the road
-                    </span>
-                    <p className="mb-2 text-sm font-semibold uppercase tracking-[0.25em] text-gray-300">Field Notes</p>
-                    <h2 className="mb-3 text-3xl font-bold text-white sm:text-5xl">Montana Bound</h2>
-                    <p className="max-w-lg text-base leading-relaxed text-gray-200 sm:text-lg">
-                      Badland Campers is on the move—headed to Montana for an upcoming show with a fully outfitted camper in tow.
-                    </p>
-                  </div>
+              </div>
+              <div className="border-t border-gray-700 px-6 py-6 sm:flex sm:items-end sm:justify-between sm:gap-8 sm:px-9 sm:py-8">
+                <div>
+                  <p className="mb-2 text-sm font-bold uppercase tracking-[0.28em] text-orange-400">Field Notes</p>
+                  <h2 className="text-3xl font-bold text-white sm:text-4xl">Montana Bound</h2>
                 </div>
+                <p className="mt-4 max-w-xl text-base leading-relaxed text-gray-300 sm:mt-0 sm:text-right sm:text-lg">
+                  Badland Campers is headed to Montana for an upcoming show with a fully outfitted camper in tow.
+                </p>
               </div>
             </section>
 
