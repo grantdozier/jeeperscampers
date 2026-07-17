@@ -80,8 +80,8 @@ export const OrderForm: React.FC<OrderFormProps> = ({ cart, onBackToBuilder, get
             .map(([key]) => key.replace(/([A-Z])/g, ' $1').replace(/^./, (s) => s.toUpperCase()))
             .join(', ') || 'None';
         return `CAMPER #${index + 1}:
-Frame Type: ${config.frame?.charAt(0).toUpperCase() + config.frame?.slice(1)}
-Wheel Package: ${config.wheels?.charAt(0).toUpperCase() + config.wheels?.slice(1)}
+Camper: ${config.model === 'goat' ? 'The Goat' : 'The Buffalo'}
+Base: Rolling Camper Frame with Timbren axle-less suspension
 Accessories: ${accessories}
 Price: $${item.price.toLocaleString()}
 `;
