@@ -81,8 +81,8 @@ export const OrderForm: React.FC<OrderFormProps> = ({ cart, onBackToBuilder, get
             .join(', ') || 'None';
         return `CAMPER #${index + 1}:
 Camper: ${config.model === 'goat' ? 'The Goat' : 'The Buffalo'}
-Base: Rolling Camper Frame with Timbren axle-less suspension; Enclosed Cabin with Single Door${
-          config.model === 'buffalo' ? '; Second Cabin Door; Rear Doors' : ''
+Base: Welded and powder-coated 2-inch steel frame; Timbren axle-less suspension; Standard hitch insert; Enclosed Cabin with Single Door${
+          config.model === 'buffalo' ? '; Rear Doors' : ''
         }
 Accessories: ${accessories}
 Price: $${item.price.toLocaleString()}

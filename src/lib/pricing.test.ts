@@ -18,12 +18,14 @@ describe('camper pricing', () => {
       waterTankFaucet: 1500,
       propaneStovePackage: 1500,
       campluxShower: 1500,
+      roamShowerRoom: 379,
+      arc270Awning: 999,
     });
   });
 
   it('prices a base camper using server-shared rules', () => {
     expect(calculatePrice({ model: 'goat' })).toBe(8_500);
-    expect(calculatePrice({ model: 'buffalo' })).toBe(11_500);
+    expect(calculatePrice({ model: 'buffalo' })).toBe(10_000);
     expect(
       calculatePrice({
         model: 'buffalo',

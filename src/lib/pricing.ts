@@ -26,6 +26,8 @@ export const PRICES = {
   waterTankFaucet: 1500,
   propaneStovePackage: 1500,
   campluxShower: 1500,
+  roamShowerRoom: 379,
+  arc270Awning: 999,
   // ROAM regular retail prices verified 2026-07-17. Shopify Collective should
   // become the source of truth after the supplier connection is active.
   roofTent_vagabond: 2399,
@@ -61,7 +63,6 @@ export const PRICES = {
   onboardWaterTank: 0,
   onboardPropaneTank: 0,
   campluxOutdoorShower: 0,
-  roamShowerRoom: 0,
   basicInteriorPackage: 0,
   premiumInteriorPackage: 0,
   roofTent_basic: 0,
@@ -79,7 +80,7 @@ export type CamperModel = 'goat' | 'buffalo';
 
 export const MODEL_INCLUDED_UPGRADES: Record<CamperModel, PriceKey[]> = {
   goat: ['enclosedCabinSingleDoor'],
-  buffalo: ['enclosedCabinSingleDoor', 'secondCabinDoor', 'rearDoors'],
+  buffalo: ['enclosedCabinSingleDoor', 'rearDoors'],
 };
 
 export const MODEL_NAMES: Record<CamperModel, string> = {

@@ -33,6 +33,7 @@ const JeepersCampers = () => {
     waterTankFaucet: false,
     propaneStovePackage: false,
     campluxShower: false,
+    arc270Awning: false,
     roofTent: '',
     // Legacy fields retained only for type-checking the non-rendered migration block.
     frame: 'standard',
@@ -156,7 +157,24 @@ const JeepersCampers = () => {
     ['waterTankFaucet', '30 Gallon Water Tank and Faucet', prices.waterTankFaucet],
     ['propaneStovePackage', 'Propane Package & 2 Burner Stove', prices.propaneStovePackage],
     ['campluxShower', 'CAMPLUX Shower', prices.campluxShower],
+    ['roamShowerRoom', 'The Shower Room', prices.roamShowerRoom],
+    ['arc270Awning', 'The 270 Awning', prices.arc270Awning],
   ] as const;
+  const availableUpgradeOptions = upgradeOptions.filter(
+    ([key]) => !MODEL_INCLUDED_UPGRADES[camperModel].includes(key),
+  );
+  const allUpgradesSelected = availableUpgradeOptions.every(([key]) => Boolean(config[key]));
+
+  const toggleAllUpgrades = () => {
+    const nextChecked = !allUpgradesSelected;
+    setConfig((previous) => {
+      const next = { ...previous };
+      availableUpgradeOptions.forEach(([key]) => {
+        next[key] = nextChecked;
+      });
+      return next;
+    });
+  };
 
   const calculatePrice = () => computePrice({ model: camperModel, ...config });
 
@@ -182,10 +200,9 @@ const JeepersCampers = () => {
     parts.push(cfg.model === 'goat' ? 'The Goat' : 'The Buffalo');
     parts.push('Rolling Camper Frame');
     parts.push('Enclosed Cabin with Single Door');
-    if (cfg.model === 'buffalo') parts.push('Second Cabin Door');
     if (cfg.model === 'buffalo') parts.push('Rear Doors');
     if (cfg.premiumOffroadWheels) parts.push('Premium Offroad Wheel & Tire Package');
-    if (cfg.model !== 'buffalo' && cfg.secondCabinDoor) parts.push('Second Cabin Door');
+    if (cfg.secondCabinDoor) parts.push('Second Cabin Door');
     if (cfg.model !== 'buffalo' && cfg.rearDoors) parts.push('Rear Doors');
     if (cfg.fullyArticulatedHitch) parts.push('Fully Articulating Hitch');
     if (cfg.vNoseStorage) parts.push('V-Nose Storage');
@@ -200,6 +217,8 @@ const JeepersCampers = () => {
     if (cfg.waterTankFaucet) parts.push('30 Gallon Water Tank and Faucet');
     if (cfg.propaneStovePackage) parts.push('Propane Package & 2 Burner Stove');
     if (cfg.campluxShower) parts.push('CAMPLUX Shower');
+    if (cfg.roamShowerRoom) parts.push('The Shower Room');
+    if (cfg.arc270Awning) parts.push('The 270 Awning');
     return parts.join(', ');
   };
 
@@ -343,52 +362,87 @@ const JeepersCampers = () => {
 
       {/* CART DRAWER */}
       {showCart && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-end">
-          <div className="bg-gray-800 w-full md:w-96 h-full overflow-y-auto p-6">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold">Your Cart</h2>
-              <button onClick={() => setShowCart(false)}>
-                <X size={24} />
+        <div className="fixed inset-0 z-50 flex justify-end bg-black/70 backdrop-blur-sm" onClick={() => setShowCart(false)}>
+          <aside
+            className="flex h-full w-full max-w-lg flex-col border-l border-gray-700 bg-gray-950 shadow-2xl"
+            onClick={(event) => event.stopPropagation()}
+            aria-label="Shopping cart"
+          >
+            <div className="flex items-start justify-between border-b border-gray-800 px-6 py-6">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-[0.2em] text-orange-500">Your build</p>
+                <h2 className="mt-1 text-2xl font-black">Cart</h2>
+                <p className="mt-1 text-sm text-gray-400">{cart.length} {cart.length === 1 ? 'camper' : 'campers'} configured</p>
+              </div>
+              <button
+                onClick={() => setShowCart(false)}
+                className="rounded-full border border-gray-700 p-2 text-gray-300 transition hover:border-orange-500 hover:text-white"
+                aria-label="Close cart"
+              >
+                <X size={20} />
               </button>
             </div>
             {cart.length === 0 ? (
-              <p className="text-gray-400">Your cart is empty</p>
+              <div className="flex flex-1 flex-col items-center justify-center px-8 text-center">
+                <ShoppingCart className="mb-4 text-gray-600" size={42} />
+                <h3 className="text-xl font-bold">Your cart is empty</h3>
+                <p className="mt-2 max-w-xs text-sm text-gray-400">Choose a model and configure the camper that fits your trips.</p>
+                <button onClick={() => setShowCart(false)} className="mt-6 rounded-lg bg-orange-500 px-5 py-3 font-bold hover:bg-orange-600">
+                  Continue Building
+                </button>
+              </div>
             ) : (
-              <div className="space-y-4">
+              <>
+              <div className="flex-1 space-y-4 overflow-y-auto p-6">
                 {cart.map((item) => (
-                  <div key={item.id} className="bg-gray-700 p-4 rounded">
-                    <p className="text-sm mb-2">{getConfigDisplay(item.config)}</p>
-                    <div className="flex justify-between items-center">
-                      <span className="text-orange-500 font-bold">${item.price.toLocaleString()}</span>
+                  <article key={item.id} className="rounded-xl border border-gray-700 bg-gray-900 p-5">
+                    <div className="flex items-start justify-between gap-4">
+                      <div>
+                        <p className="text-xs font-bold uppercase tracking-wider text-orange-500">Custom camper</p>
+                        <h3 className="mt-1 text-xl font-black">{MODEL_NAMES[item.config.model === 'goat' ? 'goat' : 'buffalo']}</h3>
+                      </div>
+                      <span className="whitespace-nowrap text-lg font-black">${item.price.toLocaleString()}</span>
+                    </div>
+                    <p className="mt-4 border-t border-gray-800 pt-4 text-sm leading-relaxed text-gray-400">
+                      {getConfigDisplay(item.config)}
+                    </p>
+                    <div className="mt-4 flex justify-end">
                       <button
                         onClick={() => removeFromCart(item.id)}
-                        className="text-red-500 hover:text-red-400"
+                        className="text-sm font-semibold text-gray-400 transition hover:text-red-400"
                       >
-                        Remove
+                        Remove build
                       </button>
                     </div>
-                  </div>
+                  </article>
                 ))}
-                <div className="border-t border-gray-600 pt-4">
-                  <div className="flex justify-between text-xl font-bold mb-4">
-                    <span>Total:</span>
-                    <span className="text-orange-500">
-                      ${cart.reduce((s, i) => s + i.price, 0).toLocaleString()}
-                    </span>
-                  </div>
-                  <button
-                    onClick={() => {
-                      setActiveTab('order');
-                      setShowCart(false);
-                    }}
-                    className="w-full bg-orange-500 hover:bg-orange-600 text-white py-3 rounded font-bold"
-                  >
-                    Proceed to Order
-                  </button>
-                </div>
               </div>
+              <div className="border-t border-gray-800 bg-gray-950 p-6">
+                <div className="mb-5 flex items-end justify-between">
+                  <div>
+                    <p className="text-sm text-gray-400">Build total</p>
+                    <p className="text-xs text-gray-500">Taxes and delivery confirmed separately</p>
+                  </div>
+                  <span className="text-2xl font-black text-orange-500">
+                    ${cart.reduce((s, i) => s + i.price, 0).toLocaleString()}
+                  </span>
+                </div>
+                <button
+                  onClick={() => {
+                    setActiveTab('order');
+                    setShowCart(false);
+                  }}
+                  className="w-full rounded-lg bg-orange-500 py-3.5 font-black text-white transition hover:bg-orange-600"
+                >
+                  Continue to Checkout
+                </button>
+                <button onClick={() => setShowCart(false)} className="mt-3 w-full py-2 text-sm font-semibold text-gray-400 hover:text-white">
+                  Keep customizing
+                </button>
+              </div>
+              </>
             )}
-          </div>
+          </aside>
         </div>
       )}
 
@@ -465,7 +519,7 @@ const JeepersCampers = () => {
                     <button className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-lg font-bold transition-all duration-200 w-full">
                       Build The Buffalo
                     </button>
-                    <p className="text-gray-400 text-sm mt-2">Starting at $11,500</p>
+                    <p className="text-gray-400 text-sm mt-2">Starting at $10,000</p>
                   </div>
                 </div>
               </div>
@@ -642,10 +696,12 @@ const JeepersCampers = () => {
                   <div className="flex justify-between gap-4">
                     <div>
                       <div className="font-bold text-base">{MODEL_NAMES[camperModel]} Base Package</div>
-                      <div className="text-sm text-gray-300 mt-1">Rolling Camper Frame with Timbren axle-less suspension</div>
+                      <div className="text-sm text-gray-300 mt-1">Purpose-built foundation, ready to configure</div>
                       <ul className="text-xs text-gray-400 mt-2 space-y-1">
+                        <li>&bull; Welded and powder-coated 2-inch steel frame</li>
+                        <li>&bull; Timbren axle-less suspension</li>
+                        <li>&bull; Standard hitch insert</li>
                         <li>• Enclosed cabin with single door</li>
-                        {camperModel === 'buffalo' && <li>• Second cabin door</li>}
                         {camperModel === 'buffalo' && <li>• Rear doors</li>}
                       </ul>
                     </div>
@@ -656,38 +712,33 @@ const JeepersCampers = () => {
                 </div>
 
                 <div className="mb-3">
-                  <h3 className="text-xs sm:text-sm lg:text-base font-bold mb-2">Upgrade Options</h3>
+                  <div className="mb-2 flex items-center justify-between gap-3">
+                    <h3 className="text-xs sm:text-sm lg:text-base font-bold">Upgrade Options</h3>
+                    <button
+                      type="button"
+                      onClick={toggleAllUpgrades}
+                      className={`rounded-full border px-3 py-1.5 text-xs font-bold transition ${
+                        allUpgradesSelected
+                          ? 'border-orange-500 bg-orange-500 text-white'
+                          : 'border-gray-600 text-gray-300 hover:border-orange-500 hover:text-white'
+                      }`}
+                    >
+                      {allUpgradesSelected ? 'Clear all' : 'Select all'}
+                    </button>
+                  </div>
                   <div className="space-y-1">
-                    {upgradeOptions
-                      .filter(([key]) => !MODEL_INCLUDED_UPGRADES[camperModel].includes(key))
-                      .map(([key, label, price]) => {
+                    {availableUpgradeOptions.map(([key, label, price]) => {
                       const checked = Boolean(config[key]);
-                      const requiresCabin = key === 'secondCabinDoor';
                       return (
                         <label
                           key={key}
-                          className={`flex items-center justify-between p-2 lg:p-3 rounded transition ${
-                            requiresCabin && !config.enclosedCabinSingleDoor
-                              ? 'bg-gray-800 text-gray-500'
-                              : 'bg-gray-700 cursor-pointer hover:bg-gray-600'
-                          }`}
+                          className="flex cursor-pointer items-center justify-between rounded bg-gray-700 p-2 transition hover:bg-gray-600 lg:p-3"
                         >
                           <div className="flex items-center">
                             <input
                               type="checkbox"
                               checked={checked}
-                              disabled={requiresCabin && !config.enclosedCabinSingleDoor}
-                              onChange={() => {
-                                if (key === 'enclosedCabinSingleDoor' && config.enclosedCabinSingleDoor) {
-                                  setConfig((prev) => ({
-                                    ...prev,
-                                    enclosedCabinSingleDoor: false,
-                                    secondCabinDoor: false,
-                                  }));
-                                } else {
-                                  toggleConfig(key);
-                                }
-                              }}
+                              onChange={() => toggleConfig(key)}
                               className="mr-2 w-4 h-4 accent-orange-500"
                             />
                             <span className="text-xs sm:text-sm">{label}</span>
@@ -1521,18 +1572,25 @@ const JeepersCampers = () => {
             <section className="overflow-hidden rounded-2xl border border-gray-700 bg-gray-900">
               <div className="grid lg:grid-cols-[1.05fr_0.95fr]">
                 <div className="flex flex-col justify-center p-7 sm:p-10 lg:p-14">
-                  <p className="mb-4 text-sm font-bold uppercase tracking-[0.22em] text-orange-500">About Badland</p>
+                  <div className="mb-5 flex flex-wrap items-center gap-3">
+                    <p className="text-sm font-bold uppercase tracking-[0.22em] text-orange-500">About Badland</p>
+                    <span className="rounded-full border border-orange-500/50 bg-orange-500/10 px-3 py-1 text-xs font-black uppercase tracking-wider text-orange-300">
+                      Veteran owned
+                    </span>
+                  </div>
                   <h2 className="max-w-xl text-4xl font-black leading-tight sm:text-5xl">
                     Built for the trip, not the driveway.
                   </h2>
                   <p className="mt-6 max-w-xl text-lg leading-relaxed text-gray-300">
-                    Badland Campers grew from a simple idea: outdoor equipment should be practical,
-                    dependable, and easy to make your own. We build compact campers for people who
-                    would rather spend their time exploring than wrestling with complicated gear.
+                    Badland Campers is Matt’s veteran-owned business, built around a simple idea:
+                    outdoor equipment should be practical, dependable, and easy to make your own.
+                    We build compact campers for people who would rather spend their time exploring
+                    than wrestling with complicated gear.
                   </p>
                   <p className="mt-4 max-w-xl leading-relaxed text-gray-400">
-                    That approach is informed by years around hardworking outdoor products—using them,
-                    improving them, and paying attention to what matters once the pavement ends.
+                    The same values behind Matt’s work at Hornet Outdoors carry forward here:
+                    straightforward service, American workmanship, and products shaped by real outdoor
+                    use—not showroom gimmicks.
                   </p>
                 </div>
                 <img
