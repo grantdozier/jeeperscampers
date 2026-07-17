@@ -262,6 +262,12 @@ const JeepersCampers = () => {
     },
     {
       type: 'image',
+      src: `${process.env.PUBLIC_URL}/images/badland_campers_montana_bound.jpg`,
+      title: 'Montana Bound',
+      description: 'Badland Campers on the move, headed north for the next show'
+    },
+    {
+      type: 'image',
       src: `${process.env.PUBLIC_URL}/images/camper_in_tow.jpeg`,
       title: 'In Tow',
       description: 'On the road - perfect towing companion for any adventure'
@@ -471,6 +477,29 @@ const JeepersCampers = () => {
                 Premium quality, rugged construction, endless adventure possibilities.
               </p>
             </div>
+
+            <section className="mb-12 overflow-hidden rounded-2xl border border-gray-700 bg-gray-900 shadow-2xl">
+              <div className="relative">
+                <img
+                  src={`${process.env.PUBLIC_URL}/images/badland_campers_montana_bound.jpg`}
+                  alt="Badland Camper in tow at sunset on the way to Montana"
+                  className="h-80 w-full object-cover sm:h-[28rem]"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/35 to-transparent sm:bg-gradient-to-r sm:from-black/90 sm:via-black/40 sm:to-transparent" />
+                <div className="absolute inset-0 flex items-end p-6 sm:items-center sm:p-10 lg:p-14">
+                  <div className="max-w-xl">
+                    <span className="mb-4 inline-flex items-center rounded-full border border-orange-400/60 bg-orange-500/15 px-3 py-1 text-xs font-bold uppercase tracking-[0.2em] text-orange-300">
+                      On the road
+                    </span>
+                    <p className="mb-2 text-sm font-semibold uppercase tracking-[0.25em] text-gray-300">Field Notes</p>
+                    <h2 className="mb-3 text-3xl font-bold text-white sm:text-5xl">Montana Bound</h2>
+                    <p className="max-w-lg text-base leading-relaxed text-gray-200 sm:text-lg">
+                      Badland Campers is on the move—headed to Montana for an upcoming show with a fully outfitted camper in tow.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </section>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 mb-12">
               {/* The Buffalo */}
