@@ -124,4 +124,35 @@ async function notifyOrder(session: Stripe.Checkout.Session): Promise<void> {
   }
 }
 
-export default { fetch: handler };
+export const config = {
+  api: { bodyParser: false },
+};
+
+async function rawRequestBody(req: any): Promise<Buffer> {
+  if (Buffer.isBuffer(req.body)) return req.body;
+  if (typeof req.body === 'string') return Buffer.from(req.body);
+  const chunks: Buffer[] = [];
+  for await (const chunk of req) {
+    chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
+  }
+  return Buffer.concat(chunks);
+}
+
+function webHeaders(req: any): Headers {
+  const headers = new Headers();
+  Object.entries(req.headers || {}).forEach(([key, value]) => {
+    if (Array.isArray(value)) value.forEach((item) => headers.append(key, item));
+    else if (value !== undefined) headers.set(key, String(value));
+  });
+  return headers;
+}
+
+export default async function vercelHandler(req: any, res: any): Promise<void> {
+  const url = `https://${req.headers.host}${req.url}`;
+  const body = req.method === 'POST' ? await rawRequestBody(req) : undefined;
+  const response = await handler(
+    new Request(url, { method: req.method, headers: webHeaders(req), body }),
+  );
+  response.headers.forEach((value, key) => res.setHeader(key, value));
+  res.status(response.status).send(await response.text());
+}

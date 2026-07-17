@@ -75,4 +75,20 @@ async function handler(request: Request): Promise<Response> {
   }
 }
 
-export default { fetch: handler };
+function webHeaders(req: any): Headers {
+  const headers = new Headers();
+  Object.entries(req.headers || {}).forEach(([key, value]) => {
+    if (Array.isArray(value)) value.forEach((item) => headers.append(key, item));
+    else if (value !== undefined) headers.set(key, String(value));
+  });
+  return headers;
+}
+
+export default async function vercelHandler(req: any, res: any): Promise<void> {
+  const url = `https://${req.headers.host}${req.url}`;
+  const response = await handler(
+    new Request(url, { method: req.method, headers: webHeaders(req) }),
+  );
+  response.headers.forEach((value, key) => res.setHeader(key, value));
+  res.status(response.status).send(await response.text());
+}
