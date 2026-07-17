@@ -1,6 +1,6 @@
 const ALLOWED_ORIGINS = ['https://badlandcampers.com', 'https://www.badlandcampers.com', 'http://localhost:3000'];
-const DEFAULT_EMAIL_ENDPOINT = 'https://formspree.io/f/xblzbazr';
 const MATT_PHONE = '+18435408503';
+const CONTACT_RECIPIENTS = ['matthew@badlandcampers.com', 'grant@doziertechgroup.com'];
 
 function responseHeaders(origin: string | null): Record<string, string> {
   return {
@@ -20,13 +20,28 @@ function reply(res: any, status: number, body: Record<string, unknown>, headers:
 const clean = (value: unknown, maximum: number) =>
   typeof value === 'string' ? value.trim().slice(0, maximum) : '';
 
-async function sendEmail(payload: Record<string, string>): Promise<void> {
-  const response = await fetch(process.env.CONTACT_EMAIL_WEBHOOK_URL || DEFAULT_EMAIL_ENDPOINT, {
+async function sendEmail(name: string, email: string, subject: string, message: string): Promise<void> {
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) throw new Error('RESEND_API_KEY is not configured');
+  const response = await fetch('https://api.resend.com/emails', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-    body: JSON.stringify(payload),
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      from: process.env.CONTACT_FROM_EMAIL || 'Badland Campers <website@badlandcampers.com>',
+      to: CONTACT_RECIPIENTS,
+      reply_to: email,
+      subject: `Badland Campers contact: ${subject}`,
+      text: `New website contact\n\nName: ${name}\nEmail: ${email}\nSubject: ${subject}\n\n${message}`,
+    }),
   });
-  if (!response.ok) throw new Error(`Email delivery returned ${response.status}`);
+  if (!response.ok) {
+    const detail = await response.text();
+    console.error('Resend delivery failed', response.status, detail);
+    throw new Error(`Email delivery returned ${response.status}`);
+  }
 }
 
 async function sendText(name: string, email: string, subject: string, message: string): Promise<boolean> {
@@ -67,17 +82,7 @@ export default async function contact(req: any, res: any): Promise<void> {
 
   try {
     const [, textSent] = await Promise.all([
-      sendEmail({
-        _subject: `Badland Campers contact: ${subject}`,
-        _replyto: email,
-        _cc: 'grant@doziertechgroup.com',
-        recipient: 'matthew@badlandcampers.com',
-        name,
-        email,
-        subject,
-        message,
-        submitted_at: new Date().toISOString(),
-      }),
+      sendEmail(name, email, subject, message),
       sendText(name, email, subject, message),
     ]);
     return reply(res, 200, { ok: true, textSent }, headers);

@@ -4,17 +4,16 @@ The shared contact form appears below every site section and posts to `/api/cont
 
 ## Email delivery
 
-The API defaults to the existing Formspree endpoint:
+The API sends each message through Resend to:
 
-`https://formspree.io/f/xblzbazr`
+- `matthew@badlandcampers.com`
+- `grant@doziertechgroup.com`
 
-In Formspree, confirm that the form's primary recipient is
-`matthew@badlandcampers.com` and that `grant@doziertechgroup.com` is allowed as
-a CC recipient. Formspree may require both addresses to be verified.
+Verify `badlandcampers.com` in Resend, then add these Vercel environment
+variables to Production and Preview:
 
-To use a different endpoint, add this Vercel environment variable:
-
-`CONTACT_EMAIL_WEBHOOK_URL=https://formspree.io/f/your-form-id`
+- `RESEND_API_KEY`
+- `CONTACT_FROM_EMAIL=Badland Campers <website@badlandcampers.com>`
 
 ## Text delivery to Matt
 
