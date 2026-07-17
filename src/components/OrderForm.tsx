@@ -8,22 +8,15 @@ import {
   CreditCard,
   Clock,
   ShieldCheck,
-  ChevronDown,
-  ChevronUp,
   AlertCircle,
   Info,
   Lock,
   FileText,
   CheckCircle,
+  ExternalLink,
 } from 'lucide-react';
 import { calculateDeposit, DEPOSIT_PERCENT } from '../lib/pricing';
-import {
-  DEPOSIT_TERMS,
-  DEPOSIT_TERMS_VERSION,
-  DEPOSIT_TERMS_IS_DRAFT,
-  DEPOSIT_INFO_BULLETS,
-  DEPOSIT_CONSENT_LINE,
-} from '../lib/terms';
+import { DEPOSIT_TERMS_VERSION } from '../lib/terms';
 
 interface CartItem {
   id: string;
@@ -64,7 +57,6 @@ export const OrderForm: React.FC<OrderFormProps> = ({ cart, onBackToBuilder, get
 
   const [paymentMode, setPaymentMode] = useState<PaymentMode>('full');
   const [termsAccepted, setTermsAccepted] = useState(false);
-  const [showTerms, setShowTerms] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [paymentError, setPaymentError] = useState<string | null>(null);
 
@@ -136,7 +128,6 @@ Price: $${item.price.toLocaleString()}
     }
     if (paymentMode === 'deposit' && !termsAccepted) {
       setPaymentError('Please read and accept the 50% deposit terms to reserve your build.');
-      setShowTerms(true);
       return;
     }
     if (!API_BASE) {
@@ -299,77 +290,93 @@ Price: $${item.price.toLocaleString()}
               <p className="text-sm text-gray-400">
                 Lock in your build. Remaining{' '}
                 <span className="text-gray-200 font-semibold">${balanceDue.toLocaleString()}</span> due within 30
-                days of completion.
+                days of completion notice.
               </p>
             </button>
           </div>
-          <div className="mt-4 flex items-start rounded-lg border border-blue-400/20 bg-blue-400/10 p-4 text-sm text-blue-100">
-            <Info className="mr-2 mt-0.5 shrink-0 text-blue-300" size={17} />
-            Financing options shown by Stripe, including Affirm when eligible, are offered by third parties and are subject to approval and their terms.
-          </div>
+          {paymentMode === 'full' && (
+            <div className="mt-4 flex items-start rounded-lg border border-blue-400/20 bg-blue-400/10 p-4 text-sm text-blue-100">
+              <Info className="mr-2 mt-0.5 shrink-0 text-blue-300" size={17} />
+              Financing options shown by Stripe, including Affirm when eligible, are offered by third parties and are subject to approval and their terms.
+            </div>
+          )}
         </div>
 
-        {/* Deposit terms box — required before the deposit path can proceed */}
+        {/* Compact deposit agreement. Full terms open separately so cart state is preserved. */}
         {paymentMode === 'deposit' && (
-          <div className="mb-6 bg-gray-700 rounded-lg border border-gray-600 overflow-hidden">
-            <button
-              type="button"
-              onClick={() => setShowTerms((s) => !s)}
-              className="w-full flex items-center justify-between p-4 text-left"
-            >
-              <span className="flex items-center font-bold">
-                <ShieldCheck className="mr-2 text-orange-500" size={20} />
-                50% Deposit Terms
-              </span>
-              {showTerms ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
-            </button>
+          <section className="mb-8 overflow-hidden rounded-xl border border-orange-500/35 bg-gradient-to-br from-orange-500/10 via-gray-800 to-gray-800 shadow-lg shadow-black/10">
+            <div className="flex flex-col gap-5 p-5 sm:p-6">
+              <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-start">
+                <div className="flex items-start gap-3">
+                  <div className="rounded-lg bg-orange-500/15 p-2.5 text-orange-400">
+                    <ShieldCheck size={22} />
+                  </div>
+                  <div>
+                    <p className="text-xs font-black uppercase tracking-[0.18em] text-orange-400">
+                      Build reservation agreement
+                    </p>
+                    <h3 className="mt-1 text-xl font-black">Review before reserving your build</h3>
+                    <p className="mt-2 max-w-2xl text-sm leading-6 text-gray-400">
+                      Your deposit reserves production capacity and authorizes Badland Campers
+                      to begin scheduling, purchasing, and work for your selected configuration.
+                    </p>
+                  </div>
+                </div>
+                <a
+                  href="?legal=deposit-terms"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex shrink-0 items-center justify-center gap-2 rounded-lg border border-gray-600 bg-gray-900/70 px-4 py-2.5 text-sm font-bold text-gray-100 transition hover:border-orange-500 hover:text-orange-300"
+                >
+                  View full terms
+                  <ExternalLink size={15} />
+                </a>
+              </div>
 
-            <div className="px-4 pb-2">
-              <ul className="space-y-1.5 text-sm text-gray-300">
-                {DEPOSIT_INFO_BULLETS.map((b, i) => (
-                  <li key={i} className="flex">
-                    <span className="text-orange-500 mr-2">•</span>
-                    <span>{b}</span>
-                  </li>
-                ))}
-              </ul>
+              <div className="grid overflow-hidden rounded-lg border border-gray-700 bg-gray-900/60 sm:grid-cols-3 sm:divide-x sm:divide-gray-700">
+                <div className="border-b border-gray-700 p-4 sm:border-b-0">
+                  <p className="text-xs font-black uppercase tracking-wider text-gray-500">Pay today</p>
+                  <p className="mt-1 text-lg font-black text-white">${depositAmount.toLocaleString()}</p>
+                  <p className="mt-1 text-xs text-gray-400">50% build deposit</p>
+                </div>
+                <div className="border-b border-gray-700 p-4 sm:border-b-0">
+                  <p className="text-xs font-black uppercase tracking-wider text-gray-500">Balance later</p>
+                  <p className="mt-1 text-lg font-black text-white">${balanceDue.toLocaleString()}</p>
+                  <p className="mt-1 text-xs text-gray-400">Due after completion notice</p>
+                </div>
+                <div className="p-4">
+                  <p className="text-xs font-black uppercase tracking-wider text-gray-500">Release</p>
+                  <p className="mt-1 text-sm font-bold text-white">After cleared payment</p>
+                  <p className="mt-1 text-xs text-gray-400">Before pickup or delivery</p>
+                </div>
+              </div>
             </div>
 
-            {showTerms && (
-              <div className="px-4 pb-4 pt-2 max-h-72 overflow-y-auto border-t border-gray-600 mt-2 space-y-3">
-                {DEPOSIT_TERMS_IS_DRAFT && (
-                  <p className="flex items-start text-xs text-yellow-300 bg-yellow-900/30 rounded p-2">
-                    <Info size={14} className="mr-2 mt-0.5 flex-shrink-0" />
-                    These terms are being finalized. Bracketed items will be confirmed in writing before your
-                    purchase is completed.
-                  </p>
-                )}
-                {DEPOSIT_TERMS.map((section) => (
-                  <div key={section.title}>
-                    <h5 className="font-bold text-sm text-orange-400 mb-1">{section.title}</h5>
-                    <ul className="space-y-1 text-xs text-gray-300">
-                      {section.items.map((item, i) => (
-                        <li key={i} className="flex">
-                          <span className="text-gray-500 mr-2">–</span>
-                          <span>{item}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                ))}
-              </div>
-            )}
-
-            <label className="flex items-start p-4 border-t border-gray-600 cursor-pointer">
+            <label
+              className={`flex cursor-pointer items-start gap-3 border-t p-5 transition sm:p-6 ${
+                termsAccepted
+                  ? 'border-orange-500/40 bg-orange-500/10'
+                  : 'border-gray-700 bg-black/10 hover:bg-black/20'
+              }`}
+            >
               <input
                 type="checkbox"
                 checked={termsAccepted}
                 onChange={(e) => setTermsAccepted(e.target.checked)}
-                className="mt-1 mr-3 h-4 w-4 accent-orange-500 flex-shrink-0"
+                className="mt-0.5 h-5 w-5 shrink-0 accent-orange-500"
               />
-              <span className="text-sm text-gray-300">{DEPOSIT_CONSENT_LINE}</span>
+              <span>
+                <span className="block text-sm font-bold text-gray-100">
+                  I have reviewed and agree to the 50% Build Deposit Terms.
+                </span>
+                <span className="mt-1 block text-xs leading-5 text-gray-400">
+                  I authorize Badland Campers to begin my custom build and understand that
+                  the remaining balance is due within 30 calendar days after written completion
+                  or availability notice. Agreement version {DEPOSIT_TERMS_VERSION}.
+                </span>
+              </span>
             </label>
-          </div>
+          </section>
         )}
 
         {/* Contact / delivery form */}
