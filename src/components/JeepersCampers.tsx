@@ -129,6 +129,15 @@ const JeepersCampers = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Each navigation choice swaps the page content in place. Reset the viewport
+  // and move keyboard/screen-reader focus to that new content so customers land
+  // at the builder, checkout, gallery, or confirmation heading—not at the scroll
+  // position left behind by the previous page.
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+    document.getElementById('page-content')?.focus({ preventScroll: true });
+  }, [activeTab]);
+
   const reviews = [
     { id: 1, name: 'Mike T.', rating: 5, comment: 'Took this beauty through the Rockies. Handled like a dream! The build quality is exceptional and it towed perfectly behind my Jeep.', date: '2024-09-15' },
     { id: 2, name: 'Sarah K.', rating: 5, comment: 'Perfect for weekend adventures. The kitchen setup is genius! Love how everything folds out so smoothly.', date: '2024-08-22' },
@@ -453,7 +462,11 @@ const JeepersCampers = () => {
       )}
 
       {/* MAIN CONTENT */}
-      <main className="container mx-auto px-2 sm:px-4 py-2 sm:py-4 lg:py-8">
+      <main
+        id="page-content"
+        tabIndex={-1}
+        className="container mx-auto px-2 sm:px-4 py-2 sm:py-4 lg:py-8 focus:outline-none"
+      >
         {/* HOME TAB */}
         {activeTab === 'home' && (
           <div className="max-w-6xl mx-auto">
