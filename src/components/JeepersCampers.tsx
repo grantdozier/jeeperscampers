@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ShoppingCart, Star, Menu, X, Wrench, Truck, Home, CheckCircle } from 'lucide-react';
 import { OrderForm } from './OrderForm'; // Import the new OrderForm component
+import ContactForm from './ContactForm';
 import {
   MODEL_INCLUDED_UPGRADES,
   MODEL_NAMES,
@@ -1702,6 +1703,8 @@ const JeepersCampers = () => {
           </div>
         )}
       </main>
+
+      <ContactForm />
 
       {/* LIGHTBOX */}
       {showLightbox && (
